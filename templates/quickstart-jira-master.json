@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "us-east-1b, us-east-1a"
+    },
+    {
+        "ParameterKey": "BitbucketVersion",
+        "ParameterValue": "4.7.2"
+    },
+    {
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "$[alfred_genpass_8]"
+    },
+    {
+        "ParameterKey": "DBPassword",
+        "ParameterValue": "$[alfred_genpass_8]"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "cikey"
+    }
+]

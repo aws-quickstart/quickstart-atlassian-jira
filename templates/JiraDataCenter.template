@@ -34,7 +34,7 @@
             "DBStorage",
             "DBStorageType",
             "DBIops",
-            "MultiAZ"
+            "DBMultiAZ"
           ]
         },
         {
@@ -104,7 +104,7 @@
         "DBIops": {
           "default": "RDS Provisioned IOPS"
         },
-        "MultiAZ": {
+        "DBMultiAZ": {
           "default": "HA Database across Availability Zones"
         },
         "JiraVersion": {
@@ -235,7 +235,7 @@
       "ConstraintDescription": "Must contain only alphanumeric characters.",
       "NoEcho": "true"
     },
-    "MultiAZ": {
+    "DBMultiAZ": {
       "Description": "Database High availability across Availability Zones",
       "Type": "String",
       "Default": "true",
@@ -288,7 +288,7 @@
       "Default": ""
     },
     "CidrBlock": {
-      "Description": "The CIDR IP range that is permitted to access Bitbucket",
+      "Description": "The CIDR IP range that is permitted to access JIRA",
       "Type": "String",
       "MinLength": "9",
       "MaxLength": "18",
@@ -937,7 +937,7 @@
           ]
         },
         "MultiAZ": {
-          "Ref": "MultiAZ"
+          "Ref": "DBMultiAZ"
         },
         "VPCSecurityGroups": [
           {
