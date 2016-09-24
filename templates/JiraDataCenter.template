@@ -32,7 +32,9 @@
             "DBName",
             "DBPassword",
             "DBStorage",
-            "DBStorageType"
+            "DBStorageType",
+            "DBIops",
+            "MultiAZ"
           ]
         },
         {
@@ -41,6 +43,7 @@
           },
           "Parameters": [
             "AssociatePublicIpAddress",
+            "CidrBlock",
             "KeyName",
             "SSLCertificateName",
             "VPC",
@@ -54,7 +57,7 @@
           },
           "Parameters": [
             "CatalinaOpts",
-            "CollectdConfigUrl"
+            "StartCollectd"
           ]
         }
       ],
@@ -68,8 +71,8 @@
         "CatalinaOpts": {
           "default": "Catalina Options"
         },
-        "CollectdConfigUrl": {
-          "default": "Collectd Config URL"
+        "StartCollectd": {
+          "default": "Should collectd service be started"
         },
         "ClusterNodeMax": {
           "default": "Maximum number of cluster nodes"
@@ -98,6 +101,12 @@
         "DBStorageType": {
           "default": "Database storage type"
         },
+        "DBIops": {
+          "default": "RDS Provisioned IOPS"
+        },
+        "MultiAZ": {
+          "default": "HA Database across Availability Zones"
+        },
         "JiraVersion": {
           "default": "JIRA Version"
         },
@@ -106,6 +115,9 @@
         },
         "SSLCertificateName": {
           "default": "SSL Certificate Name"
+        },
+        "CidrBlock": {
+          "default": "Permitted IP range"
         },
         "Subnets": {
           "default": "Subnets"
@@ -134,7 +146,7 @@
     },
     "ClusterNodeMax": {
       "Type": "Number",
-      "Default": "4"
+      "Default": "1"
     },
     "ClusterNodeMin": {
       "Type": "Number",
@@ -166,11 +178,15 @@
       "Type": "String",
       "Default": ""
     },
-    "CollectdConfigUrl": {
-      "Description": "URL of collectd.conf file. Leave blank to disable collectd monitoring",
+    "StartCollectd": {
+      "Description": "Should the collectd service be started",
       "Type": "String",
-      "Default": "",
-      "ConstraintDescription": "Must be a valid URL to a collectd.conf file, or blank"
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "ConstraintDescription": "Must be 'true' or 'false'."
     },
     "DBInstanceClass": {
       "Description": "RDS instance type",
@@ -219,6 +235,16 @@
       "ConstraintDescription": "Must contain only alphanumeric characters.",
       "NoEcho": "true"
     },
+    "MultiAZ": {
+      "Description": "Database High availability across Availability Zones",
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "ConstraintDescription": "Must be 'true' or 'false'."
+    },    
     "DBStorage": {
       "Description": "Database allocated storage size, in gigabytes (GB)",
       "Type": "Number",
@@ -227,16 +253,25 @@
     "DBStorageType": {
       "Description": "Database storage type",
       "Type": "String",
-      "Default": "General Purpose (SSD)",
+      "Default": "Provisioned IOPS",
       "AllowedValues": [
         "General Purpose (SSD)",
         "Provisioned IOPS"
       ],
       "ConstraintDescription": "Must be 'General Purpose (SSD)' or 'Provisioned IOPS'."
     },
+    "DBIops": {
+      "Description": "Shou;d be in the range of 1000 - 20000, and only used with Provisioned IOPS.  Note: The ratio of iops per allocated-storage must be between 3.00 and 10.00.",
+      "Type": "Number",
+      "Default": "1000",
+      "MinValue": "1000",
+      "MaxValue": "20000",
+      "ConstraintDescription": "Must be in the range 1000 - 20000."
+    },    
     "JiraVersion": {
       "Description": "The version of JIRA to install",
       "Type": "String",
+      "Default": "7.3.0-SNAPSHOT",
       "AllowedPattern": "(\\d+\\.\\d+\\.\\d+(-?.*))",
       "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.2 or higher"
     },
@@ -251,6 +286,14 @@
       "MinLength": "0",
       "MaxLength": "32",
       "Default": ""
+    },
+    "CidrBlock": {
+      "Description": "The CIDR IP range that is permitted to access Bitbucket",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "Must be a valid IP CIDR range of the form x.x.x.x/x."
     },
     "Subnets": {
       "Description": "Subnets (two or more) within the selected VPC",
@@ -273,15 +316,11 @@
       ]
     },
     "DoCollectd": {
-      "Fn::Not": [
-        {
           "Fn::Equals": [
             {
-              "Ref": "CollectdConfigUrl"
+              "Ref": "StartCollectd"
             },
-            ""
-          ]
-        }
+            "true"
       ]
     },
     "DoSetDBMasterUserPassword": {
@@ -475,6 +514,11 @@
         },
         "Tags": [
           {
+            "Key": "Name",
+            "Value": "Jira Node",
+            "PropagateAtLaunch": true
+          },
+          {
             "Key": "Cluster",
             "Value": {
               "Ref": "AWS::StackName"
@@ -500,21 +544,6 @@
             ]
           },
           "0": {
-            "packages": {
-              "Fn::If": [
-                "DoCollectd",
-                {
-                  "yum": {
-                    "collectd": [],
-                    "collectd-java": [],
-                    "collectd-generic-jmx": []
-                  }
-                },
-                {
-                  "Ref": "AWS::NoValue"
-                }
-              ]
-            },
             "files": {
               "/etc/atl": {
                 "content": {
@@ -651,22 +680,6 @@
                     ]
                   ]
                 }
-              },
-              "/etc/collectd.conf": {
-                "Fn::If": [
-                  "DoCollectd",
-                  {
-                    "source": {
-                      "Ref": "CollectdConfigUrl"
-                    },
-                    "mode": "000600",
-                    "owner": "root",
-                    "group": "root"
-                  },
-                  {
-                    "Ref": "AWS::NoValue"
-                  }
-                ]
               }
             },
             "commands": {
@@ -912,10 +925,30 @@
             "gp2"
           ]
         },
+        "Iops": {
+          "Fn::If": [
+            "DBProvisionedIops",
+            {
+              "Ref": "DBIops"
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        },
+        "MultiAZ": {
+          "Ref": "MultiAZ"
+        },
         "VPCSecurityGroups": [
           {
             "Ref": "SecurityGroup"
           }
+        ],
+        "Tags" : [ 
+          { 
+            "Key" : "Name", 
+            "Value" : "Jira PostGres Database" 
+          } 
         ]
       }
     },
@@ -1024,19 +1057,25 @@
             "IpProtocol": "tcp",
             "FromPort": "22",
             "ToPort": "22",
-            "CidrIp": "0.0.0.0/0"
+            "CidrIp": {
+              "Ref": "CidrBlock"
+            }
           },
           {
             "IpProtocol": "tcp",
             "FromPort": "80",
             "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
+            "CidrIp": {
+              "Ref": "CidrBlock"
+            }
           },
           {
             "IpProtocol": "tcp",
             "FromPort": "443",
             "ToPort": "443",
-            "CidrIp": "0.0.0.0/0"
+            "CidrIp": {
+              "Ref": "CidrBlock"
+            }
           }
         ]
       }
