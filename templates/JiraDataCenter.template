@@ -6,7 +6,7 @@
       "ParameterGroups": [
         {
           "Label": {
-            "default": "JIRA"
+            "default": "JIRA setup"
           },
           "Parameters": [
             "JiraVersion"
@@ -14,22 +14,21 @@
         },
         {
           "Label": {
-            "default": "Scaling"
+            "default": "Cluster nodes"
           },
           "Parameters": [
-            "ClusterNodeMax",
+            "ClusterNodeInstanceType",
             "ClusterNodeMin",
-            "ClusterNodeInstanceType"
+            "ClusterNodeMax"
           ]
         },
         {
           "Label": {
-            "default": "JIRA Database"
+            "default": "Database"
           },
           "Parameters": [
             "DBInstanceClass",
             "DBMasterUserPassword",
-            "DBName",
             "DBPassword",
             "DBStorage",
             "DBStorageType",
@@ -42,17 +41,17 @@
             "default": "Networking"
           },
           "Parameters": [
+            "VPC",
+            "ExternalSubnets",
+            "InternalSubnets",
             "AssociatePublicIpAddress",
             "KeyName",
-            "SSLCertificateName",
-            "VPC",
-            "Subnets",
-            "AvailabilityZones"
+            "SSLCertificateName"
           ]
         },
         {
           "Label": {
-            "default": "(Optional) Advanced Options"
+            "default": "Advanced (Optional)"
           },
           "Parameters": [
             "CatalinaOpts",
@@ -64,14 +63,8 @@
         "AssociatePublicIpAddress": {
           "default": "Assign public IP"
         },
-        "AvailabilityZones": {
-          "default": "Availability zones"
-        },
         "CatalinaOpts": {
-          "default": "Catalina Options"
-        },
-        "StartCollectd": {
-          "default": "Should collectd service be started"
+          "default": "Catalina options"
         },
         "ClusterNodeMax": {
           "default": "Maximum number of cluster nodes"
@@ -86,13 +79,10 @@
           "default": "Database instance class"
         },
         "DBMasterUserPassword": {
-          "default": "Master password"
-        },
-        "DBName": {
-          "default": "JIRA database name"
+          "default": "Master password *"
         },
         "DBPassword": {
-          "default": "JIRA database password"
+          "default": "JIRA database password *"
         },
         "DBStorage": {
           "default": "Database storage"
@@ -103,23 +93,23 @@
         "DBIops": {
           "default": "RDS Provisioned IOPS"
         },
-        "DBMultiAZ": {
-          "default": "HA Database across Availability Zones"
-        },
         "JiraVersion": {
-          "default": "JIRA Version"
+          "default": "Version *"
         },
         "KeyName": {
-          "default": "Key Name"
+          "default": "Key Name *"
         },
         "SSLCertificateName": {
           "default": "SSL Certificate Name"
         },
-        "Subnets": {
-          "default": "Subnets"
+        "ExternalSubnets": {
+          "default": "External subnets *"
+        },
+        "InternalSubnets": {
+          "default": "Internal subnets *"
         },
         "VPC": {
-          "default": "VPC"
+          "default": "VPC *"
         }
       }
     }
@@ -134,11 +124,6 @@
         "false"
       ],
       "ConstraintDescription": "Must be 'true' or 'false'."
-    },
-    "AvailabilityZones": {
-      "Description": "Two (2) or more, MUST MATCH Subnets",
-      "Type": "List<AWS::EC2::AvailabilityZone::Name>",
-      "ConstraintDescription": "Must be the names of two or more Availability Zones in the specified Region, and must match the Subnets"
     },
     "ClusterNodeMax": {
       "Type": "Number",
@@ -160,29 +145,18 @@
         "i2.2xlarge",
         "i2.4xlarge",
         "i2.8xlarge",
-        "m3.xlarge",
-        "m3.2xlarge",
         "r3.xlarge",
         "r3.2xlarge",
         "r3.4xlarge",
         "r3.8xlarge",
         "x1.32xlarge"
       ],
-      "ConstraintDescription": "Must be a valid EC2 HVM instance type. 'xlarge' or larger."
+      "ConstraintDescription": "Must be an EC2 instance type in the C3, I2, R3, or X1 family, 'xlarge' or larger",
+      "Description": "Instance type for the cluster nodes."
     },
     "CatalinaOpts": {
       "Type": "String",
       "Default": ""
-    },
-    "StartCollectd": {
-      "Description": "Should the collectd service be started",
-      "Type": "String",
-      "Default": "true",
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "ConstraintDescription": "Must be 'true' or 'false'."
     },
     "DBInstanceClass": {
       "Description": "RDS instance type",
@@ -213,15 +187,6 @@
       "AllowedPattern": "[a-zA-Z0-9]*",
       "ConstraintDescription": "Must be at least 8 alphanumeric characters."
     },
-    "DBName": {
-      "Description": "Database name",
-      "Type": "String",
-      "Default": "jira",
-      "MinLength": "1",
-      "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9_-]*",
-      "ConstraintDescription": "Must not be blank, and may contain only alphanumeric characters, underscore ('_'), and hyphen ('-')."
-    },
     "DBPassword": {
       "Default": "",
       "Description": "Database user account password.",
@@ -231,16 +196,6 @@
       "ConstraintDescription": "Must contain only alphanumeric characters.",
       "NoEcho": "true"
     },
-    "DBMultiAZ": {
-      "Description": "Database High availability across Availability Zones",
-      "Type": "String",
-      "Default": "true",
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "ConstraintDescription": "Must be 'true' or 'false'."
-    },    
     "DBStorage": {
       "Description": "Database allocated storage size, in gigabytes (GB)",
       "Type": "Number",
@@ -249,27 +204,38 @@
     "DBStorageType": {
       "Description": "Database storage type",
       "Type": "String",
-      "Default": "Provisioned IOPS",
+      "Default": "General Purpose (SSD)",
       "AllowedValues": [
         "General Purpose (SSD)",
         "Provisioned IOPS"
       ],
       "ConstraintDescription": "Must be 'General Purpose (SSD)' or 'Provisioned IOPS'."
     },
+    "DBMultiAZ": {
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "ConstraintDescription": "Must be 'true' or 'false'."
+    },
     "DBIops": {
-      "Description": "Shou;d be in the range of 1000 - 20000, and only used with Provisioned IOPS.  Note: The ratio of iops per allocated-storage must be between 3.00 and 10.00.",
+      "Description": "Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00.",
       "Type": "Number",
       "Default": "1000",
       "MinValue": "1000",
-      "MaxValue": "20000",
-      "ConstraintDescription": "Must be in the range 1000 - 20000."
-    },    
+      "MaxValue": "30000",
+      "ConstraintDescription": "Must be in the range 1000 - 30000."
+    },
     "JiraVersion": {
       "Description": "The version of JIRA to install",
       "Type": "String",
-      "Default": "7.3.0-SNAPSHOT",
       "AllowedPattern": "(\\d+\\.\\d+\\.\\d+(-?.*))",
-      "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.2 or higher"
+      "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.3 or higher",
+      "AllowedValues": [
+        "7.3.0-SNAPSHOT"
+      ]
     },
     "KeyName": {
       "Description": "The EC2 Key Pair to allow SSH access to the instances",
@@ -283,8 +249,23 @@
       "MaxLength": "32",
       "Default": ""
     },
-    "Subnets": {
-      "Description": "Subnets (two or more) within the selected VPC",
+    "StartCollectd": {
+      "Description": "Should the collectd service be started",
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "ConstraintDescription": "Must be 'true' or 'false'."
+    },
+    "ExternalSubnets": {
+      "Description": "Subnets (two or more) where your user-facing load balancer will be deployed. MUST be within the selected VPC.",
+      "Type": "List<AWS::EC2::Subnet::Id>",
+      "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
+    },
+    "InternalSubnets": {
+      "Description": "Subnets (two or more) where your cluster nodes and other internal infrastructure will be deployed. MUST be within the selected VPC. Specify the ExternalSubnets again here if you wish to deploy the whole stack into the same subnets.",
       "Type": "List<AWS::EC2::Subnet::Id>",
       "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
     },
@@ -304,11 +285,11 @@
       ]
     },
     "DoCollectd": {
-          "Fn::Equals": [
-            {
-              "Ref": "StartCollectd"
-            },
-            "true"
+      "Fn::Equals": [
+        {
+          "Ref": "StartCollectd"
+        },
+        "true"
       ]
     },
     "DoSetDBMasterUserPassword": {
@@ -427,48 +408,48 @@
       }
     },
     "AWSRegionArch2AMI": {
-      "ap-southeast-2": {
-        "HVM64": "ami-acab9bcf",
+      "us-east-1": {
+        "HVM64": "ami-805a1b97",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-south-1": {
-        "HVM64": "ami-a8c0b5c7",
+        "HVM64": "ami-1133477e",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-west-1": {
-        "HVM64": "ami-ba6327c9",
+        "HVM64": "ami-442a6c37",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-southeast-1": {
-        "HVM64": "ami-c10eaba2",
+        "HVM64": "ami-6882260b",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-2": {
+        "HVM64": "ami-db3201b8",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-central-1": {
-        "HVM64": "ami-56fe0239",
+        "HVM64": "ami-d46599bb",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-2": {
-        "HVM64": "ami-3872a756",
+        "HVM64": "ami-4590442b",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-1": {
-        "HVM64": "ami-0a31ec6b",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "us-east-1": {
-        "HVM64": "ami-8598dd92",
+        "HVM64": "ami-87f32ce6",
         "HVMG2": "NOT_SUPPORTED"
       },
       "sa-east-1": {
-        "HVM64": "ami-79108315",
+        "HVM64": "ami-f7fc6e9b",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-1": {
-        "HVM64": "ami-3d7f315d",
+        "HVM64": "ami-82e7a9e2",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-2": {
-        "HVM64": "ami-8cfc23ec",
+        "HVM64": "ami-2714ca47",
         "HVMG2": "NOT_SUPPORTED"
       }
     }
@@ -477,9 +458,6 @@
     "ClusterNodeGroup": {
       "Type": "AWS::AutoScaling::AutoScalingGroup",
       "Properties": {
-        "AvailabilityZones": {
-          "Ref": "AvailabilityZones"
-        },
         "DesiredCapacity": {
           "Ref": "ClusterNodeMin"
         },
@@ -498,7 +476,7 @@
           }
         ],
         "VPCZoneIdentifier": {
-          "Ref": "Subnets"
+          "Ref": "InternalSubnets"
         },
         "Tags": [
           {
@@ -544,11 +522,7 @@
                         "Ref": "DBMasterUserPassword"
                       },
                       "\n",
-                      "ATL_DB_NAME=",
-                      {
-                        "Ref": "DBName"
-                      },
-                      "\n",
+                      "ATL_DB_NAME=jira\n",
                       "ATL_DB_HOST=",
                       {
                         "Fn::GetAtt": [
@@ -580,11 +554,7 @@
                           "Endpoint.Port"
                         ]
                       },
-                      "/",
-                      {
-                        "Ref": "DBName"
-                      },
-                      "\n",
+                      "/jira\n",
                       "ATL_JDBC_USER=atljira\n",
                       "ATL_JDBC_PASSWORD=",
                       {
@@ -851,7 +821,7 @@
           "Fn::Select": [
             "0",
             {
-              "Ref": "Subnets"
+              "Ref": "InternalSubnets"
             }
           ]
         }
@@ -872,7 +842,7 @@
           "Fn::Select": [
             "1",
             {
-              "Ref": "Subnets"
+              "Ref": "InternalSubnets"
             }
           ]
         }
@@ -881,9 +851,6 @@
     "DB": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
-        "DBName": {
-          "Ref": "DBName"
-        },
         "AllocatedStorage": {
           "Ref": "DBStorage"
         },
@@ -933,11 +900,11 @@
             "Ref": "SecurityGroup"
           }
         ],
-        "Tags" : [ 
-          { 
-            "Key" : "Name", 
-            "Value" : "Jira PostGres Database" 
-          } 
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "JIRA PostgreSQL Database"
+          }
         ]
       }
     },
@@ -946,7 +913,7 @@
       "Properties": {
         "DBSubnetGroupDescription": "DBSubnetGroup",
         "SubnetIds": {
-          "Ref": "Subnets"
+          "Ref": "InternalSubnets"
         }
       }
     },
@@ -1030,7 +997,7 @@
           }
         ],
         "Subnets": {
-          "Ref": "Subnets"
+          "Ref": "ExternalSubnets"
         }
       }
     },
