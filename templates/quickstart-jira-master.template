@@ -505,7 +505,24 @@
       "DependsOn": "VPCStack",
       "Type": "AWS::CloudFormation::Stack",
       "Properties": {
-        "TemplateURL": "https://s3-ap-southeast-2.amazonaws.com/aws-deployment-test/templates/jira/JiraDataCenter.template",
+        "TemplateURL": {
+          "Fn::Join": [
+            "/", [{
+                "Fn::FindInMap": [
+                  "AWSInfoRegionMap", {
+                    "Ref": "AWS::Region"
+                  },
+                  "QuickStartS3URL"
+                ]
+              }, {
+                "Ref": "QSS3BucketName"
+              }, {
+                "Ref": "QSS3KeyPrefix"
+              },
+              "templates/JiraDataCenter.template"
+            ]
+          ]
+        },
         "Parameters": {
           "ExternalSubnets": {
             "Fn::Join": [
