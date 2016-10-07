@@ -29,7 +29,7 @@
     },
     {
         "ParameterKey": "JiraVersion",
-        "ParameterValue": "7.3.0-SNAPSHOT"
+        "ParameterValue": "7.2.3-AWS-SUMMIT-DEMO"
     },
     {
         "ParameterKey": "KeyPairName",
