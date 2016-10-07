@@ -219,7 +219,7 @@
     "JiraVersion": {
       "Description": "Version of JIRA to install. Find valid versions at https://www.atlassian.com/software/jira/download-archives.html",
       "Type": "String",
-      "Default": "7.3.0-SNAPSHOT",
+      "Default": "7.2.3-AWS-SUMMIT-DEMO",
       "MinLength": "5",
       "MaxLength": "27",
       "ConstraintDescription": "Must be a valid JIRA version number."

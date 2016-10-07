@@ -234,7 +234,7 @@
       "AllowedPattern": "(\\d+\\.\\d+\\.\\d+(-?.*))",
       "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.3 or higher",
       "AllowedValues": [
-        "7.3.0-SNAPSHOT"
+        "7.2.3-AWS-SUMMIT-DEMO"
       ]
     },
     "KeyName": {
@@ -409,47 +409,47 @@
     },
     "AWSRegionArch2AMI": {
       "us-east-1": {
-        "HVM64": "ami-805a1b97",
+        "HVM64": "ami-4a86c95d",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-south-1": {
-        "HVM64": "ami-1133477e",
+        "HVM64": "ami-a62b5fc9",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-west-1": {
-        "HVM64": "ami-442a6c37",
+        "HVM64": "ami-2cecac5f",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-southeast-1": {
-        "HVM64": "ami-6882260b",
+        "HVM64": "ami-85d275e6",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-southeast-2": {
-        "HVM64": "ami-db3201b8",
+        "HVM64": "ami-d99eadba",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-central-1": {
-        "HVM64": "ami-d46599bb",
+        "HVM64": "ami-556b943a",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-2": {
-        "HVM64": "ami-4590442b",
+        "HVM64": "ami-bdb266d3",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-1": {
-        "HVM64": "ami-87f32ce6",
+        "HVM64": "ami-d0ed35b1",
         "HVMG2": "NOT_SUPPORTED"
       },
       "sa-east-1": {
-        "HVM64": "ami-f7fc6e9b",
+        "HVM64": "ami-cb0290a7",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-1": {
-        "HVM64": "ami-82e7a9e2",
+        "HVM64": "ami-d4a1e8b4",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-2": {
-        "HVM64": "ami-2714ca47",
+        "HVM64": "ami-cf1dc5af",
         "HVMG2": "NOT_SUPPORTED"
       }
     }
