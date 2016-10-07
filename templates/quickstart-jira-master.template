@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) Oct,6,2016",
+  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) Oct,7,2016",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [{
