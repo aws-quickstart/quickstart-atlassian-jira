@@ -1,5 +1,9 @@
 [
     {
+        "ParameterKey": "JiraProduct",
+        "ParameterValue": "Software"
+    },
+    {
         "ParameterKey": "AssociatePublicIpAddress",
         "ParameterValue": "false"
     },

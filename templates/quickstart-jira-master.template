@@ -512,7 +512,6 @@
             "/", [{
                 "Fn::FindInMap": [
                   "AWSInfoRegionMap", {
-                  "AWSInfoRegionMap", {
                     "Ref": "AWS::Region"
                   },
                   "QuickStartS3URL"
