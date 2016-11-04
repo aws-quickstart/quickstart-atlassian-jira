@@ -28,8 +28,8 @@
         "ParameterValue": "Provisioned IOPS"
     },
     {
-        "ParameterKey": "JiraVersion",
-        "ParameterValue": "7.2.3-AWS-SUMMIT-DEMO"
+        "ParameterKey": "JiraProduct",
+        "ParameterValue": "Software"
     },
     {
         "ParameterKey": "KeyPairName",
