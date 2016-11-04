@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "QS(0035) Atlassian Jira Data Center Nov,4,2016",
+  "Description": "QS(0035) Atlassian Jira Data Center Oct,7,2016",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [
@@ -9,7 +9,7 @@
             "default": "JIRA setup"
           },
           "Parameters": [
-            "JiraProduct"
+            "JiraVersion"
           ]
         },
         {
@@ -93,8 +93,8 @@
         "DBIops": {
           "default": "RDS Provisioned IOPS"
         },
-        "JiraProduct": {
-          "default": "JIRA Product *"
+        "JiraVersion": {
+          "default": "Version *"
         },
         "KeyName": {
           "default": "Key Name *"
@@ -228,14 +228,14 @@
       "MaxValue": "30000",
       "ConstraintDescription": "Must be in the range 1000 - 30000."
     },
-    "JiraProduct": {
-      "Description": "The JIRA Product to install. Installs latest available version of the selected product",
+    "JiraVersion": {
+      "Description": "The version of JIRA to install",
+	  "Default": "7.2.3-AWS-SUMMIT-DEMO",
       "Type": "String",
-      "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
+      "AllowedPattern": "(\\d+\\.\\d+\\.\\d+(-?.*))",
+      "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.3 or higher",
       "AllowedValues": [
-        "Software",
-        "ServiceDesk",
-        "Core"
+        "7.2.3-AWS-SUMMIT-DEMO"
       ]
     },
     "KeyName": {
@@ -453,26 +453,6 @@
         "HVM64": "ami-cf1dc5af",
         "HVMG2": "NOT_SUPPORTED"
       }
-    },
-    "JIRAProduct2NameAndVersion" : {
-      "Software": {
-        "name" : "jira-software",
-        "version" : "7.2.3",
-        "shortdisplayname" : "\"JIRA SW\"",
-        "fulldisplayname" : "\"Atlassian JIRA Software\""
-      },
-      "ServiceDesk": {
-        "name" : "servicedesk",
-        "version" : "3.2.3",
-        "shortdisplayname" : "\"JIRA SD\"",
-        "fulldisplayname" : "\"Atlassian JIRA Service Desk\""
-      },
-      "Core": {
-        "name" : "jira-core",
-        "version" : "7.2.3",
-        "shortdisplayname" : "\"JIRA Core\"",
-        "fulldisplayname" : "\"Atlassian JIRA Core\""
-      }
     }
   },
   "Resources": {
@@ -584,51 +564,11 @@
                       "\n",
                       "ATL_ENABLED_PRODUCTS=Jira\n",
                       "ATL_ENABLED_SHARED_HOMES=\n",
-                      "ATL_JIRA_NAME=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "name"
-                        ]
-                      },
-                      "\n",
                       "ATL_JIRA_VERSION=",
                       {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "version"
-                        ]
+                        "Ref": "JiraVersion"
                       },
                       "\n",
-                      "ATL_JIRA_SHORT_DISPLAY_NAME=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "shortdisplayname"
-                        ]
-                      },
-                      "\n",
-                      "ATL_JIRA_FULL_DISPLAY_NAME=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "fulldisplayname"
-                        ]
-                      },
-                      "\n",
-                      "ATL_RELEASE_S3_PATH=releases/jira\n",
                       "ATL_JIRA_DATA_CENTER=true\n",
                       "ATL_NGINX_ENABLED=false\n",
                       "ATL_POSTGRES_ENABLED=false\n",

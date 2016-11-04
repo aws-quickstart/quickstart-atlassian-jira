@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) Nov,4,2016",
+  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) Oct,7,2016",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [{
@@ -22,7 +22,7 @@
           "default": "JIRA Setup"
         },
         "Parameters": [
-          "JiraProduct",
+          "JiraVersion",
           "ClusterNodeMax",
           "ClusterNodeMin",
           "ClusterNodeInstanceType",
@@ -93,8 +93,8 @@
         "AssociatePublicIpAddress": {
           "default": "Assign public IP"
         },
-        "JiraProduct": {
-          "default": "JIRA Product"
+        "JiraVersion": {
+          "default": "Version"
         },
         "CatalinaOpts": {
           "default": "Catalina Options"
@@ -216,15 +216,13 @@
       ],
       "ConstraintDescription": "Must be 'true' or 'false'."
     },
-    "JiraProduct": {
-      "Description": "The JIRA Product to install. Installs latest available version of the selected product",
+    "JiraVersion": {
+      "Description": "Version of JIRA to install. Find valid versions at https://www.atlassian.com/software/jira/download-archives.html",
       "Type": "String",
-      "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
-      "AllowedValues": [
-        "Software",
-        "ServiceDesk",
-        "Core"
-      ]
+      "Default": "7.2.3-AWS-SUMMIT-DEMO",
+      "MinLength": "5",
+      "MaxLength": "27",
+      "ConstraintDescription": "Must be a valid JIRA version number."
     },
     "ClusterNodeMax": {
       "Type": "Number",
@@ -512,7 +510,6 @@
             "/", [{
                 "Fn::FindInMap": [
                   "AWSInfoRegionMap", {
-                  "AWSInfoRegionMap", {
                     "Ref": "AWS::Region"
                   },
                   "QuickStartS3URL"
@@ -574,8 +571,8 @@
           "AssociatePublicIpAddress": {
             "Ref": "AssociatePublicIpAddress"
           },
-          "JiraProduct": {
-            "Ref": "JiraProduct"
+          "JiraVersion": {
+            "Ref": "JiraVersion"
           },
           "ClusterNodeMax": {
             "Ref": "ClusterNodeMax"
