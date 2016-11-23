@@ -220,6 +220,7 @@
       "Description": "The JIRA Product to install. Installs latest available version of the selected product",
       "Type": "String",
       "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
+      "Default": "ServiceDesk",
       "AllowedValues": [
         "Software",
         "ServiceDesk",
