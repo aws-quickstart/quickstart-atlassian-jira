@@ -1,5 +1,9 @@
 [
     {
+        "ParameterKey": "JiraProduct",
+        "ParameterValue": "Software"
+    },
+    {
         "ParameterKey": "AssociatePublicIpAddress",
         "ParameterValue": "false"
     },
@@ -28,8 +32,8 @@
         "ParameterValue": "Provisioned IOPS"
     },
     {
-        "ParameterKey": "JiraVersion",
-        "ParameterValue": "7.3.0-SNAPSHOT"
+        "ParameterKey": "JiraProduct",
+        "ParameterValue": "Software"
     },
     {
         "ParameterKey": "KeyPairName",
