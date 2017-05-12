@@ -232,7 +232,6 @@
       "Description": "The JIRA Product to install. Installs latest available version of the selected product",
       "Type": "String",
       "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
-      "Default": "ServiceDesk",
       "AllowedValues": [
         "Software",
         "ServiceDesk",
@@ -411,68 +410,78 @@
     },
     "AWSRegionArch2AMI": {
       "us-east-1": {
-        "HVM64": "ami-4a86c95d",
+        "HVM64": "ami-bb5642ac",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-south-1": {
-        "HVM64": "ami-a62b5fc9",
+        "HVM64": "ami-67c6b108",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-west-2": {
+        "HVM64": "ami-eeede78a",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-west-1": {
-        "HVM64": "ami-2cecac5f",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-1": {
-        "HVM64": "ami-85d275e6",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-2": {
-        "HVM64": "ami-d99eadba",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "eu-central-1": {
-        "HVM64": "ami-556b943a",
+        "HVM64": "ami-afcaeadc",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-2": {
-        "HVM64": "ami-bdb266d3",
+        "HVM64": "ami-15a0767b",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-1": {
-        "HVM64": "ami-d0ed35b1",
+        "HVM64": "ami-da107bbd",
         "HVMG2": "NOT_SUPPORTED"
       },
       "sa-east-1": {
-        "HVM64": "ami-cb0290a7",
+        "HVM64": "ami-5a71e936",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ca-central-1": {
+        "HVM64": "ami-ab2a98cf",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-1": {
+        "HVM64": "ami-b7ae00d4",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-2": {
+        "HVM64": "ami-5bc2f938",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-central-1": {
+        "HVM64": "ami-982aeaf7",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "us-east-2": {
+        "HVM64": "ami-1ccc9679",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-1": {
-        "HVM64": "ami-d4a1e8b4",
+        "HVM64": "ami-f0267790",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-2": {
-        "HVM64": "ami-cf1dc5af",
+        "HVM64": "ami-560fbb36",
         "HVMG2": "NOT_SUPPORTED"
       }
     },
-    "JIRAProduct2NameAndVersion" : {
+    "JIRAProduct2NameAndVersion": {
       "Software": {
-        "name" : "jira-software",
-        "version" : "7.2.3",
-        "shortdisplayname" : "\"JIRA SW\"",
-        "fulldisplayname" : "\"Atlassian JIRA Software\""
+        "name": "jira-software",
+        "shortdisplayname": "\"JIRA SW\"",
+        "fulldisplayname": "\"Atlassian JIRA Software\""
       },
       "ServiceDesk": {
-        "name" : "servicedesk",
-        "version" : "3.2.3",
-        "shortdisplayname" : "\"JIRA SD\"",
-        "fulldisplayname" : "\"Atlassian JIRA Service Desk\""
+        "name": "servicedesk",
+        "shortdisplayname": "\"JIRA SD\"",
+        "fulldisplayname": "\"Atlassian JIRA Service Desk\""
       },
       "Core": {
-        "name" : "jira-core",
-        "version" : "7.2.3",
-        "shortdisplayname" : "\"JIRA Core\"",
-        "fulldisplayname" : "\"Atlassian JIRA Core\""
+        "name": "jira-core",
+        "shortdisplayname": "\"JIRA Core\"",
+        "fulldisplayname": "\"Atlassian JIRA Core\""
+
       }
     }
   },
@@ -538,13 +547,15 @@
                   "Fn::Join": [
                     "",
                     [
+                      "ATL_NGINX_ENABLED=false\n",
                       "ATL_APP_DATA_MOUNT_ENABLED=false\n",
+                      "ATL_DB_NAME=jira\n",
+                      "ATL_DB_USER=jira\n",
                       "ATL_DB_PASSWORD=",
                       {
                         "Ref": "DBMasterUserPassword"
                       },
                       "\n",
-                      "ATL_DB_NAME=jira\n",
                       "ATL_DB_HOST=",
                       {
                         "Fn::GetAtt": [
@@ -586,6 +597,7 @@
                       "ATL_ENABLED_PRODUCTS=Jira\n",
                       "ATL_ENABLED_SHARED_HOMES=\n",
                       "ATL_JIRA_NAME=",
+
                       {
                         "Fn::FindInMap": [
                           "JIRAProduct2NameAndVersion",
@@ -593,17 +605,6 @@
                             "Ref": "JiraProduct"
                           },
                           "name"
-                        ]
-                      },
-                      "\n",
-                      "ATL_JIRA_VERSION=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "version"
                         ]
                       },
                       "\n",
@@ -629,9 +630,9 @@
                         ]
                       },
                       "\n",
-                      "ATL_RELEASE_S3_PATH=releases/jira\n",
-                      "ATL_JIRA_DATA_CENTER=true\n",
-                      "ATL_NGINX_ENABLED=false\n",
+                      "ATL_RELEASE_S3_BUCKET=atlassian-software\n",
+                      "ATL_RELEASE_S3_PATH=releases\n",
+
                       "ATL_POSTGRES_ENABLED=false\n",
                       "ATL_PROXY_NAME=",
                       {
