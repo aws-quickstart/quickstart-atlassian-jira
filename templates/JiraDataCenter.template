@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "QS(0035) Atlassian Jira Data Center Nov,23,2016",
+  "Description": "QS(0035) Atlassian Jira Data Center May,11,2017",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [
