@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) Oct,6,2016",
+  "Description": "Atlassian Jira Data Center in new VPC License: Apache 2.0 (Please do not remove) May,11,2017",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [{
@@ -22,7 +22,7 @@
           "default": "JIRA Setup"
         },
         "Parameters": [
-          "JiraVersion",
+          "JiraProduct",
           "ClusterNodeMax",
           "ClusterNodeMin",
           "ClusterNodeInstanceType",
@@ -93,8 +93,8 @@
         "AssociatePublicIpAddress": {
           "default": "Assign public IP"
         },
-        "JiraVersion": {
-          "default": "Version"
+        "JiraProduct": {
+          "default": "JIRA Product"
         },
         "CatalinaOpts": {
           "default": "Catalina Options"
@@ -216,13 +216,16 @@
       ],
       "ConstraintDescription": "Must be 'true' or 'false'."
     },
-    "JiraVersion": {
-      "Description": "Version of JIRA to install. Find valid versions at https://www.atlassian.com/software/jira/download-archives.html",
+    "JiraProduct": {
+      "Description": "The JIRA Product to install. Installs latest available version of the selected product",
       "Type": "String",
-      "Default": "7.3.0-SNAPSHOT",
-      "MinLength": "5",
-      "MaxLength": "27",
-      "ConstraintDescription": "Must be a valid JIRA version number."
+      "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
+      "Default": "ServiceDesk",
+      "AllowedValues": [
+        "Software",
+        "ServiceDesk",
+        "Core"
+      ]
     },
     "ClusterNodeMax": {
       "Type": "Number",
@@ -571,8 +574,8 @@
           "AssociatePublicIpAddress": {
             "Ref": "AssociatePublicIpAddress"
           },
-          "JiraVersion": {
-            "Ref": "JiraVersion"
+          "JiraProduct": {
+            "Ref": "JiraProduct"
           },
           "ClusterNodeMax": {
             "Ref": "ClusterNodeMax"

@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Atlassian JIRA Data Center",
+  "Description": "QS(0035) Atlassian Jira Data Center May,11,2017",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [
@@ -501,6 +501,7 @@
         "name": "jira-core",
         "shortdisplayname": "\"JIRA Core\"",
         "fulldisplayname": "\"Atlassian JIRA Core\""
+
       }
     }
   },
@@ -616,6 +617,7 @@
                       "ATL_ENABLED_PRODUCTS=Jira\n",
                       "ATL_ENABLED_SHARED_HOMES=\n",
                       "ATL_JIRA_NAME=",
+
                       {
                         "Fn::FindInMap": [
                           "JIRAProduct2NameAndVersion",
@@ -650,6 +652,7 @@
                       "\n",
                       "ATL_RELEASE_S3_BUCKET=atlassian-software\n",
                       "ATL_RELEASE_S3_PATH=releases\n",
+
                       "ATL_POSTGRES_ENABLED=false\n",
                       "ATL_PROXY_NAME=",
                       {

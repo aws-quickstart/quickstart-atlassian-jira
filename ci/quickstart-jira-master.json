@@ -1,5 +1,9 @@
 [
     {
+        "ParameterKey": "JiraProduct",
+        "ParameterValue": "Software"
+    },
+    {
         "ParameterKey": "AssociatePublicIpAddress",
         "ParameterValue": "false"
     },
@@ -26,10 +30,6 @@
     {
         "ParameterKey": "DBStorageType",
         "ParameterValue": "Provisioned IOPS"
-    },
-    {
-        "ParameterKey": "JiraVersion",
-        "ParameterValue": "7.3.0-SNAPSHOT"
     },
     {
         "ParameterKey": "KeyPairName",
