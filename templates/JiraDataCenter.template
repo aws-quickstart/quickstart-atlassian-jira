@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "QS(0035) Atlassian Jira Data Center Oct,3,2016",
+  "Description": "Atlassian JIRA Data Center",
   "Metadata": {
     "AWS::CloudFormation::Interface": {
       "ParameterGroups": [
@@ -9,7 +9,7 @@
             "default": "JIRA setup"
           },
           "Parameters": [
-            "JiraVersion"
+            "JiraProduct"
           ]
         },
         {
@@ -46,6 +46,7 @@
             "InternalSubnets",
             "AssociatePublicIpAddress",
             "KeyName",
+            "CustomDnsName",
             "SSLCertificateName"
           ]
         },
@@ -93,11 +94,14 @@
         "DBIops": {
           "default": "RDS Provisioned IOPS"
         },
-        "JiraVersion": {
-          "default": "Version *"
+        "JiraProduct": {
+          "default": "JIRA Product *"
         },
         "KeyName": {
           "default": "Key Name *"
+        },
+        "CustomDnsName": {
+          "default": "Existing DNS name (optional)"
         },
         "SSLCertificateName": {
           "default": "SSL Certificate Name"
@@ -228,19 +232,24 @@
       "MaxValue": "30000",
       "ConstraintDescription": "Must be in the range 1000 - 30000."
     },
-    "JiraVersion": {
-      "Description": "The version of JIRA to install",
+    "JiraProduct": {
+      "Description": "The JIRA Product to install. Installs latest available version of the selected product",
       "Type": "String",
-      "AllowedPattern": "(\\d+\\.\\d+\\.\\d+(-?.*))",
-      "ConstraintDescription": "Must be a valid JIRA version number. For example: 7.2.3 or higher",
+      "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
       "AllowedValues": [
-        "7.3.0-SNAPSHOT"
+        "Software",
+        "ServiceDesk",
+        "Core"
       ]
     },
     "KeyName": {
       "Description": "The EC2 Key Pair to allow SSH access to the instances",
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "Must be the name of an existing EC2 Key Pair."
+    },
+    "CustomDnsName": {
+      "Description": "Use custom existing DNS name for your JIRA Data Center instance. Please note: you must own the domain and configure it to point at the load balancer.",
+      "Type": "String"
     },
     "SSLCertificateName": {
       "Description": "The name of your Server Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
@@ -298,6 +307,18 @@
           "Fn::Equals": [
             {
               "Ref": "DBMasterUserPassword"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "UseCustomDnsName": {
+      "Fn::Not": [
+        {
+          "Fn::Equals" : [
+            {
+              "Ref": "CustomDnsName"
             },
             ""
           ]
@@ -409,48 +430,77 @@
     },
     "AWSRegionArch2AMI": {
       "us-east-1": {
-        "HVM64": "ami-805a1b97",
+        "HVM64": "ami-bb5642ac",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-south-1": {
-        "HVM64": "ami-1133477e",
+        "HVM64": "ami-67c6b108",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-west-2": {
+        "HVM64": "ami-eeede78a",
         "HVMG2": "NOT_SUPPORTED"
       },
       "eu-west-1": {
-        "HVM64": "ami-442a6c37",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-1": {
-        "HVM64": "ami-6882260b",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-2": {
-        "HVM64": "ami-db3201b8",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "eu-central-1": {
-        "HVM64": "ami-d46599bb",
+        "HVM64": "ami-afcaeadc",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-2": {
-        "HVM64": "ami-4590442b",
+        "HVM64": "ami-15a0767b",
         "HVMG2": "NOT_SUPPORTED"
       },
       "ap-northeast-1": {
-        "HVM64": "ami-87f32ce6",
+        "HVM64": "ami-da107bbd",
         "HVMG2": "NOT_SUPPORTED"
       },
       "sa-east-1": {
-        "HVM64": "ami-f7fc6e9b",
+        "HVM64": "ami-5a71e936",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ca-central-1": {
+        "HVM64": "ami-ab2a98cf",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-1": {
+        "HVM64": "ami-b7ae00d4",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "ap-southeast-2": {
+        "HVM64": "ami-5bc2f938",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "eu-central-1": {
+        "HVM64": "ami-982aeaf7",
+        "HVMG2": "NOT_SUPPORTED"
+      },
+      "us-east-2": {
+        "HVM64": "ami-1ccc9679",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-1": {
-        "HVM64": "ami-82e7a9e2",
+        "HVM64": "ami-f0267790",
         "HVMG2": "NOT_SUPPORTED"
       },
       "us-west-2": {
-        "HVM64": "ami-2714ca47",
+        "HVM64": "ami-560fbb36",
         "HVMG2": "NOT_SUPPORTED"
+      }
+    },
+    "JIRAProduct2NameAndVersion": {
+      "Software": {
+        "name": "jira-software",
+        "shortdisplayname": "\"JIRA SW\"",
+        "fulldisplayname": "\"Atlassian JIRA Software\""
+      },
+      "ServiceDesk": {
+        "name": "servicedesk",
+        "shortdisplayname": "\"JIRA SD\"",
+        "fulldisplayname": "\"Atlassian JIRA Service Desk\""
+      },
+      "Core": {
+        "name": "jira-core",
+        "shortdisplayname": "\"JIRA Core\"",
+        "fulldisplayname": "\"Atlassian JIRA Core\""
       }
     }
   },
@@ -516,13 +566,15 @@
                   "Fn::Join": [
                     "",
                     [
+                      "ATL_NGINX_ENABLED=false\n",
                       "ATL_APP_DATA_MOUNT_ENABLED=false\n",
+                      "ATL_DB_NAME=jira\n",
+                      "ATL_DB_USER=jira\n",
                       "ATL_DB_PASSWORD=",
                       {
                         "Ref": "DBMasterUserPassword"
                       },
                       "\n",
-                      "ATL_DB_NAME=jira\n",
                       "ATL_DB_HOST=",
                       {
                         "Fn::GetAtt": [
@@ -563,19 +615,55 @@
                       "\n",
                       "ATL_ENABLED_PRODUCTS=Jira\n",
                       "ATL_ENABLED_SHARED_HOMES=\n",
-                      "ATL_JIRA_VERSION=",
+                      "ATL_JIRA_NAME=",
                       {
-                        "Ref": "JiraVersion"
+                        "Fn::FindInMap": [
+                          "JIRAProduct2NameAndVersion",
+                          {
+                            "Ref": "JiraProduct"
+                          },
+                          "name"
+                        ]
                       },
                       "\n",
-                      "ATL_JIRA_DATA_CENTER=true\n",
-                      "ATL_NGINX_ENABLED=false\n",
+                      "ATL_JIRA_SHORT_DISPLAY_NAME=",
+                      {
+                        "Fn::FindInMap": [
+                          "JIRAProduct2NameAndVersion",
+                          {
+                            "Ref": "JiraProduct"
+                          },
+                          "shortdisplayname"
+                        ]
+                      },
+                      "\n",
+                      "ATL_JIRA_FULL_DISPLAY_NAME=",
+                      {
+                        "Fn::FindInMap": [
+                          "JIRAProduct2NameAndVersion",
+                          {
+                            "Ref": "JiraProduct"
+                          },
+                          "fulldisplayname"
+                        ]
+                      },
+                      "\n",
+                      "ATL_RELEASE_S3_BUCKET=atlassian-software\n",
+                      "ATL_RELEASE_S3_PATH=releases\n",
                       "ATL_POSTGRES_ENABLED=false\n",
                       "ATL_PROXY_NAME=",
                       {
-                        "Fn::GetAtt": [
-                          "LoadBalancer",
-                          "DNSName"
+                        "Fn::If": [
+                          "UseCustomDnsName",
+                          {
+                            "Ref": "CustomDnsName"
+                          },
+                          {
+                            "Fn::GetAtt": [
+                              "LoadBalancer",
+                              "DNSName"
+                            ]
+                          }
                         ]
                       },
                       "\n",
@@ -1046,8 +1134,40 @@
     }
   },
   "Outputs": {
-    "URL": {
-      "Description": "The URL of the JIRA Data Center instance",
+    "JIRAURL": {
+      "Description": "The URL of JIRA Data Center instance",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            {
+              "Fn::If": [
+                "DoSSL",
+                "https",
+                "http"
+              ]
+            },
+            "://",
+            {
+              "Fn::If": [
+                "UseCustomDnsName",
+                {
+                  "Ref": "CustomDnsName"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "LoadBalancer",
+                    "DNSName"
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    "LoadBalancerURL": {
+      "Description": "The Load Balancer URL",
       "Value": {
         "Fn::Join": [
           "",
