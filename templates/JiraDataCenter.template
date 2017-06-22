@@ -46,6 +46,7 @@
             "InternalSubnets",
             "AssociatePublicIpAddress",
             "KeyName",
+            "CustomDnsName",
             "SSLCertificateName"
           ]
         },
@@ -98,6 +99,9 @@
         },
         "KeyName": {
           "default": "Key Name *"
+        },
+        "CustomDnsName": {
+          "default": "Existing DNS name (optional)"
         },
         "SSLCertificateName": {
           "default": "SSL Certificate Name"
@@ -243,6 +247,10 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription": "Must be the name of an existing EC2 Key Pair."
     },
+    "CustomDnsName": {
+      "Description": "Use custom existing DNS name for your JIRA Data Center instance. Please note: you must own the domain and configure it to point at the load balancer.",
+      "Type": "String"
+    },
     "SSLCertificateName": {
       "Description": "The name of your Server Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
       "Type": "String",
@@ -299,6 +307,18 @@
           "Fn::Equals": [
             {
               "Ref": "DBMasterUserPassword"
+            },
+            ""
+          ]
+        }
+      ]
+    },
+    "UseCustomDnsName": {
+      "Fn::Not": [
+        {
+          "Fn::Equals" : [
+            {
+              "Ref": "CustomDnsName"
             },
             ""
           ]
@@ -636,9 +656,17 @@
                       "ATL_POSTGRES_ENABLED=false\n",
                       "ATL_PROXY_NAME=",
                       {
-                        "Fn::GetAtt": [
-                          "LoadBalancer",
-                          "DNSName"
+                        "Fn::If": [
+                          "UseCustomDnsName",
+                          {
+                            "Ref": "CustomDnsName"
+                          },
+                          {
+                            "Fn::GetAtt": [
+                              "LoadBalancer",
+                              "DNSName"
+                            ]
+                          }
                         ]
                       },
                       "\n",
@@ -1109,8 +1137,40 @@
     }
   },
   "Outputs": {
-    "URL": {
-      "Description": "The URL of the JIRA Data Center instance",
+    "JIRAURL": {
+      "Description": "The URL of JIRA Data Center instance",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            {
+              "Fn::If": [
+                "DoSSL",
+                "https",
+                "http"
+              ]
+            },
+            "://",
+            {
+              "Fn::If": [
+                "UseCustomDnsName",
+                {
+                  "Ref": "CustomDnsName"
+                },
+                {
+                  "Fn::GetAtt": [
+                    "LoadBalancer",
+                    "DNSName"
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    },
+    "LoadBalancerURL": {
+      "Description": "The Load Balancer URL",
       "Value": {
         "Fn::Join": [
           "",
