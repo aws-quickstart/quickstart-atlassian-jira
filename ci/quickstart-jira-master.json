@@ -32,6 +32,10 @@
         "ParameterValue": "Provisioned IOPS"
     },
     {
+        "ParameterKey": "CustomDnsName",
+        "ParameterValue": "qsjiraci.awsqs.com"
+    },
+    {
         "ParameterKey": "KeyPairName",
         "ParameterValue": "tonynv"
     }
