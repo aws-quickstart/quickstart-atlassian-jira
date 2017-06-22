@@ -1,1197 +1,1093 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "QS(0035) Atlassian Jira Data Center May,11,2017",
-  "Metadata": {
-    "AWS::CloudFormation::Interface": {
-      "ParameterGroups": [
-        {
-          "Label": {
-            "default": "JIRA setup"
-          },
-          "Parameters": [
-            "JiraProduct"
-          ]
-        },
-        {
-          "Label": {
-            "default": "Cluster nodes"
-          },
-          "Parameters": [
-            "ClusterNodeInstanceType",
-            "ClusterNodeMin",
-            "ClusterNodeMax"
-          ]
-        },
-        {
-          "Label": {
-            "default": "Database"
-          },
-          "Parameters": [
-            "DBInstanceClass",
-            "DBMasterUserPassword",
-            "DBPassword",
-            "DBStorage",
-            "DBStorageType",
-            "DBIops",
-            "DBMultiAZ"
-          ]
-        },
-        {
-          "Label": {
-            "default": "Networking"
-          },
-          "Parameters": [
-            "VPC",
-            "ExternalSubnets",
-            "InternalSubnets",
-            "AssociatePublicIpAddress",
-            "KeyName",
-            "CustomDnsName",
-            "SSLCertificateName"
-          ]
-        },
-        {
-          "Label": {
-            "default": "Advanced (Optional)"
-          },
-          "Parameters": [
-            "CatalinaOpts",
-            "StartCollectd"
-          ]
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "QS(0035) Atlassian Jira Data Center June,21,2017",
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [{
+                "Label": {
+                    "default": "JIRA setup"
+                },
+                "Parameters": [
+                    "JiraProduct"
+                ]
+            }, {
+                "Label": {
+                    "default": "Cluster nodes"
+                },
+                "Parameters": [
+                    "ClusterNodeInstanceType",
+                    "ClusterNodeMin",
+                    "ClusterNodeMax"
+                ]
+            }, {
+                "Label": {
+                    "default": "Database"
+                },
+                "Parameters": [
+                    "DBInstanceClass",
+                    "DBMasterUserPassword",
+                    "DBPassword",
+                    "DBStorage",
+                    "DBStorageType",
+                    "DBIops",
+                    "DBMultiAZ"
+                ]
+            }, {
+                "Label": {
+                    "default": "Networking"
+                },
+                "Parameters": [
+                    "VPC",
+                    "ExternalSubnets",
+                    "InternalSubnets",
+                    "AssociatePublicIpAddress",
+                    "KeyName",
+                    "CustomDnsName",
+                    "SSLCertificateName"
+                ]
+            }, {
+                "Label": {
+                    "default": "Advanced (Optional)"
+                },
+                "Parameters": [
+                    "CatalinaOpts",
+                    "StartCollectd"
+                ]
+            }],
+            "ParameterLabels": {
+                "AssociatePublicIpAddress": {
+                    "default": "Assign public IP"
+                },
+                "CatalinaOpts": {
+                    "default": "Catalina options"
+                },
+                "ClusterNodeMax": {
+                    "default": "Maximum number of cluster nodes"
+                },
+                "ClusterNodeMin": {
+                    "default": "Minimum number of cluster nodes"
+                },
+                "ClusterNodeInstanceType": {
+                    "default": "JIRA cluster node instance type"
+                },
+                "DBInstanceClass": {
+                    "default": "Database instance class"
+                },
+                "DBMasterUserPassword": {
+                    "default": "Master password *"
+                },
+                "DBPassword": {
+                    "default": "JIRA database password *"
+                },
+                "DBStorage": {
+                    "default": "Database storage"
+                },
+                "DBStorageType": {
+                    "default": "Database storage type"
+                },
+                "DBIops": {
+                    "default": "RDS Provisioned IOPS"
+                },
+                "JiraProduct": {
+                    "default": "JIRA Product *"
+                },
+                "KeyName": {
+                    "default": "Key Name *"
+                },
+                "CustomDnsName": {
+                    "default": "Existing DNS name (optional)"
+                },
+                "SSLCertificateName": {
+                    "default": "SSL Certificate Name"
+                },
+                "ExternalSubnets": {
+                    "default": "External subnets *"
+                },
+                "InternalSubnets": {
+                    "default": "Internal subnets *"
+                },
+                "VPC": {
+                    "default": "VPC *"
+                }
+            }
         }
-      ],
-      "ParameterLabels": {
+    },
+    "Parameters": {
         "AssociatePublicIpAddress": {
-          "default": "Assign public IP"
-        },
-        "CatalinaOpts": {
-          "default": "Catalina options"
+            "Description": "Controls if the EC2 instances are assigned a public IP address",
+            "Type": "String",
+            "Default": "true",
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "ConstraintDescription": "Must be 'true' or 'false'."
         },
         "ClusterNodeMax": {
-          "default": "Maximum number of cluster nodes"
+            "Type": "Number",
+            "Default": "1"
         },
         "ClusterNodeMin": {
-          "default": "Minimum number of cluster nodes"
+            "Type": "Number",
+            "Default": "1"
         },
         "ClusterNodeInstanceType": {
-          "default": "JIRA cluster node instance type"
+            "Type": "String",
+            "Default": "c3.xlarge",
+            "AllowedValues": [
+                "c3.xlarge",
+                "c3.2xlarge",
+                "c3.4xlarge",
+                "c3.8xlarge",
+                "i2.xlarge",
+                "i2.2xlarge",
+                "i2.4xlarge",
+                "i2.8xlarge",
+                "r3.xlarge",
+                "r3.2xlarge",
+                "r3.4xlarge",
+                "r3.8xlarge",
+                "x1.32xlarge"
+            ],
+            "ConstraintDescription": "Must be an EC2 instance type in the C3, I2, R3, or X1 family, 'xlarge' or larger",
+            "Description": "Instance type for the cluster nodes."
+        },
+        "CatalinaOpts": {
+            "Type": "String",
+            "Default": ""
         },
         "DBInstanceClass": {
-          "default": "Database instance class"
+            "Description": "RDS instance type",
+            "Type": "String",
+            "Default": "db.m4.xlarge",
+            "AllowedValues": [
+                "db.m4.large",
+                "db.m4.xlarge",
+                "db.m4.2xlarge",
+                "db.m4.4xlarge",
+                "db.m4.10xlarge",
+                "db.r3.large",
+                "db.r3.xlarge",
+                "db.r3.2xlarge",
+                "db.r3.4xlarge",
+                "db.r3.8xlarge",
+                "db.t2.medium",
+                "db.t2.large"
+            ],
+            "ConstraintDescription": "Must be a valid RDS instance class, 'db.t2.medium' or larger."
         },
         "DBMasterUserPassword": {
-          "default": "Master password *"
+            "NoEcho": "true",
+            "Default": "",
+            "Description": "Database admin account password.",
+            "Type": "String",
+            "MaxLength": "41",
+            "AllowedPattern": "[a-zA-Z0-9]*",
+            "ConstraintDescription": "Must be at least 8 alphanumeric characters."
         },
         "DBPassword": {
-          "default": "JIRA database password *"
+            "Default": "",
+            "Description": "Database user account password.",
+            "Type": "String",
+            "MaxLength": "41",
+            "AllowedPattern": "[a-zA-Z0-9]*",
+            "ConstraintDescription": "Must contain only alphanumeric characters.",
+            "NoEcho": "true"
         },
         "DBStorage": {
-          "default": "Database storage"
+            "Description": "Database allocated storage size, in gigabytes (GB)",
+            "Type": "Number",
+            "Default": "10"
         },
         "DBStorageType": {
-          "default": "Database storage type"
+            "Description": "Database storage type",
+            "Type": "String",
+            "Default": "General Purpose (SSD)",
+            "AllowedValues": [
+                "General Purpose (SSD)",
+                "Provisioned IOPS"
+            ],
+            "ConstraintDescription": "Must be 'General Purpose (SSD)' or 'Provisioned IOPS'."
+        },
+        "DBMultiAZ": {
+            "Type": "String",
+            "Default": "true",
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "ConstraintDescription": "Must be 'true' or 'false'."
         },
         "DBIops": {
-          "default": "RDS Provisioned IOPS"
+            "Description": "Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00.",
+            "Type": "Number",
+            "Default": "1000",
+            "MinValue": "1000",
+            "MaxValue": "30000",
+            "ConstraintDescription": "Must be in the range 1000 - 30000."
         },
         "JiraProduct": {
-          "default": "JIRA Product *"
+            "Description": "The JIRA Product to install. Installs latest available version of the selected product",
+            "Type": "String",
+            "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
+            "AllowedValues": [
+                "Software",
+                "ServiceDesk",
+                "Core"
+            ]
         },
         "KeyName": {
-          "default": "Key Name *"
+            "Description": "The EC2 Key Pair to allow SSH access to the instances",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "ConstraintDescription": "Must be the name of an existing EC2 Key Pair."
         },
         "CustomDnsName": {
-          "default": "Existing DNS name (optional)"
+            "Description": "Use custom existing DNS name for your JIRA Data Center instance. Please note: you must own the domain and configure it to point at the load balancer.",
+            "Type": "String"
         },
         "SSLCertificateName": {
-          "default": "SSL Certificate Name"
+            "Description": "The name of your Server Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
+            "Type": "String",
+            "MinLength": "0",
+            "MaxLength": "32",
+            "Default": ""
+        },
+        "StartCollectd": {
+            "Description": "Should the collectd service be started",
+            "Type": "String",
+            "Default": "true",
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "ConstraintDescription": "Must be 'true' or 'false'."
         },
         "ExternalSubnets": {
-          "default": "External subnets *"
+            "Description": "Subnets (two or more) where your user-facing load balancer will be deployed. MUST be within the selected VPC.",
+            "Type": "List<AWS::EC2::Subnet::Id>",
+            "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
         },
         "InternalSubnets": {
-          "default": "Internal subnets *"
+            "Description": "Subnets (two or more) where your cluster nodes and other internal infrastructure will be deployed. MUST be within the selected VPC. Specify the ExternalSubnets again here if you wish to deploy the whole stack into the same subnets.",
+            "Type": "List<AWS::EC2::Subnet::Id>",
+            "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
         },
         "VPC": {
-          "default": "VPC *"
+            "Description": "Virtual Private Cloud",
+            "Type": "AWS::EC2::VPC::Id",
+            "ConstraintDescription": "Must be the ID of a VPC."
         }
-      }
-    }
-  },
-  "Parameters": {
-    "AssociatePublicIpAddress": {
-      "Description": "Controls if the EC2 instances are assigned a public IP address",
-      "Type": "String",
-      "Default": "true",
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "ConstraintDescription": "Must be 'true' or 'false'."
     },
-    "ClusterNodeMax": {
-      "Type": "Number",
-      "Default": "1"
-    },
-    "ClusterNodeMin": {
-      "Type": "Number",
-      "Default": "1"
-    },
-    "ClusterNodeInstanceType": {
-      "Type": "String",
-      "Default": "c3.xlarge",
-      "AllowedValues": [
-        "c3.xlarge",
-        "c3.2xlarge",
-        "c3.4xlarge",
-        "c3.8xlarge",
-        "i2.xlarge",
-        "i2.2xlarge",
-        "i2.4xlarge",
-        "i2.8xlarge",
-        "r3.xlarge",
-        "r3.2xlarge",
-        "r3.4xlarge",
-        "r3.8xlarge",
-        "x1.32xlarge"
-      ],
-      "ConstraintDescription": "Must be an EC2 instance type in the C3, I2, R3, or X1 family, 'xlarge' or larger",
-      "Description": "Instance type for the cluster nodes."
-    },
-    "CatalinaOpts": {
-      "Type": "String",
-      "Default": ""
-    },
-    "DBInstanceClass": {
-      "Description": "RDS instance type",
-      "Type": "String",
-      "Default": "db.m4.xlarge",
-      "AllowedValues": [
-        "db.m4.large",
-        "db.m4.xlarge",
-        "db.m4.2xlarge",
-        "db.m4.4xlarge",
-        "db.m4.10xlarge",
-        "db.r3.large",
-        "db.r3.xlarge",
-        "db.r3.2xlarge",
-        "db.r3.4xlarge",
-        "db.r3.8xlarge",
-        "db.t2.medium",
-        "db.t2.large"
-      ],
-      "ConstraintDescription": "Must be a valid RDS instance class, 'db.t2.medium' or larger."
-    },
-    "DBMasterUserPassword": {
-      "NoEcho": "true",
-      "Default": "",
-      "Description": "Database admin account password.",
-      "Type": "String",
-      "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9]*",
-      "ConstraintDescription": "Must be at least 8 alphanumeric characters."
-    },
-    "DBPassword": {
-      "Default": "",
-      "Description": "Database user account password.",
-      "Type": "String",
-      "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9]*",
-      "ConstraintDescription": "Must contain only alphanumeric characters.",
-      "NoEcho": "true"
-    },
-    "DBStorage": {
-      "Description": "Database allocated storage size, in gigabytes (GB)",
-      "Type": "Number",
-      "Default": "10"
-    },
-    "DBStorageType": {
-      "Description": "Database storage type",
-      "Type": "String",
-      "Default": "General Purpose (SSD)",
-      "AllowedValues": [
-        "General Purpose (SSD)",
-        "Provisioned IOPS"
-      ],
-      "ConstraintDescription": "Must be 'General Purpose (SSD)' or 'Provisioned IOPS'."
-    },
-    "DBMultiAZ": {
-      "Type": "String",
-      "Default": "true",
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "ConstraintDescription": "Must be 'true' or 'false'."
-    },
-    "DBIops": {
-      "Description": "Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00.",
-      "Type": "Number",
-      "Default": "1000",
-      "MinValue": "1000",
-      "MaxValue": "30000",
-      "ConstraintDescription": "Must be in the range 1000 - 30000."
-    },
-    "JiraProduct": {
-      "Description": "The JIRA Product to install. Installs latest available version of the selected product",
-      "Type": "String",
-      "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
-      "AllowedValues": [
-        "Software",
-        "ServiceDesk",
-        "Core"
-      ]
-    },
-    "KeyName": {
-      "Description": "The EC2 Key Pair to allow SSH access to the instances",
-      "Type": "AWS::EC2::KeyPair::KeyName",
-      "ConstraintDescription": "Must be the name of an existing EC2 Key Pair."
-    },
-    "CustomDnsName": {
-      "Description": "Use custom existing DNS name for your JIRA Data Center instance. Please note: you must own the domain and configure it to point at the load balancer.",
-      "Type": "String"
-    },
-    "SSLCertificateName": {
-      "Description": "The name of your Server Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
-      "Type": "String",
-      "MinLength": "0",
-      "MaxLength": "32",
-      "Default": ""
-    },
-    "StartCollectd": {
-      "Description": "Should the collectd service be started",
-      "Type": "String",
-      "Default": "true",
-      "AllowedValues": [
-        "true",
-        "false"
-      ],
-      "ConstraintDescription": "Must be 'true' or 'false'."
-    },
-    "ExternalSubnets": {
-      "Description": "Subnets (two or more) where your user-facing load balancer will be deployed. MUST be within the selected VPC.",
-      "Type": "List<AWS::EC2::Subnet::Id>",
-      "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
-    },
-    "InternalSubnets": {
-      "Description": "Subnets (two or more) where your cluster nodes and other internal infrastructure will be deployed. MUST be within the selected VPC. Specify the ExternalSubnets again here if you wish to deploy the whole stack into the same subnets.",
-      "Type": "List<AWS::EC2::Subnet::Id>",
-      "ConstraintDescription": "Must be a list of two or more Subnet ID's within the selected VPC."
-    },
-    "VPC": {
-      "Description": "Virtual Private Cloud",
-      "Type": "AWS::EC2::VPC::Id",
-      "ConstraintDescription": "Must be the ID of a VPC."
-    }
-  },
-  "Conditions": {
-    "DBProvisionedIops": {
-      "Fn::Equals": [
-        {
-          "Ref": "DBStorageType"
-        },
-        "Provisioned IOPS"
-      ]
-    },
-    "DoCollectd": {
-      "Fn::Equals": [
-        {
-          "Ref": "StartCollectd"
-        },
-        "true"
-      ]
-    },
-    "DoSetDBMasterUserPassword": {
-      "Fn::Not": [
-        {
-          "Fn::Equals": [
-            {
-              "Ref": "DBMasterUserPassword"
-            },
-            ""
-          ]
-        }
-      ]
-    },
-    "UseCustomDnsName": {
-      "Fn::Not": [
-        {
-          "Fn::Equals" : [
-            {
-              "Ref": "CustomDnsName"
-            },
-            ""
-          ]
-        }
-      ]
-    },
-    "DoSSL": {
-      "Fn::Not": [
-        {
-          "Fn::Equals": [
-            {
-              "Ref": "SSLCertificateName"
-            },
-            ""
-          ]
-        }
-      ]
-    }
-  },
-  "Mappings": {
-    "AWSInstanceType2Arch": {
-      "c3.large": {
-        "Arch": "HVM64"
-      },
-      "c3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "c3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.large": {
-        "Arch": "HVM64"
-      },
-      "c4.xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "c4.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "d2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "i2.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.large": {
-        "Arch": "HVM64"
-      },
-      "m4.xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "m4.10xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.large": {
-        "Arch": "HVM64"
-      },
-      "r3.xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.2xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.4xlarge": {
-        "Arch": "HVM64"
-      },
-      "r3.8xlarge": {
-        "Arch": "HVM64"
-      },
-      "x1.32xlarge": {
-        "Arch": "HVM64"
-      }
-    },
-    "AWSRegionArch2AMI": {
-      "us-east-1": {
-        "HVM64": "ami-bb5642ac",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-south-1": {
-        "HVM64": "ami-67c6b108",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "eu-west-2": {
-        "HVM64": "ami-eeede78a",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "eu-west-1": {
-        "HVM64": "ami-afcaeadc",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-northeast-2": {
-        "HVM64": "ami-15a0767b",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-northeast-1": {
-        "HVM64": "ami-da107bbd",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "sa-east-1": {
-        "HVM64": "ami-5a71e936",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ca-central-1": {
-        "HVM64": "ami-ab2a98cf",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-1": {
-        "HVM64": "ami-b7ae00d4",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "ap-southeast-2": {
-        "HVM64": "ami-5bc2f938",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "eu-central-1": {
-        "HVM64": "ami-982aeaf7",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "us-east-2": {
-        "HVM64": "ami-1ccc9679",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "us-west-1": {
-        "HVM64": "ami-f0267790",
-        "HVMG2": "NOT_SUPPORTED"
-      },
-      "us-west-2": {
-        "HVM64": "ami-560fbb36",
-        "HVMG2": "NOT_SUPPORTED"
-      }
-    },
-    "JIRAProduct2NameAndVersion": {
-      "Software": {
-        "name": "jira-software",
-        "shortdisplayname": "\"JIRA SW\"",
-        "fulldisplayname": "\"Atlassian JIRA Software\""
-      },
-      "ServiceDesk": {
-        "name": "servicedesk",
-        "shortdisplayname": "\"JIRA SD\"",
-        "fulldisplayname": "\"Atlassian JIRA Service Desk\""
-      },
-      "Core": {
-        "name": "jira-core",
-        "shortdisplayname": "\"JIRA Core\"",
-        "fulldisplayname": "\"Atlassian JIRA Core\""
-
-      }
-    }
-  },
-  "Resources": {
-    "ClusterNodeGroup": {
-      "Type": "AWS::AutoScaling::AutoScalingGroup",
-      "Properties": {
-        "DesiredCapacity": {
-          "Ref": "ClusterNodeMin"
-        },
-        "LaunchConfigurationName": {
-          "Ref": "ClusterNodeLaunchConfig"
-        },
-        "MaxSize": {
-          "Ref": "ClusterNodeMax"
-        },
-        "MinSize": {
-          "Ref": "ClusterNodeMin"
-        },
-        "LoadBalancerNames": [
-          {
-            "Ref": "LoadBalancer"
-          }
-        ],
-        "VPCZoneIdentifier": {
-          "Ref": "InternalSubnets"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "JIRA Node",
-            "PropagateAtLaunch": true
-          },
-          {
-            "Key": "Cluster",
-            "Value": {
-              "Ref": "AWS::StackName"
-            },
-            "PropagateAtLaunch": true
-          }
-        ]
-      }
-    },
-    "ClusterNodeLaunchConfig": {
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
-      "DependsOn": [
-        "EFSMountAz1",
-        "EFSMountAz2",
-        "DB"
-      ],
-      "Metadata": {
-        "Comment": "",
-        "AWS::CloudFormation::Init": {
-          "configSets": {
-            "default": [
-              "0"
+    "Conditions": {
+        "DBProvisionedIops": {
+            "Fn::Equals": [{
+                    "Ref": "DBStorageType"
+                },
+                "Provisioned IOPS"
             ]
-          },
-          "0": {
-            "files": {
-              "/etc/atl": {
-                "content": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "ATL_NGINX_ENABLED=false\n",
-                      "ATL_APP_DATA_MOUNT_ENABLED=false\n",
-                      "ATL_DB_NAME=jira\n",
-                      "ATL_DB_USER=jira\n",
-                      "ATL_DB_PASSWORD=",
-                      {
+        },
+        "DoCollectd": {
+            "Fn::Equals": [{
+                    "Ref": "StartCollectd"
+                },
+                "true"
+            ]
+        },
+        "DoSetDBMasterUserPassword": {
+            "Fn::Not": [{
+                "Fn::Equals": [{
                         "Ref": "DBMasterUserPassword"
-                      },
-                      "\n",
-                      "ATL_DB_HOST=",
-                      {
-                        "Fn::GetAtt": [
-                          "DB",
-                          "Endpoint.Address"
-                        ]
-                      },
-                      "\n",
-                      "ATL_DB_PORT=",
-                      {
-                        "Fn::GetAtt": [
-                          "DB",
-                          "Endpoint.Port"
-                        ]
-                      },
-                      "\n",
-                      "ATL_JDBC_DRIVER=org.postgresql.Driver\n",
-                      "ATL_JDBC_URL=jdbc:postgresql://",
-                      {
-                        "Fn::GetAtt": [
-                          "DB",
-                          "Endpoint.Address"
-                        ]
-                      },
-                      ":",
-                      {
-                        "Fn::GetAtt": [
-                          "DB",
-                          "Endpoint.Port"
-                        ]
-                      },
-                      "/jira\n",
-                      "ATL_JDBC_USER=atljira\n",
-                      "ATL_JDBC_PASSWORD=",
-                      {
-                        "Ref": "DBPassword"
-                      },
-                      "\n",
-                      "ATL_ENABLED_PRODUCTS=Jira\n",
-                      "ATL_ENABLED_SHARED_HOMES=\n",
-                      "ATL_JIRA_NAME=",
-
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "name"
-                        ]
-                      },
-                      "\n",
-                      "ATL_JIRA_SHORT_DISPLAY_NAME=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "shortdisplayname"
-                        ]
-                      },
-                      "\n",
-                      "ATL_JIRA_FULL_DISPLAY_NAME=",
-                      {
-                        "Fn::FindInMap": [
-                          "JIRAProduct2NameAndVersion",
-                          {
-                            "Ref": "JiraProduct"
-                          },
-                          "fulldisplayname"
-                        ]
-                      },
-                      "\n",
-                      "ATL_RELEASE_S3_BUCKET=atlassian-software\n",
-                      "ATL_RELEASE_S3_PATH=releases\n",
-
-                      "ATL_POSTGRES_ENABLED=false\n",
-                      "ATL_PROXY_NAME=",
-                      {
-                        "Fn::If": [
-                          "UseCustomDnsName",
-                          {
-                            "Ref": "CustomDnsName"
-                          },
-                          {
-                            "Fn::GetAtt": [
-                              "LoadBalancer",
-                              "DNSName"
-                            ]
-                          }
-                        ]
-                      },
-                      "\n",
-                      "ATL_SSL_SELF_CERT_ENABLED=false\n",
-                      {
-                        "Fn::If": [
-                          "DoSSL",
-                          "ATL_SSL_PROXY=true\n",
-                          {
-                            "Ref": "AWS::NoValue"
-                          }
-                        ]
-                      }
-                    ]
-                  ]
-                }
-              },
-              "/etc/cfn/cfn-hup.conf": {
-                "content": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "[main]\n",
-                      "stack=",
-                      {
-                        "Ref": "AWS::StackId"
-                      },
-                      "\n",
-                      "region=",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      "\n"
-                    ]
-                  ]
-                },
-                "mode": "000400",
-                "owner": "root",
-                "group": "root"
-              },
-              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
-                "content": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "[cfn-auto-reloader-hook]\n",
-                      "triggers=post.update\n",
-                      "path=Resources.ClusterNodeLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
-                      "action=/opt/aws/bin/cfn-init -v ",
-                      "         --stack ",
-                      {
-                        "Ref": "AWS::StackName"
-                      },
-                      "         --resource ClusterNodeLaunchConfig ",
-                      "         --region ",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      "\n",
-                      "runas=root\n"
-                    ]
-                  ]
-                }
-              }
-            },
-            "commands": {
-              "010_make_mount_point": {
-                "command": "mkdir -p /media/atl",
-                "ignoreErrors": "false"
-              },
-              "020_add_nfs_mount": {
-                "command": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "echo ",
-                      {
-                        "Fn::Join": [
-                          "",
-                          [
-                            "$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone).",
-                            {
-                              "Ref": "ElasticFileSystem"
-                            },
-                            ".efs.",
-                            {
-                              "Ref": "AWS::Region"
-                            },
-                            ".amazonaws.com"
-                          ]
-                        ]
-                      },
-                      ":/ /media/atl nfs4 noatime,intr,rsize=32768,wsize=32768 0 0 >>/etc/fstab"
-                    ]
-                  ]
-                },
-                "ignoreErrors": "false"
-              },
-              "030_mount_all": {
-                "command": "mount -a",
-                "ignoreErrors": "false"
-              },
-              "040_make_shared_home_dir": {
-                "command": "mkdir -p /media/atl/jira/shared",
-                "ignoreErrors": "false"
-              }
-            },
-            "services": {
-              "sysvinit": {
-                "cfn-hup": {
-                  "enabled": "true",
-                  "ensureRunning": "true",
-                  "files": [
-                    "/etc/cfn/cfn-hup.conf",
-                    "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
-                  ]
-                },
-                "collectd": {
-                  "Fn::If": [
-                    "DoCollectd",
-                    {
-                      "enabled": "true",
-                      "ensureRunning": "true"
                     },
-                    {
-                      "Ref": "AWS::NoValue"
-                    }
-                  ]
-                },
-                "rpcbind": {
-                  "enabled": "true",
-                  "ensureRunning": "true",
-                  "packages": {
-                    "yum": [
-                      "nfs-utils"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "Properties": {
-        "AssociatePublicIpAddress": {
-          "Ref": "AssociatePublicIpAddress"
+                    ""
+                ]
+            }]
         },
-        "BlockDeviceMappings": [
-          {
-            "DeviceName": "/dev/xvdf",
-            "Ebs": {},
-            "NoDevice": true
-          }
-        ],
-        "KeyName": {
-          "Ref": "KeyName"
+        "UseCustomDnsName": {
+            "Fn::Not": [{
+                "Fn::Equals": [{
+                        "Ref": "CustomDnsName"
+                    },
+                    ""
+                ]
+            }]
         },
-        "ImageId": {
-          "Fn::FindInMap": [
-            "AWSRegionArch2AMI",
-            {
-              "Ref": "AWS::Region"
-            },
-            {
-              "Fn::FindInMap": [
-                "AWSInstanceType2Arch",
-                {
-                  "Ref": "ClusterNodeInstanceType"
-                },
-                "Arch"
-              ]
-            }
-          ]
-        },
-        "InstanceType": {
-          "Ref": "ClusterNodeInstanceType"
-        },
-        "SecurityGroups": [
-          {
-            "Ref": "SecurityGroup"
-          }
-        ],
-        "UserData": {
-          "Fn::Base64": {
-            "Fn::Join": [
-              "",
-              [
-                "#!/bin/bash -xe\n",
-                "yum update -y aws-cfn-bootstrap\n",
-                "/opt/aws/bin/cfn-init -v ",
-                "         --stack ",
-                {
-                  "Ref": "AWS::StackName"
-                },
-                "         --resource ClusterNodeLaunchConfig ",
-                "         --region ",
-                {
-                  "Ref": "AWS::Region"
-                },
-                "\n",
-                "/opt/aws/bin/cfn-signal -e $? ",
-                "         --stack ",
-                {
-                  "Ref": "AWS::StackName"
-                },
-                "         --resource ClusterNodeGroup ",
-                "         --region ",
-                {
-                  "Ref": "AWS::Region"
-                },
-                "\n"
-              ]
-            ]
-          }
-        }
-      }
-    },
-    "ElasticFileSystem": {
-      "Type": "AWS::EFS::FileSystem",
-      "Properties": {
-        "FileSystemTags": [
-          {
-            "Key": "Application",
-            "Value": {
-              "Ref": "AWS::StackId"
-            }
-          }
-        ]
-      }
-    },
-    "EFSMountAz1": {
-      "Type": "AWS::EFS::MountTarget",
-      "Properties": {
-        "FileSystemId": {
-          "Ref": "ElasticFileSystem"
-        },
-        "SecurityGroups": [
-          {
-            "Ref": "SecurityGroup"
-          }
-        ],
-        "SubnetId": {
-          "Fn::Select": [
-            "0",
-            {
-              "Ref": "InternalSubnets"
-            }
-          ]
-        }
-      }
-    },
-    "EFSMountAz2": {
-      "Type": "AWS::EFS::MountTarget",
-      "Properties": {
-        "FileSystemId": {
-          "Ref": "ElasticFileSystem"
-        },
-        "SecurityGroups": [
-          {
-            "Ref": "SecurityGroup"
-          }
-        ],
-        "SubnetId": {
-          "Fn::Select": [
-            "1",
-            {
-              "Ref": "InternalSubnets"
-            }
-          ]
-        }
-      }
-    },
-    "DB": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "AllocatedStorage": {
-          "Ref": "DBStorage"
-        },
-        "DBInstanceClass": {
-          "Ref": "DBInstanceClass"
-        },
-        "DBSubnetGroupName": {
-          "Ref": "DBSubnetGroup"
-        },
-        "Engine": "postgres",
-        "EngineVersion": "9.3.12",
-        "MasterUsername": "postgres",
-        "MasterUserPassword": {
-          "Fn::If": [
-            "DoSetDBMasterUserPassword",
-            {
-              "Ref": "DBMasterUserPassword"
-            },
-            {
-              "Ref": "AWS::NoValue"
-            }
-          ]
-        },
-        "StorageType": {
-          "Fn::If": [
-            "DBProvisionedIops",
-            "io1",
-            "gp2"
-          ]
-        },
-        "Iops": {
-          "Fn::If": [
-            "DBProvisionedIops",
-            {
-              "Ref": "DBIops"
-            },
-            {
-              "Ref": "AWS::NoValue"
-            }
-          ]
-        },
-        "MultiAZ": {
-          "Ref": "DBMultiAZ"
-        },
-        "VPCSecurityGroups": [
-          {
-            "Ref": "SecurityGroup"
-          }
-        ],
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "JIRA PostgreSQL Database"
-          }
-        ]
-      }
-    },
-    "DBSubnetGroup": {
-      "Type": "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": "DBSubnetGroup",
-        "SubnetIds": {
-          "Ref": "InternalSubnets"
-        }
-      }
-    },
-    "LoadBalancer": {
-      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Properties": {
-        "AppCookieStickinessPolicy": [
-          {
-            "CookieName": "JSESSIONID",
-            "PolicyName": "JSessionIdStickiness"
-          }
-        ],
-        "ConnectionDrainingPolicy": {
-          "Enabled": true,
-          "Timeout": 300
-        },
-        "ConnectionSettings": {
-          "IdleTimeout": 3600
-        },
-        "CrossZone": "true",
-        "Listeners": [
-          {
-            "LoadBalancerPort": "80",
-            "Protocol": "HTTP",
-            "InstancePort": {
-              "Fn::If": [
-                "DoSSL",
-                "8081",
-                "8080"
-              ]
-            },
-            "InstanceProtocol": "HTTP",
-            "PolicyNames": [
-              "JSessionIdStickiness"
-            ]
-          },
-          {
-            "Fn::If": [
-              "DoSSL",
-              {
-                "LoadBalancerPort": "443",
-                "Protocol": "HTTPS",
-                "InstancePort": "8080",
-                "InstanceProtocol": "HTTP",
-                "PolicyNames": [
-                  "JSessionIdStickiness"
-                ],
-                "SSLCertificateId": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":server-certificate/",
-                      {
+        "DoSSL": {
+            "Fn::Not": [{
+                "Fn::Equals": [{
                         "Ref": "SSLCertificateName"
-                      }
-                    ]
-                  ]
-                }
-              },
-              {
-                "Ref": "AWS::NoValue"
-              }
-            ]
-          }
-        ],
-        "HealthCheck": {
-          "Target": "HTTP:8080/status",
-          "Timeout": "29",
-          "Interval": "30",
-          "UnhealthyThreshold": "2",
-          "HealthyThreshold": "2"
-        },
-        "Scheme": "internet-facing",
-        "SecurityGroups": [
-          {
-            "Ref": "SecurityGroup"
-          }
-        ],
-        "Subnets": {
-          "Ref": "ExternalSubnets"
+                    },
+                    ""
+                ]
+            }]
         }
-      }
     },
-    "SecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "Security group allowing SSH and HTTP/HTTPS access",
-        "VpcId": {
-          "Ref": "VPC"
-        },
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "22",
-            "ToPort": "22",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-          },
-          {
-            "IpProtocol": "tcp",
-            "FromPort": "443",
-            "ToPort": "443",
-            "CidrIp": "0.0.0.0/0"
-          }
-        ]
-      }
-    },
-    "SecurityGroupIngress": {
-      "Type": "AWS::EC2::SecurityGroupIngress",
-      "Properties": {
-        "GroupId": {
-          "Ref": "SecurityGroup"
-        },
-        "IpProtocol": "-1",
-        "FromPort": "-1",
-        "ToPort": "-1",
-        "SourceSecurityGroupId": {
-          "Ref": "SecurityGroup"
-        }
-      }
-    }
-  },
-  "Outputs": {
-    "JIRAURL": {
-      "Description": "The URL of JIRA Data Center instance",
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            {
-              "Fn::If": [
-                "DoSSL",
-                "https",
-                "http"
-              ]
+    "Mappings": {
+        "AWSInstanceType2Arch": {
+            "c3.large": {
+                "Arch": "HVM64"
             },
-            "://",
-            {
-              "Fn::If": [
-                "UseCustomDnsName",
-                {
-                  "Ref": "CustomDnsName"
+            "c3.xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "c3.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.large": {
+                "Arch": "HVM64"
+            },
+            "c4.xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "c4.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "d2.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "i2.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.large": {
+                "Arch": "HVM64"
+            },
+            "m4.xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "m4.10xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.large": {
+                "Arch": "HVM64"
+            },
+            "r3.xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.2xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.4xlarge": {
+                "Arch": "HVM64"
+            },
+            "r3.8xlarge": {
+                "Arch": "HVM64"
+            },
+            "x1.32xlarge": {
+                "Arch": "HVM64"
+            }
+        },
+        "AWSRegionArch2AMI": {
+            "us-east-1": {
+                "HVM64": "ami-bb5642ac",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ap-south-1": {
+                "HVM64": "ami-67c6b108",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "eu-west-2": {
+                "HVM64": "ami-eeede78a",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "eu-west-1": {
+                "HVM64": "ami-afcaeadc",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ap-northeast-2": {
+                "HVM64": "ami-15a0767b",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ap-northeast-1": {
+                "HVM64": "ami-da107bbd",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "sa-east-1": {
+                "HVM64": "ami-5a71e936",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ca-central-1": {
+                "HVM64": "ami-ab2a98cf",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ap-southeast-1": {
+                "HVM64": "ami-b7ae00d4",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "ap-southeast-2": {
+                "HVM64": "ami-5bc2f938",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "eu-central-1": {
+                "HVM64": "ami-982aeaf7",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "us-east-2": {
+                "HVM64": "ami-1ccc9679",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "us-west-1": {
+                "HVM64": "ami-f0267790",
+                "HVMG2": "NOT_SUPPORTED"
+            },
+            "us-west-2": {
+                "HVM64": "ami-560fbb36",
+                "HVMG2": "NOT_SUPPORTED"
+            }
+        },
+        "JIRAProduct2NameAndVersion": {
+            "Software": {
+                "name": "jira-software",
+                "shortdisplayname": "\"JIRA SW\"",
+                "fulldisplayname": "\"Atlassian JIRA Software\""
+            },
+            "ServiceDesk": {
+                "name": "servicedesk",
+                "shortdisplayname": "\"JIRA SD\"",
+                "fulldisplayname": "\"Atlassian JIRA Service Desk\""
+            },
+            "Core": {
+                "name": "jira-core",
+                "shortdisplayname": "\"JIRA Core\"",
+                "fulldisplayname": "\"Atlassian JIRA Core\""
+
+            }
+        }
+    },
+    "Resources": {
+        "ClusterNodeGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "DesiredCapacity": {
+                    "Ref": "ClusterNodeMin"
                 },
-                {
-                  "Fn::GetAtt": [
-                    "LoadBalancer",
-                    "DNSName"
-                  ]
+                "LaunchConfigurationName": {
+                    "Ref": "ClusterNodeLaunchConfig"
+                },
+                "MaxSize": {
+                    "Ref": "ClusterNodeMax"
+                },
+                "MinSize": {
+                    "Ref": "ClusterNodeMin"
+                },
+                "LoadBalancerNames": [{
+                    "Ref": "LoadBalancer"
+                }],
+                "VPCZoneIdentifier": {
+                    "Ref": "InternalSubnets"
+                },
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "JIRA Node",
+                    "PropagateAtLaunch": true
+                }, {
+                    "Key": "Cluster",
+                    "Value": {
+                        "Ref": "AWS::StackName"
+                    },
+                    "PropagateAtLaunch": true
+                }]
+            }
+        },
+        "ClusterNodeLaunchConfig": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "DependsOn": [
+                "EFSMountAz1",
+                "EFSMountAz2",
+                "DB"
+            ],
+            "Metadata": {
+                "Comment": "",
+                "AWS::CloudFormation::Init": {
+                    "configSets": {
+                        "default": [
+                            "0"
+                        ]
+                    },
+                    "0": {
+                        "files": {
+                            "/etc/atl": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "ATL_NGINX_ENABLED=false\n",
+                                            "ATL_APP_DATA_MOUNT_ENABLED=false\n",
+                                            "ATL_DB_NAME=jira\n",
+                                            "ATL_DB_USER=jira\n",
+                                            "ATL_DB_PASSWORD=", {
+                                                "Ref": "DBMasterUserPassword"
+                                            },
+                                            "\n",
+                                            "ATL_DB_HOST=", {
+                                                "Fn::GetAtt": [
+                                                    "DB",
+                                                    "Endpoint.Address"
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_DB_PORT=", {
+                                                "Fn::GetAtt": [
+                                                    "DB",
+                                                    "Endpoint.Port"
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_JDBC_DRIVER=org.postgresql.Driver\n",
+                                            "ATL_JDBC_URL=jdbc:postgresql://", {
+                                                "Fn::GetAtt": [
+                                                    "DB",
+                                                    "Endpoint.Address"
+                                                ]
+                                            },
+                                            ":", {
+                                                "Fn::GetAtt": [
+                                                    "DB",
+                                                    "Endpoint.Port"
+                                                ]
+                                            },
+                                            "/jira\n",
+                                            "ATL_JDBC_USER=atljira\n",
+                                            "ATL_JDBC_PASSWORD=", {
+                                                "Ref": "DBPassword"
+                                            },
+                                            "\n",
+                                            "ATL_ENABLED_PRODUCTS=Jira\n",
+                                            "ATL_ENABLED_SHARED_HOMES=\n",
+                                            "ATL_JIRA_NAME=",
+
+                                            {
+                                                "Fn::FindInMap": [
+                                                    "JIRAProduct2NameAndVersion", {
+                                                        "Ref": "JiraProduct"
+                                                    },
+                                                    "name"
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_JIRA_SHORT_DISPLAY_NAME=", {
+                                                "Fn::FindInMap": [
+                                                    "JIRAProduct2NameAndVersion", {
+                                                        "Ref": "JiraProduct"
+                                                    },
+                                                    "shortdisplayname"
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_JIRA_FULL_DISPLAY_NAME=", {
+                                                "Fn::FindInMap": [
+                                                    "JIRAProduct2NameAndVersion", {
+                                                        "Ref": "JiraProduct"
+                                                    },
+                                                    "fulldisplayname"
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_RELEASE_S3_BUCKET=atlassian-software\n",
+                                            "ATL_RELEASE_S3_PATH=releases\n",
+
+                                            "ATL_POSTGRES_ENABLED=false\n",
+                                            "ATL_PROXY_NAME=", {
+                                                "Fn::If": [
+                                                    "UseCustomDnsName", {
+                                                        "Ref": "CustomDnsName"
+                                                    }, {
+                                                        "Fn::GetAtt": [
+                                                            "LoadBalancer",
+                                                            "DNSName"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "\n",
+                                            "ATL_SSL_SELF_CERT_ENABLED=false\n", {
+                                                "Fn::If": [
+                                                    "DoSSL",
+                                                    "ATL_SSL_PROXY=true\n", {
+                                                        "Ref": "AWS::NoValue"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    ]
+                                }
+                            },
+                            "/etc/cfn/cfn-hup.conf": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "[main]\n",
+                                            "stack=", {
+                                                "Ref": "AWS::StackId"
+                                            },
+                                            "\n",
+                                            "region=", {
+                                                "Ref": "AWS::Region"
+                                            },
+                                            "\n"
+                                        ]
+                                    ]
+                                },
+                                "mode": "000400",
+                                "owner": "root",
+                                "group": "root"
+                            },
+                            "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "[cfn-auto-reloader-hook]\n",
+                                            "triggers=post.update\n",
+                                            "path=Resources.ClusterNodeLaunchConfig.Metadata.AWS::CloudFormation::Init\n",
+                                            "action=/opt/aws/bin/cfn-init -v ",
+                                            "         --stack ", {
+                                                "Ref": "AWS::StackName"
+                                            },
+                                            "         --resource ClusterNodeLaunchConfig ",
+                                            "         --region ", {
+                                                "Ref": "AWS::Region"
+                                            },
+                                            "\n",
+                                            "runas=root\n"
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        "commands": {
+                            "010_make_mount_point": {
+                                "command": "mkdir -p /media/atl",
+                                "ignoreErrors": "false"
+                            },
+                            "020_add_nfs_mount": {
+                                "command": {
+                                    "Fn::Join": [
+                                        "", [
+                                            "echo ", {
+                                                "Fn::Join": [
+                                                    "", [
+                                                        "$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone).", {
+                                                            "Ref": "ElasticFileSystem"
+                                                        },
+                                                        ".efs.", {
+                                                            "Ref": "AWS::Region"
+                                                        },
+                                                        ".amazonaws.com"
+                                                    ]
+                                                ]
+                                            },
+                                            ":/ /media/atl nfs4 noatime,intr,rsize=32768,wsize=32768 0 0 >>/etc/fstab"
+                                        ]
+                                    ]
+                                },
+                                "ignoreErrors": "false"
+                            },
+                            "030_mount_all": {
+                                "command": "mount -a",
+                                "ignoreErrors": "false"
+                            },
+                            "040_make_shared_home_dir": {
+                                "command": "mkdir -p /media/atl/jira/shared",
+                                "ignoreErrors": "false"
+                            }
+                        },
+                        "services": {
+                            "sysvinit": {
+                                "cfn-hup": {
+                                    "enabled": "true",
+                                    "ensureRunning": "true",
+                                    "files": [
+                                        "/etc/cfn/cfn-hup.conf",
+                                        "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+                                    ]
+                                },
+                                "collectd": {
+                                    "Fn::If": [
+                                        "DoCollectd", {
+                                            "enabled": "true",
+                                            "ensureRunning": "true"
+                                        }, {
+                                            "Ref": "AWS::NoValue"
+                                        }
+                                    ]
+                                },
+                                "rpcbind": {
+                                    "enabled": "true",
+                                    "ensureRunning": "true",
+                                    "packages": {
+                                        "yum": [
+                                            "nfs-utils"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              ]
-            }
-          ]
-        ]
-      }
-    },
-    "LoadBalancerURL": {
-      "Description": "The Load Balancer URL",
-      "Value": {
-        "Fn::Join": [
-          "",
-          [
-            {
-              "Fn::If": [
-                "DoSSL",
-                "https",
-                "http"
-              ]
             },
-            "://",
-            {
-              "Fn::GetAtt": [
-                "LoadBalancer",
-                "DNSName"
-              ]
+            "Properties": {
+                "AssociatePublicIpAddress": {
+                    "Ref": "AssociatePublicIpAddress"
+                },
+                "BlockDeviceMappings": [{
+                    "DeviceName": "/dev/xvdf",
+                    "Ebs": {},
+                    "NoDevice": true
+                }],
+                "KeyName": {
+                    "Ref": "KeyName"
+                },
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "AWSRegionArch2AMI", {
+                            "Ref": "AWS::Region"
+                        }, {
+                            "Fn::FindInMap": [
+                                "AWSInstanceType2Arch", {
+                                    "Ref": "ClusterNodeInstanceType"
+                                },
+                                "Arch"
+                            ]
+                        }
+                    ]
+                },
+                "InstanceType": {
+                    "Ref": "ClusterNodeInstanceType"
+                },
+                "SecurityGroups": [{
+                    "Ref": "SecurityGroup"
+                }],
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "", [
+                                "#!/bin/bash -xe\n",
+                                "yum update -y aws-cfn-bootstrap\n",
+                                "/opt/aws/bin/cfn-init -v ",
+                                "         --stack ", {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource ClusterNodeLaunchConfig ",
+                                "         --region ", {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ", {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource ClusterNodeGroup ",
+                                "         --region ", {
+                                    "Ref": "AWS::Region"
+                                },
+                                "\n"
+                            ]
+                        ]
+                    }
+                }
             }
-          ]
-        ]
-      }
+        },
+        "ElasticFileSystem": {
+            "Type": "AWS::EFS::FileSystem",
+            "Properties": {
+                "FileSystemTags": [{
+                    "Key": "Application",
+                    "Value": {
+                        "Ref": "AWS::StackId"
+                    }
+                }]
+            }
+        },
+        "EFSMountAz1": {
+            "Type": "AWS::EFS::MountTarget",
+            "Properties": {
+                "FileSystemId": {
+                    "Ref": "ElasticFileSystem"
+                },
+                "SecurityGroups": [{
+                    "Ref": "SecurityGroup"
+                }],
+                "SubnetId": {
+                    "Fn::Select": [
+                        "0", {
+                            "Ref": "InternalSubnets"
+                        }
+                    ]
+                }
+            }
+        },
+        "EFSMountAz2": {
+            "Type": "AWS::EFS::MountTarget",
+            "Properties": {
+                "FileSystemId": {
+                    "Ref": "ElasticFileSystem"
+                },
+                "SecurityGroups": [{
+                    "Ref": "SecurityGroup"
+                }],
+                "SubnetId": {
+                    "Fn::Select": [
+                        "1", {
+                            "Ref": "InternalSubnets"
+                        }
+                    ]
+                }
+            }
+        },
+        "DB": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "AllocatedStorage": {
+                    "Ref": "DBStorage"
+                },
+                "DBInstanceClass": {
+                    "Ref": "DBInstanceClass"
+                },
+                "DBSubnetGroupName": {
+                    "Ref": "DBSubnetGroup"
+                },
+                "Engine": "postgres",
+                "EngineVersion": "9.3.12",
+                "MasterUsername": "postgres",
+                "MasterUserPassword": {
+                    "Fn::If": [
+                        "DoSetDBMasterUserPassword", {
+                            "Ref": "DBMasterUserPassword"
+                        }, {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "StorageType": {
+                    "Fn::If": [
+                        "DBProvisionedIops",
+                        "io1",
+                        "gp2"
+                    ]
+                },
+                "Iops": {
+                    "Fn::If": [
+                        "DBProvisionedIops", {
+                            "Ref": "DBIops"
+                        }, {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                },
+                "MultiAZ": {
+                    "Ref": "DBMultiAZ"
+                },
+                "VPCSecurityGroups": [{
+                    "Ref": "SecurityGroup"
+                }],
+                "Tags": [{
+                    "Key": "Name",
+                    "Value": "JIRA PostgreSQL Database"
+                }]
+            }
+        },
+        "DBSubnetGroup": {
+            "Type": "AWS::RDS::DBSubnetGroup",
+            "Properties": {
+                "DBSubnetGroupDescription": "DBSubnetGroup",
+                "SubnetIds": {
+                    "Ref": "InternalSubnets"
+                }
+            }
+        },
+        "LoadBalancer": {
+            "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+            "Properties": {
+                "AppCookieStickinessPolicy": [{
+                    "CookieName": "JSESSIONID",
+                    "PolicyName": "JSessionIdStickiness"
+                }],
+                "ConnectionDrainingPolicy": {
+                    "Enabled": true,
+                    "Timeout": 300
+                },
+                "ConnectionSettings": {
+                    "IdleTimeout": 3600
+                },
+                "CrossZone": "true",
+                "Listeners": [{
+                    "LoadBalancerPort": "80",
+                    "Protocol": "HTTP",
+                    "InstancePort": {
+                        "Fn::If": [
+                            "DoSSL",
+                            "8081",
+                            "8080"
+                        ]
+                    },
+                    "InstanceProtocol": "HTTP",
+                    "PolicyNames": [
+                        "JSessionIdStickiness"
+                    ]
+                }, {
+                    "Fn::If": [
+                        "DoSSL", {
+                            "LoadBalancerPort": "443",
+                            "Protocol": "HTTPS",
+                            "InstancePort": "8080",
+                            "InstanceProtocol": "HTTP",
+                            "PolicyNames": [
+                                "JSessionIdStickiness"
+                            ],
+                            "SSLCertificateId": {
+                                "Fn::Join": [
+                                    "", [
+                                        "arn:aws:iam::", {
+                                            "Ref": "AWS::AccountId"
+                                        },
+                                        ":server-certificate/", {
+                                            "Ref": "SSLCertificateName"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }, {
+                            "Ref": "AWS::NoValue"
+                        }
+                    ]
+                }],
+                "HealthCheck": {
+                    "Target": "HTTP:8080/status",
+                    "Timeout": "29",
+                    "Interval": "30",
+                    "UnhealthyThreshold": "2",
+                    "HealthyThreshold": "2"
+                },
+                "Scheme": "internet-facing",
+                "SecurityGroups": [{
+                    "Ref": "SecurityGroup"
+                }],
+                "Subnets": {
+                    "Ref": "ExternalSubnets"
+                }
+            }
+        },
+        "SecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Security group allowing SSH and HTTP/HTTPS access",
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "SecurityGroupIngress": [{
+                    "IpProtocol": "tcp",
+                    "FromPort": "22",
+                    "ToPort": "22",
+                    "CidrIp": "0.0.0.0/0"
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "80",
+                    "ToPort": "80",
+                    "CidrIp": "0.0.0.0/0"
+                }, {
+                    "IpProtocol": "tcp",
+                    "FromPort": "443",
+                    "ToPort": "443",
+                    "CidrIp": "0.0.0.0/0"
+                }]
+            }
+        },
+        "SecurityGroupIngress": {
+            "Type": "AWS::EC2::SecurityGroupIngress",
+            "Properties": {
+                "GroupId": {
+                    "Ref": "SecurityGroup"
+                },
+                "IpProtocol": "-1",
+                "FromPort": "-1",
+                "ToPort": "-1",
+                "SourceSecurityGroupId": {
+                    "Ref": "SecurityGroup"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "JIRAURL": {
+            "Description": "The URL of JIRA Data Center instance",
+            "Value": {
+                "Fn::Join": [
+                    "", [{
+                            "Fn::If": [
+                                "DoSSL",
+                                "https",
+                                "http"
+                            ]
+                        },
+                        "://", {
+                            "Fn::If": [
+                                "UseCustomDnsName", {
+                                    "Ref": "CustomDnsName"
+                                }, {
+                                    "Fn::GetAtt": [
+                                        "LoadBalancer",
+                                        "DNSName"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                ]
+            }
+        },
+        "LoadBalancerURL": {
+            "Description": "The Load Balancer URL",
+            "Value": {
+                "Fn::Join": [
+                    "", [{
+                            "Fn::If": [
+                                "DoSSL",
+                                "https",
+                                "http"
+                            ]
+                        },
+                        "://", {
+                            "Fn::GetAtt": [
+                                "LoadBalancer",
+                                "DNSName"
+                            ]
+                        }
+                    ]
+                ]
+            }
+        }
     }
-  }
 }
