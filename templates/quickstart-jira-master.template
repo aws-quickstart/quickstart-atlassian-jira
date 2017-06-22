@@ -629,7 +629,16 @@
 			"Value": {
 				"Fn::GetAtt": [
 					"JiraDCStack",
-					"Outputs.URL"
+					"Outputs.JIRAURL"
+				]
+			}
+		},
+		"LoadBalancerURL": {
+			"Description": "The Load Balancer URL",
+			"Value": {
+				"Fn::GetAtt": [
+					"JiraDCStack",
+					"Outputs.LoadBalancerURL"
 				]
 			}
 		}
