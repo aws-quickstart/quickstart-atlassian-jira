@@ -17,12 +17,20 @@
 					"SSLCertificateName",
 					"AssociatePublicIpAddress"
 				]
-			}, {
+			}, 
+            {
+                "Label": {
+                    "default": "JIRA setup"
+                },
+                "Parameters": [
+                    "JiraProduct"
+                ]
+            },			
+			{
 				"Label": {
-					"default": "JIRA Setup"
+					"default": "Database"
 				},
 				"Parameters": [
-					"JiraProduct",
 					"ClusterNodeMax",
 					"ClusterNodeMin",
 					"ClusterNodeInstanceType",
@@ -198,10 +206,10 @@
 			"Type": "String"
 		},
 		"QSS3KeyPrefix": {
-			"AllowedPattern": "^[0-9a-zA-Z-]+(/[0-9a-zA-Z-]+)*$",
-			"ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
-			"Default": "atlassian/jira/latest",
-			"Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). It cannot start or end with forward slash (/) because they are automatically appended.",
+			"AllowedPattern": "^[0-9a-zA-Z-/]*$",
+			"ConstraintDescription": "Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
+			"Default": "atlassian/jira/latest/",
+			"Description": "S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).",
 			"Type": "String"
 		},
 		"VPCCIDR": {
@@ -402,7 +410,15 @@
 					""
 				]
 			}]
-		}
+		},
+        "GovCloudCondition": {
+            "Fn::Equals": [
+                {
+                    "Ref": "AWS::Region"
+                },
+                "us-gov-west-1"
+            ]
+        }
 	},
 	"Mappings": {
 		"AWSInfoRegionMap": {
@@ -461,20 +477,18 @@
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
 				"TemplateURL": {
-					"Fn::Join": [
-						"/", [{
-								"Fn::FindInMap": [
-									"AWSInfoRegionMap", {
-										"Ref": "AWS::Region"
-									},
-									"QuickStartS3URL"
-								]
-							}, {
-								"Ref": "QSS3BucketName"
-							},
-							"aws/vpc/latest/templates/aws-vpc.template"
-						]
-					]
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
 				},
 				"Parameters": {
 					"AvailabilityZones": {
@@ -514,22 +528,18 @@
 			"Type": "AWS::CloudFormation::Stack",
 			"Properties": {
 				"TemplateURL": {
-					"Fn::Join": [
-						"/", [{
-								"Fn::FindInMap": [
-									"AWSInfoRegionMap", {
-										"Ref": "AWS::Region"
-									},
-									"QuickStartS3URL"
-								]
-							}, {
-								"Ref": "QSS3BucketName"
-							}, {
-								"Ref": "QSS3KeyPrefix"
-							},
-							"templates/JiraDataCenter.template"
-						]
-					]
+                    "Fn::Sub": [
+                        "https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/JiraDataCenter.template",
+                        {
+                            "QSS3Region": {
+                                "Fn::If": [
+                                    "GovCloudCondition",
+                                    "s3-us-gov-west-1",
+                                    "s3"
+                                ]
+                            }
+                        }
+                    ]
 				},
 				"Parameters": {
 					"ExternalSubnets": {
