@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "QS(0035) Atlassian Jira Data Center June,21,2017",
+    "Description": "QS(0035) Atlassian Jira Data Center February,7,2018",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
             "ParameterGroups": [{
@@ -412,61 +412,65 @@
             }
         },
         "AWSRegionArch2AMI": {
-            "us-east-1": {
-                "HVM64": "ami-bb5642ac",
-                "HVMG2": "NOT_SUPPORTED"
+            "eu-central-1": {
+            "HVM64": "ami-6d0f6b02",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ap-south-1": {
-                "HVM64": "ami-67c6b108",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-ffa2f190",
+            "HVMG2": "NOT_SUPPORTED"
+            },
+            "eu-west-3": {
+            "HVM64": "ami-9ba117e6",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "eu-west-2": {
-                "HVM64": "ami-eeede78a",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-92a84df5",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "eu-west-1": {
-                "HVM64": "ami-afcaeadc",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-6d86ef14",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ap-northeast-2": {
-                "HVM64": "ami-15a0767b",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-c8d173a6",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ap-northeast-1": {
-                "HVM64": "ami-da107bbd",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-536a1d35",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "sa-east-1": {
-                "HVM64": "ami-5a71e936",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-39004e55",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ca-central-1": {
-                "HVM64": "ami-ab2a98cf",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-60921604",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ap-southeast-1": {
-                "HVM64": "ami-b7ae00d4",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-e5155499",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "ap-southeast-2": {
-                "HVM64": "ami-5bc2f938",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-ebdb2089",
+            "HVMG2": "NOT_SUPPORTED"
             },
-            "eu-central-1": {
-                "HVM64": "ami-982aeaf7",
-                "HVMG2": "NOT_SUPPORTED"
+            "us-east-1": {
+            "HVM64": "ami-a3ddd3d9",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "us-east-2": {
-                "HVM64": "ami-1ccc9679",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-299faa4c",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "us-west-1": {
-                "HVM64": "ami-f0267790",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-7aaaa51a",
+            "HVMG2": "NOT_SUPPORTED"
             },
             "us-west-2": {
-                "HVM64": "ami-560fbb36",
-                "HVMG2": "NOT_SUPPORTED"
+            "HVM64": "ami-b454d0cc",
+            "HVMG2": "NOT_SUPPORTED"
             }
         },
         "JIRAProduct2NameAndVersion": {
