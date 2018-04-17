@@ -3,7 +3,21 @@
     "Description": "QS(0035) Atlassian Jira Data Center February,7,2018",
     "Metadata": {
         "AWS::CloudFormation::Interface": {
-            "ParameterGroups": [{
+            "ParameterGroups": [
+            {
+                "Label": {
+                    "default": "Networking"
+                },
+                "Parameters": [
+                    "VPC",
+                    "ExternalSubnets",
+                    "InternalSubnets",
+                    "AssociatePublicIpAddress",
+                    "KeyName",
+                    "SSLCertificateName"
+                ]
+            }, 
+            {
                 "Label": {
                     "default": "JIRA setup"
                 },
@@ -32,24 +46,13 @@
                     "DBIops",
                     "DBMultiAZ"
                 ]
-            }, {
-                "Label": {
-                    "default": "Networking"
-                },
-                "Parameters": [
-                    "VPC",
-                    "ExternalSubnets",
-                    "InternalSubnets",
-                    "AssociatePublicIpAddress",
-                    "KeyName",
-                    "CustomDnsName",
-                    "SSLCertificateName"
-                ]
-            }, {
+            }, 
+            {
                 "Label": {
                     "default": "Advanced (Optional)"
                 },
                 "Parameters": [
+                    "CustomDnsName",
                     "CatalinaOpts",
                     "StartCollectd"
                 ]
@@ -64,6 +67,9 @@
                 "ClusterNodeMax": {
                     "default": "Maximum number of cluster nodes"
                 },
+                "StartCollectd": {
+                    "default": "Start the collectd service"
+                },
                 "ClusterNodeMin": {
                     "default": "Minimum number of cluster nodes"
                 },
@@ -74,10 +80,10 @@
                     "default": "Database instance class"
                 },
                 "DBMasterUserPassword": {
-                    "default": "Master password *"
+                    "default": "Master password"
                 },
                 "DBPassword": {
-                    "default": "JIRA database password *"
+                    "default": "JIRA database password"
                 },
                 "DBStorage": {
                     "default": "Database storage"
@@ -89,10 +95,10 @@
                     "default": "RDS Provisioned IOPS"
                 },
                 "JiraProduct": {
-                    "default": "JIRA Product *"
+                    "default": "JIRA Product"
                 },
                 "KeyName": {
-                    "default": "Key Name *"
+                    "default": "Key Name"
                 },
                 "CustomDnsName": {
                     "default": "Existing DNS name (optional)"
@@ -101,13 +107,13 @@
                     "default": "SSL Certificate Name"
                 },
                 "ExternalSubnets": {
-                    "default": "External subnets *"
+                    "default": "External subnets"
                 },
                 "InternalSubnets": {
-                    "default": "Internal subnets *"
+                    "default": "Internal subnets"
                 },
                 "VPC": {
-                    "default": "VPC *"
+                    "default": "VPC"
                 }
             }
         }
@@ -229,6 +235,7 @@
         "JiraProduct": {
             "Description": "The JIRA Product to install. Installs latest available version of the selected product",
             "Type": "String",
+            "Default": "ServiceDesk",
             "ConstraintDescription": "Must be \"Software\", \"ServiceDesk\", or \"Core\"",
             "AllowedValues": [
                 "Software",
@@ -255,7 +262,7 @@
         "StartCollectd": {
             "Description": "Should the collectd service be started",
             "Type": "String",
-            "Default": "true",
+            "Default": "false",
             "AllowedValues": [
                 "true",
                 "false"
