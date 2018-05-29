@@ -996,7 +996,7 @@
                     ]
                 }],
                 "HealthCheck": {
-                    "Target": "HTTP:8080/status",
+                    "Target": "TCP:8080/status",
                     "Timeout": "29",
                     "Interval": "30",
                     "UnhealthyThreshold": "2",
