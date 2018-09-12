@@ -139,23 +139,23 @@
         },
         "ClusterNodeInstanceType": {
             "Type": "String",
-            "Default": "c3.xlarge",
+            "Default": "c5.xlarge",
             "AllowedValues": [
-                "c3.xlarge",
-                "c3.2xlarge",
-                "c3.4xlarge",
-                "c3.8xlarge",
-                "i2.xlarge",
-                "i2.2xlarge",
-                "i2.4xlarge",
-                "i2.8xlarge",
-                "r3.xlarge",
-                "r3.2xlarge",
-                "r3.4xlarge",
-                "r3.8xlarge",
+                "c5.xlarge",
+                "c5.2xlarge",
+                "c5.4xlarge",
+                "c5.8xlarge",
+                "i3.xlarge",
+                "i3.2xlarge",
+                "i3.4xlarge",
+                "i3.8xlarge",
+                "r5.xlarge",
+                "r5.2xlarge",
+                "r5.4xlarge",
+                "r5.8xlarge",
                 "x1.32xlarge"
             ],
-            "ConstraintDescription": "Must be an EC2 instance type in the C3, I2, R3, or X1 family, 'xlarge' or larger",
+            "ConstraintDescription": "Must be an EC2 instance type in the C5, I3, R5, or X1 family, 'xlarge' or larger",
             "Description": "Instance type for the cluster nodes."
         },
         "CatalinaOpts": {
@@ -330,88 +330,46 @@
     },
     "Mappings": {
         "AWSInstanceType2Arch": {
-            "c3.large": {
+            "c5.large": {
                 "Arch": "HVM64"
             },
-            "c3.xlarge": {
+            "c5.xlarge": {
                 "Arch": "HVM64"
             },
-            "c3.2xlarge": {
+            "c5.2xlarge": {
                 "Arch": "HVM64"
             },
-            "c3.4xlarge": {
+            "c5.4xlarge": {
                 "Arch": "HVM64"
             },
-            "c3.8xlarge": {
+            "c5.8xlarge": {
                 "Arch": "HVM64"
             },
-            "c4.large": {
+            "i3.xlarge": {
                 "Arch": "HVM64"
             },
-            "c4.xlarge": {
+            "i3.2xlarge": {
                 "Arch": "HVM64"
             },
-            "c4.2xlarge": {
+            "i3.4xlarge": {
                 "Arch": "HVM64"
             },
-            "c4.4xlarge": {
+            "i3.8xlarge": {
                 "Arch": "HVM64"
             },
-            "c4.8xlarge": {
+            "r5.large": {
                 "Arch": "HVM64"
             },
-            "d2.xlarge": {
+            "r5.xlarge": {
                 "Arch": "HVM64"
             },
-            "d2.2xlarge": {
+            "r5.2xlarge": {
                 "Arch": "HVM64"
             },
-            "d2.4xlarge": {
+            "r5.4xlarge": {
                 "Arch": "HVM64"
             },
-            "d2.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "i2.8xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.large": {
-                "Arch": "HVM64"
-            },
-            "m4.xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "m4.10xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.large": {
-                "Arch": "HVM64"
-            },
-            "r3.xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.2xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.4xlarge": {
-                "Arch": "HVM64"
-            },
-            "r3.8xlarge": {
+            "r5.8xlarge": {
                 "Arch": "HVM64"
             },
             "x1.32xlarge": {
