@@ -944,6 +944,7 @@
                 "VPCSecurityGroups": [{
                     "Ref": "SecurityGroup"
                 }],
+                "CopyTagsToSnapshot": "true",
                 "Tags": [{
                     "Key": "Name",
                     "Value": "JIRA PostgreSQL Database"
