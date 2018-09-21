@@ -14,9 +14,9 @@
                     "InternalSubnets",
                     "AssociatePublicIpAddress",
                     "KeyName",
-                    "SSLCertificateName"
+                    "SSLCertificateId"
                 ]
-            }, 
+            },
             {
                 "Label": {
                     "default": "JIRA setup"
@@ -42,11 +42,12 @@
                     "DBMasterUserPassword",
                     "DBPassword",
                     "DBStorage",
+                    "DBStorageEncrypted",
                     "DBStorageType",
                     "DBIops",
                     "DBMultiAZ"
                 ]
-            }, 
+            },
             {
                 "Label": {
                     "default": "Advanced (Optional)"
@@ -88,6 +89,9 @@
                 "DBStorage": {
                     "default": "Database storage"
                 },
+                "DBStorageEncrypted": {
+                    "default": "DB is encrypted"
+                },
                 "DBStorageType": {
                     "default": "Database storage type"
                 },
@@ -103,8 +107,8 @@
                 "CustomDnsName": {
                     "default": "Existing DNS name (optional)"
                 },
-                "SSLCertificateName": {
-                    "default": "SSL Certificate Name"
+                "SSLCertificateId": {
+                    "default": "SSL Certificate Id"
                 },
                 "ExternalSubnets": {
                     "default": "External subnets"
@@ -205,6 +209,16 @@
             "Type": "Number",
             "Default": "10"
         },
+        "DBStorageEncrypted": {
+            "Description": "Indicates whether the DB instance is encrypted",
+            "Type": "String",
+            "Default": "false",
+            "AllowedValues": [
+                "true",
+                "false"
+            ],
+            "ConstraintDescription": "Must be 'true' or 'false'."
+        },
         "DBStorageType": {
             "Description": "Database storage type",
             "Type": "String",
@@ -252,11 +266,11 @@
             "Description": "Use custom existing DNS name for your JIRA Data Center instance. Please note: you must own the domain and configure it to point at the load balancer.",
             "Type": "String"
         },
-        "SSLCertificateName": {
-            "Description": "The name of your Server Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
+        "SSLCertificateId": {
+            "Description": "The identifier of your ACM Certificate to use for HTTPS.  Leave blank if you don't want to set up HTTPS at this time",
             "Type": "String",
             "MinLength": "0",
-            "MaxLength": "32",
+            "MaxLength": "40",
             "Default": ""
         },
         "StartCollectd": {
@@ -321,7 +335,7 @@
         "DoSSL": {
             "Fn::Not": [{
                 "Fn::Equals": [{
-                        "Ref": "SSLCertificateName"
+                        "Ref": "SSLCertificateId"
                     },
                     ""
                 ]
@@ -834,6 +848,9 @@
         "ElasticFileSystem": {
             "Type": "AWS::EFS::FileSystem",
             "Properties": {
+        	"Encrypted": {
+        	    "Ref": "DBStorageEncrypted"
+        	},
                 "FileSystemTags": [{
                     "Key": "Application",
                     "Value": {
@@ -901,6 +918,9 @@
                             "Ref": "AWS::NoValue"
                         }
                     ]
+                },
+                "StorageEncrypted": {
+            	    "Ref": "DBStorageEncrypted"
                 },
                 "StorageType": {
                     "Fn::If": [
@@ -981,11 +1001,14 @@
                             "SSLCertificateId": {
                                 "Fn::Join": [
                                     "", [
-                                        "arn:aws:iam::", {
+                                        "arn:aws:acm:", {
+                                    	    "Ref": "AWS::Region"
+                                        },
+                                        ":", {
                                             "Ref": "AWS::AccountId"
                                         },
-                                        ":server-certificate/", {
-                                            "Ref": "SSLCertificateName"
+                                        ":certificate/", {
+                                            "Ref": "SSLCertificateId"
                                         }
                                     ]
                                 ]
