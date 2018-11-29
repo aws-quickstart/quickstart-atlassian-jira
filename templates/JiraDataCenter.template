@@ -16,7 +16,7 @@
                     "KeyName",
                     "SSLCertificateName"
                 ]
-            }, 
+            },
             {
                 "Label": {
                     "default": "JIRA setup"
@@ -46,7 +46,7 @@
                     "DBIops",
                     "DBMultiAZ"
                 ]
-            }, 
+            },
             {
                 "Label": {
                     "default": "Advanced (Optional)"
