@@ -1,15 +1,11 @@
 [
     {
-        "ParameterKey": "JiraProduct",
-        "ParameterValue": "Software"
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
         "ParameterKey": "AssociatePublicIpAddress",
         "ParameterValue": "false"
-    },
-    {
-        "ParameterKey": "AvailabilityZones",
-        "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
         "ParameterKey": "DBMasterUserPassword",
@@ -36,7 +32,15 @@
         "ParameterValue": "qsjiraci.awsqs.com"
     },
     {
-        "ParameterKey": "KeyPairName",
+        "ParameterKey":"QSS3BucketName",
+        "ParameterValue":"$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey":"QSS3KeyPrefix",
+        "ParameterValue":"quickstart-atlassian-jira/"
+    },
+    {
+        "ParameterKey": "KeyName",
         "ParameterValue": "replaced-by-taskcat-override-file"
     }
 ]
