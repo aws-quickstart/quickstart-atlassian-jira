@@ -38,6 +38,7 @@ Metadata:
       - Label:
           default: Networking
         Parameters:
+          - AvailabilityZones
           - AssociatePublicIpAddress
           - CidrBlock
           - KeyName
@@ -84,6 +85,8 @@ Metadata:
     ParameterLabels:
       AssociatePublicIpAddress:
         default: Assign public IP
+      AvailabilityZones:
+        default: Availability Zones
       CatalinaOpts:
         default: Catalina options
       CidrBlock:
