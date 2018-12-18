@@ -1071,53 +1071,23 @@ Resources:
         TomcatRedirectPort: !Ref 'TomcatRedirectPort'
         TomcatScheme: !Ref 'TomcatScheme'
 
-# Outputs: !Ref 'Outputs'
-#   ServiceURL: !Ref 'ServiceURL'
-#     Description: The URL to access this Atlassian service !Ref 'Description'
-#     Value: !If !Ref 'Value'
-#       - UseCustomDnsName
-#       - !Sub
-#         - "${HTTP}://${CustomDNSName}${ContextPath}"
-#         - HTTP: !If [SSLScheme, 'https', 'http']
-#           CustomDNSName: !Ref CustomDnsName
-#           ContextPath: !Ref TomcatContextPath
-#       - !If
-#         - UseHostedZone
-#         - !Sub
-#           - "${HTTP}://${LBCName}${ContextPath}"
-#           - HTTP: !If [SSLScheme, 'https', 'http']
-#             LBCName: !Ref LoadBalancerCname
-#             ContextPath: !Ref TomcatContextPath
-#         - !Sub
-#           - "${HTTP}://${LoadBalancerDNSName}${ContextPath}"
-#           - HTTP: !If [SSLScheme, 'https', 'http']
-#             LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
-#             ContextPath: !Ref TomcatContextPath
-#   LoadBalancerURL:
-#     Description: The Load Balancer URL
-#     Value: !Sub
-#       - "${HTTP}://${LoadBalancerDNSName}"
-#       - HTTP: !If [SSLScheme, 'https', 'http']
-#         LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
-#   SGname:
-#     Description: The name of the SecurityGroup
-#     Value: !Ref SecurityGroup
-#     Export: {
-#       Name: !Join ['', [!Ref 'AWS::StackName', '-SGname']]
-#     }
-#   DBEndpointAddress:
-#     Description: The Database Connection String
-#     Value: !GetAtt DB.Endpoint.Address
-#   DBEncryptionKey:
-#     Condition: UseDatabaseEncryption
-#     Description: The alias of the encryption key created for RDS
-#     Value: !Ref EncryptionKeyAlias
-#   EFSCname:
-#     Description: The cname of the EFS
-#     Value: !If
-#       - UseHostedZone
-#       - !Ref EFSCname
-#       - !Ref ElasticFileSystem
-#     Export: {
-#       Name: !Join ['', [!Ref 'AWS::StackName', '-EFSCname']]
-#     }
+Outputs:
+  ServiceURL:
+    Description: The URL to access this Atlassian service
+    Value: !GetAtt 'JiraDCStack.Outputs.ServiceURL'
+  LoadBalancerURL:
+    Description: The Load Balancer URL
+    Value: !GetAtt 'JiraDCStack.Outputs.LoadBalancerURL'
+  SGname:
+    Description: The name of the SecurityGroup
+    Value: !GetAtt 'JiraDCStack.Outputs.SGname'
+  DBEndpointAddress:
+    Description: The Database Connection String
+    Value: !GetAtt 'JiraDCStack.Outputs.DBEndpointAddress'
+  DBEncryptionKey:
+    Condition: UseDatabaseEncryption
+    Description: The alias of the encryption key created for RDS
+    Value: !GetAtt 'JiraDCStack.Outputs.DBEncryptionKey'
+  EFSCname:
+    Description: The cname of the EFS
+    Value: !GetAtt 'JiraDCStack.Outputs.EFSCname'
