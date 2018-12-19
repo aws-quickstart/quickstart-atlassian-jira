@@ -606,6 +606,8 @@ Parameters:
     Type: String
 
 Conditions:
+  UseDatabaseEncryption:
+    !Equals [!Ref DBStorageEncrypted, true]
   GovCloudCondition: !Equals
     - !Ref 'AWS::Region'
     - us-gov-west-1
@@ -708,6 +710,7 @@ Outputs:
     Description: The Database Connection String
     Value: !GetAtt 'JiraDCStack.Outputs.DBEndpointAddress'
   DBEncryptionKey:
+    Condition: UseDatabaseEncryption
     Description: The alias of the encryption key created for RDS
     Value: !GetAtt 'JiraDCStack.Outputs.DBEncryptionKey'
   EFSCname:
