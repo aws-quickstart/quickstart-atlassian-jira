@@ -1,0 +1,1397 @@
+---
+# Bring up diffs between this file and the BitbucketDataCenter.template.yaml, ConfluenceDataCenter.template.yaml, and JiraDataCenter.template.yaml
+# As a rule, we should work to minimize our diffs between these files as best we can, so that future changes are easy to make across all supported CloudFormation templates.
+# Using YAML as our file format will allow us to put a block comment at the top of the file saying exactly this.
+AWSTemplateFormatVersion: 2010-09-09
+Description: Atlassian Jira Data Center
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Jira setup
+        Parameters:
+          - JiraProduct
+          - JiraVersion
+      - Label:
+          default: Deployment information
+        Parameters:
+          - DeployEnvironment
+      - Label:
+          default: Cluster nodes
+        Parameters:
+          - ClusterNodeInstanceType
+          - ClusterNodeMax
+          - ClusterNodeMin
+          - ClusterNodeVolumeSize
+      - Label:
+          default: Database
+        Parameters:
+          - DBInstanceClass
+          - DBIops
+          - DBMasterUserPassword
+          - DBMultiAZ
+          - DBPassword
+          - DBStorage
+          - DBStorageEncrypted
+          - DBStorageType
+      - Label:
+          default: Networking
+        Parameters:
+          - AssociatePublicIpAddress
+          - CidrBlock
+          - KeyName
+          - SSLCertificateARN
+      - Label:
+          default: DNS (Optional)
+        Parameters:
+          - CustomDnsName
+          - HostedZone
+      - Label:
+          default: Advanced (Optional)
+        Parameters:
+          - JiraDownloadUrl
+          - LocalAnsibleGitRepo
+          - LocalAnsibleGitSshKeyName
+          - StartCollectd
+      - Label:
+          default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+        Parameters:
+            - TomcatContextPath
+            - CatalinaOpts
+            - JvmHeapOverride
+            - DBPoolMaxSize
+            - DBPoolMinSize
+            - DBMaxIdle
+            - DBMaxWaitMillis
+            - DBMinEvictableIdleTimeMillis
+            - DBMinIdle
+            - DBRemoveAbandoned
+            - DBRemoveAbandonedTimeout
+            - DBTestOnBorrow
+            - DBTestWhileIdle
+            - DBTimeBetweenEvictionRunsMillis
+            - MailEnabled
+            - TomcatAcceptCount
+            - TomcatConnectionTimeout
+            - TomcatDefaultConnectorPort
+            - TomcatEnableLookups
+            - TomcatMaxThreads
+            - TomcatMinSpareThreads
+            - TomcatProtocol
+            - TomcatRedirectPort
+            - TomcatScheme
+    ParameterLabels:
+      AssociatePublicIpAddress:
+        default: Assign public IP
+      CatalinaOpts:
+        default: Catalina options
+      CidrBlock:
+        default: Permitted IP range
+      ClusterNodeMax:
+        default: Maximum number of cluster nodes
+      ClusterNodeMin:
+        default: Minimum number of cluster nodes
+      ClusterNodeInstanceType:
+        default: Cluster node instance type
+      ClusterNodeVolumeSize:
+        default: Cluster node instance volume size
+      CustomDnsName:
+        default: Existing DNS name (optional)
+      DBInstanceClass:
+        default: Database instance class
+      DBIops:
+        default: RDS Provisioned IOPS
+      DBMasterUserPassword:
+        default: Master (admin) password *
+      DBMaxIdle:
+        default: DB Maximum Idle
+      DBMaxWaitMillis:
+        default: DB Maximum Wait
+      DBMinEvictableIdleTimeMillis:
+        default: DB Minimum Evictable Idle Time
+      DBMinIdle:
+        default: DB Minimum Idle Connections
+      DBMultiAZ:
+        default: Enable RDS Multi-AZ deployment
+      DBPassword:
+        default: Application user database password *
+      DBPoolMaxSize:
+        default: DB Pool Maximum Size
+      DBPoolMinSize:
+        default: DB Pool Minimum Size
+      DBRemoveAbandoned:
+        default: DB Remove Abandoned?
+      DBRemoveAbandonedTimeout:
+        default: DB Remove Abandoned Timeout
+      DBStorage:
+        default: Database storage
+      DBStorageEncrypted:
+        default: Database encryption
+      DBStorageType:
+        default: Database storage type
+      DBTestOnBorrow:
+        default: DB Test On Borrow?
+      DBTestWhileIdle:
+        default: DB Test While Idle?
+      DBTimeBetweenEvictionRunsMillis:
+        default: DB Time Between Eviction Runs
+      DeployEnvironment:
+        default: Deployment Environment
+      HostedZone:
+        default: Route 53 Hosted Zone (optional)
+      JiraProduct:
+        default: Jira Product *
+      JiraVersion:
+        default: Version *
+      JiraDownloadUrl:
+        default: Jira Download URL
+      JvmHeapOverride:
+        default: JVM Heap Size Override
+      KeyName:
+        default: Key Name *
+      LocalAnsibleGitRepo:
+        default: Git repo for local-ansible
+      LocalAnsibleGitSshKeyName:
+        default: Git SSH key name for local-ansible
+      MailEnabled:
+        default: Enable App to Process Email
+      SSLCertificateARN:
+        default: SSL Certificate ARN
+      TomcatAcceptCount:
+        default: Tomcat Accept Count
+      TomcatConnectionTimeout:
+        default: Tomcat Connection Timeout
+      TomcatContextPath:
+        default: Tomcat Context Path
+      TomcatDefaultConnectorPort:
+        default: Tomcat Default Connector Port
+      TomcatEnableLookups:
+        default: Tomcat Enable DNS Lookups
+      TomcatMaxThreads:
+        default: Tomcat Maximum Threads
+      TomcatMinSpareThreads:
+        default: Tomcat Minimum Spare Threads
+      TomcatProtocol:
+        default: Tomcat Protocol
+      TomcatRedirectPort:
+        default: Tomcat Redirect Port
+      TomcatScheme:
+        default: Tomcat protocol Scheme
+Parameters:
+  AssociatePublicIpAddress:
+    Default: true
+    AllowedValues: [true, false]
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Controls if the EC2 instances are assigned a public IP address
+    Type: String
+  CatalinaOpts:
+    Default: ''
+    Description: Pass in any additional jvm options to tune Catalina
+    Type: String
+  CidrBlock:
+    Default: '0.0.0.0/0'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: The CIDR IP range that is permitted to access the Confluence URL. Use 0.0.0.0/0 if you want public access from the internet.
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+  ClusterNodeInstanceType:
+    Default: t3.medium
+    AllowedValues:
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c5.9xlarge
+      - c5.18xlarge
+      - c5d.large
+      - c5d.xlarge
+      - c5d.2xlarge
+      - c5d.4xlarge
+      - c5d.9xlarge
+      - c5d.18xlarge
+      - d2.xlarge
+      - d2.2xlarge
+      - d2.4xlarge
+      - d2.8xlarge
+      - h1.2xlarge
+      - h1.4xlarge
+      - h1.8xlarge
+      - h1.16xlarge
+      - i3.large
+      - i3.xlarge
+      - i3.2xlarge
+      - i3.4xlarge
+      - i3.8xlarge
+      - i3.16xlarge
+      - i3.metal
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.12xlarge
+      - m5.24xlarge
+      - m5d.large
+      - m5d.xlarge
+      - m5d.2xlarge
+      - m5d.4xlarge
+      - m5d.12xlarge
+      - m5d.24xlarge
+      - r4.large
+      - r4.xlarge
+      - r4.2xlarge
+      - r4.4xlarge
+      - r4.8xlarge
+      - r4.16xlarge
+      - r5.large
+      - r5.xlarge
+      - r5.2xlarge
+      - r5.4xlarge
+      - r5.12xlarge
+      - r5.24xlarge
+      - r5d.large
+      - r5d.xlarge
+      - r5d.2xlarge
+      - r5d.4xlarge
+      - r5d.12xlarge
+      - r5d.24xlarge
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+      - t3.2xlarge
+      - x1.16xlarge
+      - x1.32xlarge
+      - x1e.xlarge
+      - x1e.2xlarge
+      - x1e.4xlarge
+      - x1e.8xlarge
+      - x1e.16xlarge
+      - x1e.32xlarge
+      - z1d.large
+      - z1d.xlarge
+      - z1d.2xlarge
+      - z1d.3xlarge
+      - z1d.6xlarge
+      - z1d.12xlarge
+    ConstraintDescription: Must be an EC2 instance type from the selection list
+    Description: Instance type for the cluster application nodes.
+    Type: String
+  ClusterNodeMax:
+    Default: 1
+    Type: Number
+  ClusterNodeMin:
+    Default: 1
+    Description: Set to 1 for new deployment. Can be updated post launch.
+    Type: Number
+  ClusterNodeVolumeSize:
+    Default: 50
+    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)
+    Type: Number
+  CustomDnsName:
+    Default: ""
+    Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
+    Type: String
+  DBInstanceClass:
+    Default: db.t2.medium
+    AllowedValues:
+      - db.m4.large
+      - db.m4.xlarge
+      - db.m4.2xlarge
+      - db.m4.4xlarge
+      - db.m4.10xlarge
+      - db.m4.16xlarge
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+      - db.r4.16xlarge
+      - db.t2.medium
+      - db.t2.large
+      - db.t2.xlarge
+      - db.t2.2xlarge
+    ConstraintDescription: Must be a valid RDS instance class, from the selection list
+    Description: RDS instance type
+    Type: String
+  DBIops:
+    Default: 1000
+    ConstraintDescription: 'Must be in the range 1000 - 30000'
+    Description: 'Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00'
+    MaxValue: 30000
+    MinValue: 1000
+    Type: Number
+  DBMasterUserPassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: Must be at least 8 alphanumeric characters.
+    Description: Database admin account password.
+    NoEcho: True
+    MaxLength: 128
+    MinLength: 8
+    Type: String
+  DBMaxIdle:
+    Default: 20
+    Description: The maximum number of database connections that are allowed to remain idle in the pool
+    Type: String
+  DBMaxWaitMillis:
+    Default: 10000
+    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error
+    Type: String
+  DBMinEvictableIdleTimeMillis:
+    Default: 180000
+    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction
+    Type: String
+  DBMinIdle:
+    Default: 10
+    Description: The minimum number of idle database connections that are kept open at any time
+    Type: String
+  DBMultiAZ:
+    Default: true
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Type: String
+  DBPassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: Must be at least 8 alphanumeric characters.
+    Description: Database user account password.
+    MinLength: 8
+    MaxLength: 128
+    NoEcho: true
+    Type: String
+  DBPoolMaxSize:
+    Default: 20
+    Description: The maximum number of database connections that can be opened at any time
+    Type: String
+  DBPoolMinSize:
+    Default: 20
+    Description: The minimum number of idle database connections that are kept open at any time
+    Type: String
+  DBRemoveAbandoned:
+    Default: true
+    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout
+    Type: String
+  DBRemoveAbandonedTimeout:
+    Default: 60
+    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned
+    Type: String
+  DBStorage:
+    Default: 200
+    Description: Database allocated storage size, in gigabytes (GB)
+    Type: Number
+  DBStorageEncrypted:
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    Description: Whether or not to encrypt the database
+    Type: String
+  DBStorageType:
+    Default: General Purpose (SSD)
+    AllowedValues:
+      - General Purpose (SSD)
+      - Provisioned IOPS
+    ConstraintDescription: Must be 'General Purpose (SSD)' or 'Provisioned IOPS'.
+    Description: Database storage type
+    Type: String
+  DBTestOnBorrow:
+    Default: false
+    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira
+    Type: String
+  DBTestWhileIdle:
+    Default: true
+    Description: Periodically tests if the database connection is valid when it is idle
+    Type: String
+  DBTimeBetweenEvictionRunsMillis:
+    Default: 60000
+    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
+    Type: String
+  DeployEnvironment:
+    Default: prod
+    AllowedValues:
+      - prod
+      - stg
+      - dr
+    ConstraintDescription: Must be either Production (prod), Staging (stg), or Disaster Recovery (dr).
+    Description: Environment of the application - either Production, Staging, or Disaster Recovery (DR)
+    Type: String
+  HostedZone:
+    Default: ''
+    ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
+    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
+    Type: String
+  JiraDownloadUrl:
+    Default: ''
+    Description: This parameter is used to download a custom Jira version for testing purposes. Leave this parameter blank to automatically download the official version you specified earlier.
+    Type: String
+    ConstraintDescription: Must be a valid Jira download url from version 7 or higher
+  JiraProduct:
+    Default: All
+    Description: The Jira Product to install. Installs latest available version of the selected product
+    Type: String
+    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
+    AllowedValues:
+      - All
+      - Core
+      - ServiceDesk
+      - Software
+  JiraVersion:
+    Default: latest
+    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
+    ConstraintDescription: Must be a valid Jira version number, for example 7.2.3. Find valid versions at https://jira.atlassian.com/display/DOC/Jira+Release+Notes
+    Description: The version of Jira to install
+    Type: String
+  JvmHeapOverride:
+    Default: ''
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Type: String
+  KeyName:
+    Default: ''
+    ConstraintDescription: Must be the name of an existing EC2 Key Pair.
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: String
+  LocalAnsibleGitRepo:
+    Default: ''
+    Description: For additional node customization, provide repo location to git clone. This must be in format git@bitbucket.org:atlassian/atlassian-local-ansible-example.git if using Bitbucket Cloud, or ssh://git@stash.example.com:7997/my-local-ansible.git (ie protocol included) if using Bitbucket Server.
+    Type: String
+  LocalAnsibleGitSshKeyName:
+    Default: ''
+    Description: If your git repo is private, provide an AWS Systems Manager ParameterStore key name that holds an SSH private key that can access the repo
+    Type: String
+  MailEnabled:
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Default: true
+    Description: Enable mail processing and sending
+    Type: String
+  SubDomainName:
+    Description: Leave this field blank to use your stack name as the sub-domain.
+    Default: ''
+    Type: String
+  SSLCertificateARN:
+    Default: ''
+    Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
+    MinLength: 0
+    MaxLength: 90
+    Type: String
+  StartCollectd:
+    Default: true
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Start the collectd service
+    Type: String
+  TomcatAcceptCount:
+    Default: 10
+    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
+    Type: String
+  TomcatConnectionTimeout:
+    Default: 20000
+    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented
+    Type: String
+  TomcatContextPath:
+    Default: ''
+    AllowedPattern: '^(\/[A-z_\-0-9\.]+)?$'
+    Description: The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/"
+    Type: String
+  TomcatDefaultConnectorPort:
+    Default: 8080
+    Description: The port on which to serve the application
+    Type: String
+  TomcatEnableLookups:
+    Default: false
+    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client
+    Type: String
+  TomcatMaxThreads:
+    Default: 200
+    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled
+    Type: String
+  TomcatMinSpareThreads:
+    Default: 10
+    Description: The minimum number of threads always kept running
+    Type: String
+  TomcatProtocol:
+    Default: 'HTTP/1.1'
+    Description: Sets the protocol to handle incoming traffic
+    Type: String
+  TomcatRedirectPort:
+    Default: 8443
+    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
+    Type: String
+  TomcatScheme:
+    Default: http
+    Description: "The name of the protocol you wish to have returned, ie 'https' for an SSL Connector. The value of this setting also configures Tomcat's proxy port (443/80) and secure (true/false) settings appropriately."
+    Type: String
+    AllowedValues: [http, https]
+Conditions:
+  DBProvisionedIops:
+    !Equals [!Ref DBStorageType, Provisioned IOPS]
+  DisableMail:
+    !Not [!Equals [!Ref MailEnabled, true]]
+  DoCollectd:
+    !Equals [!Ref StartCollectd, true]
+  DoSetDBMasterUserPassword:
+    !Not [!Equals [!Ref DBMasterUserPassword, '']]
+  DoSSL:
+    !Not [!Equals [!Ref SSLCertificateARN, '']]
+  KeyProvided:
+    !Not [!Equals [!Ref KeyName, '']]
+  SSLScheme:
+    !Equals [!Ref TomcatScheme, 'https']
+  OverrideHeap:
+    !Not [!Equals [!Ref JvmHeapOverride, '']]
+  UseContextPath:
+    !Not [!Equals [!Ref TomcatContextPath, '']]
+  UseCustomDnsName:
+    !Not [!Equals [!Ref CustomDnsName, '']]
+  UseDatabaseEncryption:
+    !Equals [!Ref DBStorageEncrypted, true]
+  UseHostedZone:
+    !Not [!Equals [!Ref HostedZone, '']]
+  UsePublicIp:
+    !Equals [!Ref AssociatePublicIpAddress, 'true']
+Mappings:
+  AWSInstanceType2Arch:
+    c4.xlarge:
+      Arch: HVM64
+      Jvmheap: 4608m
+    c4.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c4.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c4.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5.large:
+      Arch: HVM64
+      Jvmheap: 2048m
+    c5.xlarge:
+      Arch: HVM64
+      Jvmheap: 5120m
+    c5.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5.9xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5.18xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5d.large:
+      Arch: HVM64
+      Jvmheap: 2048m
+    c5d.xlarge:
+      Arch: HVM64
+      Jvmheap: 5120m
+    c5d.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5d.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5d.9xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    c5d.18xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    d2.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    d2.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    d2.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    d2.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    h1.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    h1.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    h1.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    h1.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.large:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    i3.metal:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m4.large:
+      Arch: HVM64
+      Jvmheap: 5120m
+    m4.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m4.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m4.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m4.10xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m4.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5.large:
+      Arch: HVM64
+      Jvmheap: 5120m
+    m5.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5.12xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5.24xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5d.large:
+      Arch: HVM64
+      Jvmheap: 5120m
+    m5d.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5d.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5d.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5d.12xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    m5d.24xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.large:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r4.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.large:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.12xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5.24xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.large:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.12xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    r5d.24xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    t2.medium:
+      Arch: HVM64
+      Jvmheap: 2048m
+    t2.large:
+      Arch: HVM64
+      Jvmheap: 5120m
+    t2.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    t2.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    t3.medium:
+      Arch: HVM64
+      Jvmheap: 2048m
+    t3.large:
+      Arch: HVM64
+      Jvmheap: 5120m
+    t3.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    t3.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1.32xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.4xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.8xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.16xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    x1e.32xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.large:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.2xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.3xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.6xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+    z1d.12xlarge:
+      Arch: HVM64
+      Jvmheap: 12288m
+  AWSRegionArch2AMI:
+    ap-northeast-1:
+      HVM64: ami-0ca18d789792dd86c
+      HVMG2: NOT_SUPPORTED
+    ap-northeast-2:
+      HVM64: ami-01f36db52dee23aab
+      HVMG2: NOT_SUPPORTED
+    ap-south-1:
+      HVM64: ami-04f8e5e43cf3d3598
+      HVMG2: NOT_SUPPORTED
+    ap-southeast-1:
+      HVM64: ami-02374883cbf71d077
+      HVMG2: NOT_SUPPORTED
+    ap-southeast-2:
+      HVM64: ami-017794318025aa3bc
+      HVMG2: NOT_SUPPORTED
+    ca-central-1:
+      HVM64: ami-0b390c923fe1430dd
+      HVMG2: NOT_SUPPORTED
+    eu-central-1:
+      HVM64: ami-0f6c0e422da085bec
+      HVMG2: NOT_SUPPORTED
+    eu-west-1:
+      HVM64: ami-0c43954598f5811a8
+      HVMG2: NOT_SUPPORTED
+    eu-west-2:
+      HVM64: ami-0749bcbc016a19f9d
+      HVMG2: NOT_SUPPORTED
+    eu-west-3:
+      HVM64: ami-0af9a4728feb99dfb
+      HVMG2: NOT_SUPPORTED
+    sa-east-1:
+      HVM64: ami-01f89536bbfb78d97
+      HVMG2: NOT_SUPPORTED
+    us-east-1:
+      HVM64: ami-0f22200d3d5f3f0e5
+      HVMG2: NOT_SUPPORTED
+    us-east-2:
+      HVM64: ami-07301a07342ceedaa
+      HVMG2: NOT_SUPPORTED
+    us-west-1:
+      HVM64: ami-06de6ef005dcfd2d2
+      HVMG2: NOT_SUPPORTED
+    us-west-2:
+      HVM64: ami-08dfd2f0ecf863c9b
+      HVMG2: NOT_SUPPORTED
+  JIRAProduct2NameAndVersion:
+    All:
+      name: jira-all
+      shortdisplayname: '"Jira All"'
+      fulldisplayname: '"Atlassian Jira All"'
+    Core:
+      name: jira-core
+      shortdisplayname: '"Jira Core"'
+      fulldisplayname: '"Atlassian Jira Core"'
+    ServiceDesk:
+      name: servicedesk
+      shortdisplayname: '"Jira SD"'
+      fulldisplayname: '"Atlassian Jira Service Desk"'
+    Software:
+      name: jira-software
+      shortdisplayname: '"Jira SW"'
+      fulldisplayname: '"Atlassian Jira Software"'
+Resources:
+  JiraClusterNodeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ec2.amazonaws.com]
+            Action: ['sts:AssumeRole']
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+      Path: /
+      Policies:
+        - PolicyName: JiraClusterNodePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                - 'ec2:DescribeInstances'
+                - 'route53:ListHostedZones'
+                - 'route53:ListResourceRecordSet'
+                Effect: Allow
+                Resource: ['*']
+              - Action:
+                - "route53:ChangeResourceRecordSets"
+                Effect: Allow
+                Resource:
+                  - "arn:aws:route53:::healthcheck/*"
+                  - "arn:aws:route53:::change/*"
+                  - "arn:aws:route53:::hostedzone/*"
+                  - "arn:aws:route53:::delegationset/*"
+  JiraClusterNodeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref JiraClusterNodeRole]
+# Jira node config
+  ClusterNodeGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      DesiredCapacity: !Ref ClusterNodeMin
+      LaunchConfigurationName: !Ref ClusterNodeLaunchConfig
+      MaxSize: !Ref ClusterNodeMax
+      MinSize: !Ref ClusterNodeMin
+      LoadBalancerNames:
+        - !Ref LoadBalancer
+      VPCZoneIdentifier: !Split [ ",", !ImportValue ATL-PriNets]
+      Tags:
+        - Key: Name
+          Value: !Sub ["${StackName} Jira Node", StackName: !Ref 'AWS::StackName']
+          PropagateAtLaunch: true
+        - Key: Cluster
+          Value: !Ref AWS::StackName
+          PropagateAtLaunch: true
+  ClusterNodeLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    DependsOn:
+      - EFSMountAz1
+      - EFSMountAz2
+      - DB
+    Metadata:
+      Comment: ''
+      AWS::CloudFormation::Init:
+        config:
+          packages:
+            !If
+              - DoCollectd
+              - yum:
+                  collectd: []
+                  collectd-java: []
+                  collectd-generic-jmx: []
+                  collectd-rrdtool: []
+                  collectd-disk: []
+              - !Ref "AWS::NoValue"
+          files:
+            /etc/atl:
+              mode: "000640"
+              owner: root
+              group: root
+              content:
+                'Fn::Join':
+                  - "\n"
+                  -
+                    - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
+                    - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
+                    - !Sub ["ATL_CATALINA_OPTS=\"${CatalinaOpts} ${MailOpts}\"", { CatalinaOpts: !Ref CatalinaOpts, MailOpts: !If [DisableMail, '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true -Datlassian.mail.popdisabled=true', ''] }]
+                    - !Sub ["ATL_DB_HOST=${DBEndpointAddress}", DBEndpointAddress: !GetAtt DB.Endpoint.Address]
+                    - !Sub ["ATL_DB_MAXIDLE=${DBMaxIdle}", DBMaxIdle: !Ref DBMaxIdle]
+                    - !Sub ["ATL_DB_MAXWAITMILLIS=${DBMaxWaitMillis}", DBMaxWaitMillis: !Ref DBMaxWaitMillis]
+                    - !Sub ["ATL_DB_MINEVICTABLEIDLETIMEMILLIS=${DBMinEvictableIdleTimeMillis}", DBMinEvictableIdleTimeMillis: !Ref DBMinEvictableIdleTimeMillis]
+                    - !Sub ["ATL_DB_MINIDLE=${DBMinIdle}", DBMinIdle: !Ref DBMinIdle]
+                    - !Sub ["ATL_DB_PASSWORD=${DBMasterUserPassword}", DBMasterUserPassword: !Ref DBMasterUserPassword]
+                    - !Sub ["ATL_DB_POOLMAXSIZE=${DBPoolMaxSize}", DBPoolMaxSize: !Ref DBPoolMaxSize]
+                    - !Sub ["ATL_DB_POOLMINSIZE=${DBPoolMinSize}", DBPoolMinSize: !Ref DBPoolMinSize]
+                    - !Sub ["ATL_DB_PORT=${DBEndpointPort}", DBEndpointPort: !GetAtt DB.Endpoint.Port]
+                    - !Sub ["ATL_DB_REMOVEABANDONED=${DBRemoveAbandoned}", DBRemoveAbandoned: !Ref DBRemoveAbandoned]
+                    - !Sub ["ATL_DB_REMOVEABANDONEDTIMEOUT=${DBRemoveAbandonedTimeout}", DBRemoveAbandonedTimeout: !Ref DBRemoveAbandonedTimeout]
+                    - !Sub ["ATL_DB_TESTONBORROW=${DBTestOnBorrow}", DBTestOnBorrow: !Ref DBTestOnBorrow]
+                    - !Sub ["ATL_DB_TESTWHILEIDLE=${DBTestWhileIdle}", DBTestWhileIdle: !Ref DBTestWhileIdle]
+                    - !Sub ["ATL_DB_TIMEBETWEENEVICTIONRUNSMILLIS=${DBTimeBetweenEvictionRunsMillis}", DBTimeBetweenEvictionRunsMillis: !Ref DBTimeBetweenEvictionRunsMillis]
+                    - !Sub ["ATL_ENVIRONMENT=${DeployEnvironment}", DeployEnvironment: !Ref DeployEnvironment]
+                    - !Sub ["ATL_HOSTEDZONE=${HostedZone}", HostedZone: !Ref HostedZone]
+                    - !Sub ["ATL_JDBC_PASSWORD=${DBPassword}", DBPassword: !Ref DBPassword]
+                    - !Sub ["ATL_JDBC_URL=jdbc:postgresql://${DBEndpointAddress}:${DBEndpointPort}/jira", { DBEndpointAddress: !GetAtt DB.Endpoint.Address, DBEndpointPort: !GetAtt DB.Endpoint.Port }]
+                    - !Sub ["ATL_JIRA_FULL_DISPLAY_NAME=${JiraFullDisplayName}", JiraFullDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "fulldisplayname"]]
+                    - !Sub ["ATL_JIRA_INSTALLER_DOWNLOAD_URL=${JiraDownloadUrl}", JiraDownloadUrl: !Ref JiraDownloadUrl]
+                    - !Sub ["ATL_JIRA_NAME=${JiraProductName}", JiraProductName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]]
+                    - !Sub ["ATL_JIRA_SHORT_DISPLAY_NAME=${JiraShortDisplayName}", JiraShortDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "shortdisplayname"]]
+                    - !Sub ["ATL_JIRA_VERSION=${JiraVersion}", JiraVersion: !Ref JiraVersion]
+                    - !Sub ["ATL_JVM_HEAP=${AtlJvmHeap}", AtlJvmHeap: !If [OverrideHeap, !Ref 'JvmHeapOverride', !FindInMap [AWSInstanceType2Arch, !Ref ClusterNodeInstanceType, Jvmheap]]]
+                    - !Sub ["ATL_LOCALANSIBLE_REPO=${AnsibleRepo}", AnsibleRepo: !Ref LocalAnsibleGitRepo]
+                    - !Sub ["ATL_LOCALANSIBLE_SSHKEYNAME=${AnsibleKey}", AnsibleKey: !Ref LocalAnsibleGitSshKeyName]
+                    - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !Ref CustomDnsName, !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
+                    - !Sub ["ATL_TOMCAT_ACCEPTCOUNT=${TomcatAcceptCount}", TomcatAcceptCount: !Ref TomcatAcceptCount]
+                    - !Sub ["ATL_TOMCAT_CONNECTIONTIMEOUT=${TomcatConnectionTimeout}", TomcatConnectionTimeout: !Ref TomcatConnectionTimeout]
+                    - !Sub ["ATL_TOMCAT_CONTEXTPATH=${TomcatContextPath}", TomcatContextPath: !Ref TomcatContextPath]
+                    - !Sub ["ATL_TOMCAT_DEFAULTCONNECTORPORT=${TomcatDefaultConnectorPort}", TomcatDefaultConnectorPort: !Ref TomcatDefaultConnectorPort]
+                    - !Sub ["ATL_TOMCAT_ENABLELOOKUPS=${TomcatEnableLookups}", TomcatEnableLookups: !Ref TomcatEnableLookups]
+                    - !Sub ["ATL_TOMCAT_MAXTHREADS=${TomcatMaxThreads}", TomcatMaxThreads: !Ref TomcatMaxThreads]
+                    - !Sub ["ATL_TOMCAT_MINSPARETHREADS=${TomcatMinSpareThreads}", TomcatMinSpareThreads: !Ref TomcatMinSpareThreads]
+                    - !Sub ["ATL_TOMCAT_PROTOCOL=${TomcatProtocol}", TomcatProtocol: !Ref TomcatProtocol]
+                    - !Sub ["ATL_TOMCAT_PROXYPORT=${TomcatProxyPort}", TomcatProxyPort: !If [SSLScheme, 443, 80]]
+                    - !Sub ["ATL_TOMCAT_REDIRECTPORT=${TomcatRedirectPort}", TomcatRedirectPort: !Ref TomcatRedirectPort]
+                    - !Sub ["ATL_TOMCAT_SCHEME=${TomcatScheme}", TomcatScheme: !If [SSLScheme, https, http]]
+                    - !Sub ["ATL_TOMCAT_SECURE=${TomcatSecure}", TomcatSecure: !If [SSLScheme, true, false]]
+                    - "ATL_APP_DATA_MOUNT_ENABLED=false"
+                    - "ATL_DB_NAME=jira"
+                    - "ATL_DB_USER=jira"
+                    - "ATL_ENABLED_PRODUCTS=Jira"
+                    - "ATL_ENABLED_SHARED_HOMES="
+                    - "ATL_JDBC_DRIVER=org.postgresql.Driver"
+                    - "ATL_JDBC_USER=atljira"
+                    - "ATL_NGINX_ENABLED=false"
+                    - "ATL_POSTGRES_ENABLED=false"
+                    - "ATL_RELEASE_S3_BUCKET=atlassian-software"
+                    - "ATL_RELEASE_S3_PATH=releases"
+                    - "ATL_SSL_SELF_CERT_ENABLED=false"
+            /etc/cfn/cfn-hup.conf:
+              content:
+                !Join
+                  - "\n"
+                  -
+                    - "[main]"
+                    - !Sub ["region=${Region}", Region: !Ref "AWS::Region"]
+                    - !Sub ["stack=${StackId}", StackId: !Ref "AWS::StackId"]
+              mode: "000400"
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content:
+                !Join
+                  - "\n"
+                  -
+                    - "[cfn-auto-reloader-hook]"
+                    - triggers=post.update
+                    - "path=Resources.ClusterNodeLaunchConfig.Metadata.AWS::CloudFormation::Init"
+                    - !Sub
+                      - "action=/opt/aws/bin/cfn-init -v --stack ${StackName} --resource ClusterNodeLaunchConfig --region ${Region}"
+                      - StackName: !Ref "AWS::StackName"
+                        Region: !Ref "AWS::Region"
+                    - runas=root
+            /tmp/bootstrap_local_ansible:
+              content: !Sub |
+                #!/usr/bin/env bash
+                # bootstrap any local-ansible repo that is passed in on this template
+
+                localansiblerepopath=/home/localansible
+                gitkeylocation=/root/.ssh/gitkey
+
+                # ensure awscli is up to date
+                pip install --upgrade awscli
+                gitkey=$(aws --region=${AWS::Region} ssm get-parameters --names "${LocalAnsibleGitSshKeyName}" --with-decryption | jq --raw-output '.Parameters[0] .Value')
+                echo -e $gitkey > $gitkeylocation
+                chmod 600 $gitkeylocation
+                export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $gitkeylocation"
+
+                mkdir -p $localansiblerepopath
+                cd $localansiblerepopath
+                git clone "${LocalAnsibleGitRepo}"
+                cp $localansiblerepopath/*/local-ansible-run /usr/local/bin/local-ansible-run
+                chmod 750 /usr/local/bin/local-ansible-run
+              mode: "000750"
+              owner: root
+              group: root
+          commands:
+            010_make_mount_point:
+              command: mkdir -p /media/atl
+              ignoreErrors: false
+            020_add_nfs_mount:
+              command:
+                !Join
+                  - ""
+                  -
+                    - "echo "
+                    - !If
+                      - UseHostedZone
+                      - !Ref EFSCname
+                      - !Sub
+                          - $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone).${ElasticFileSystem}".efs."${Region}".amazonaws.com"
+                          - ElasticFileSystem: !Ref ElasticFileSystem
+                            Region: !Ref "AWS::Region"
+                    - ":/ /media/atl nfs4 rw,vers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0 >>/etc/fstab"
+              ignoreErrors: false
+            030_mount_all:
+              command: mount -a
+              ignoreErrors: true
+            040_make_shared_home_dir:
+              command: mkdir -p /media/atl/jira/shared
+              ignoreErrors: false
+            050_ssm_group:
+              command: groupadd ssm-user --gid 400 || groupmod -g 400 ssm-user
+            051_ssm_user:
+              command: useradd ssm-user --uid 400 -g ssm-user || usermod -u 400 ssm-user
+            052_ensure_ssm:
+              command: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+              ignoreErrors: true
+            090_bootstrap_local_ansible:
+              command: /tmp/bootstrap_local_ansible > /var/log/bootstrap_local_ansible.log 2>&1
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: true
+                ensureRunning: true
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+              collectd:
+                !If [DoCollectd, {enabled: true, ensureRunning: true}, !Ref 'AWS::NoValue']
+              rpcbind:
+                enabled: true
+                ensureRunning: true
+                packages:
+                  yum: [nfs-utils]
+    Properties:
+      AssociatePublicIpAddress: false
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: !Ref ClusterNodeVolumeSize
+        - DeviceName: /dev/xvdf
+          Ebs: {}
+          NoDevice: true
+      KeyName: !If [ KeyProvided, !Ref KeyName, !ImportValue ATL-DefaultKey ]
+      IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
+      ImageId:
+        !FindInMap
+          - AWSRegionArch2AMI
+          - !Ref AWS::Region
+          - !FindInMap
+              - AWSInstanceType2Arch
+              - !Ref ClusterNodeInstanceType
+              - Arch
+      InstanceType: !Ref ClusterNodeInstanceType
+      SecurityGroups: [!Ref SecurityGroup]
+      UserData:
+        Fn::Base64:
+          !Join
+            - ""
+            -
+              - "#!/bin/bash -xe\n"
+              - "yum update -y aws-cfn-bootstrap\n"
+              - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", StackName: !Ref "AWS::StackName"]
+              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", Region: !Ref "AWS::Region"]
+              - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", StackName: !Ref "AWS::StackName"]
+              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", Region: !Ref "AWS::Region"]
+# Elastic file system
+  ElasticFileSystem:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        - Key: Name
+          Value: !Join [' ', [!Ref 'AWS::StackName', 'cluster shared-files']]
+        - Key: Application
+          Value: !Ref AWS::StackId
+  EFSMountAz1:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups: [!Ref SecurityGroup]
+      SubnetId: !Select [0, !Split [ ",", !ImportValue ATL-PriNets]]
+  EFSMountAz2:
+    Type: AWS::EFS::MountTarget
+    Properties:
+      FileSystemId: !Ref ElasticFileSystem
+      SecurityGroups: [!Ref SecurityGroup]
+      SubnetId: !Select [1, !Split [ ",", !ImportValue ATL-PriNets]]
+  EFSCname:
+    Type: AWS::Route53::RecordSet
+    Condition: UseHostedZone
+    Properties:
+      HostedZoneName: !Ref HostedZone
+      Comment: Route53 cname for the efs
+      Name: !If [ UseHostedZone, !Join ['.', [!Ref 'AWS::StackName', 'efs', !Ref 'HostedZone']], '']
+      Type: CNAME
+      TTL: 900
+      ResourceRecords:
+        - !Join ['.', [!Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws.com.']]
+# Database
+  DB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: !Ref DBStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      DBInstanceIdentifier: !Ref AWS::StackName
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: postgres
+      EngineVersion: 9.6
+      Iops: !If [DBProvisionedIops, !Ref DBIops, !Ref 'AWS::NoValue']
+      KmsKeyId: !If [UseDatabaseEncryption, !GetAtt EncryptionKey.Arn, !Ref 'AWS::NoValue']
+      MasterUsername: postgres
+      MasterUserPassword: !If [DoSetDBMasterUserPassword, !Ref DBMasterUserPassword, !Ref 'AWS::NoValue']
+      MultiAZ: !Ref DBMultiAZ
+      StorageEncrypted: !If [UseDatabaseEncryption, !Ref DBStorageEncrypted, !Ref 'AWS::NoValue']
+      StorageType: !If [DBProvisionedIops, io1, gp2]
+      Tags:
+        - Key: Name
+          Value: !Sub ["${StackName} Jira PostgreSQL Database", StackName: !Ref 'AWS::StackName']
+      VPCSecurityGroups: [!Ref SecurityGroup]
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DBSubnetGroup
+      SubnetIds: !Split [ ",", !ImportValue ATL-PriNets]
+  DBCname:
+    Condition: UseHostedZone
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref HostedZone
+      Comment: Route53 cname for the RDS
+      Name: !Join ['.', [!Ref 'AWS::StackName', 'db', !Ref 'HostedZone']]
+      Type: CNAME
+      TTL: 900
+      ResourceRecords:
+        - !GetAtt DB.Endpoint.Address
+# Loadbalancer
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Properties:
+      AppCookieStickinessPolicy:
+        - CookieName: JSESSIONID
+          PolicyName: JSessionIdStickiness
+      ConnectionDrainingPolicy:
+        Enabled: true
+        Timeout: 30
+      ConnectionSettings:
+        IdleTimeout: 3600
+      CrossZone: true
+      Listeners:
+        - LoadBalancerPort: 80
+          Protocol: HTTP
+          InstancePort: !Ref TomcatDefaultConnectorPort
+          InstanceProtocol: HTTP
+          PolicyNames:
+            - JSessionIdStickiness
+        - !If
+          - DoSSL
+          - LoadBalancerPort: '443'
+            Protocol: HTTPS
+            InstancePort: !Ref TomcatDefaultConnectorPort
+            InstanceProtocol: HTTP
+            PolicyNames:
+              - JSessionIdStickiness
+            SSLCertificateId: !Ref SSLCertificateARN
+          - !Ref AWS::NoValue
+      HealthCheck:
+        Target: !If [UseContextPath, !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, !Ref TomcatContextPath, '/status']], !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, '/status']]]
+        Timeout: 29
+        Interval: 30
+        UnhealthyThreshold: 2
+        HealthyThreshold: 2
+      Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
+      SecurityGroups: [!Ref SecurityGroup]
+      Subnets: !Split [ ",", !ImportValue ATL-PubNets]
+      Tags:
+        - Key: Name
+          Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
+        - Key: Cluster
+          Value: !Ref AWS::StackName
+  LoadBalancerCname:
+    Condition: UseHostedZone
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref HostedZone
+      Comment: Route53 cname for the ALB
+      Name: !Join ['.', [!Ref "AWS::StackName", !Ref 'HostedZone']]
+      Type: CNAME
+      TTL: 900
+      ResourceRecords:
+        - !GetAtt LoadBalancer.DNSName
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group allowing SSH and HTTP/HTTPS access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref CidrBlock
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref CidrBlock
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref CidrBlock
+      Tags:
+        - Key: Name
+          Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
+      VpcId: !ImportValue ATL-VPCID
+  SecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SecurityGroup
+      IpProtocol: -1
+      FromPort: -1
+      ToPort: -1
+      SourceSecurityGroupId: !Ref SecurityGroup
+  EncryptionKey:
+    Condition: UseDatabaseEncryption
+    DeletionPolicy: Retain
+    Type: AWS::KMS::Key
+    Properties:
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: !Sub "${AWS::StackName}"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action: 'kms:*'
+            Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ["${StackName} Encryption Key", StackName: !Ref 'AWS::StackName']
+  EncryptionKeyAlias:
+    Condition: UseDatabaseEncryption
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub "alias/${AWS::StackName}"
+      TargetKeyId: !Ref EncryptionKey
+Outputs:
+  ServiceURL:
+    Description: The URL to access this Atlassian service
+    Value: !If
+      - UseCustomDnsName
+      - !Sub
+        - "${HTTP}://${CustomDNSName}${ContextPath}"
+        - HTTP: !If [SSLScheme, 'https', 'http']
+          CustomDNSName: !Ref CustomDnsName
+          ContextPath: !Ref TomcatContextPath
+      - !If
+        - UseHostedZone
+        - !Sub
+          - "${HTTP}://${LBCName}${ContextPath}"
+          - HTTP: !If [SSLScheme, 'https', 'http']
+            LBCName: !Ref LoadBalancerCname
+            ContextPath: !Ref TomcatContextPath
+        - !Sub
+          - "${HTTP}://${LoadBalancerDNSName}${ContextPath}"
+          - HTTP: !If [SSLScheme, 'https', 'http']
+            LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
+            ContextPath: !Ref TomcatContextPath
+  LoadBalancerURL:
+    Description: The Load Balancer URL
+    Value: !Sub
+      - "${HTTP}://${LoadBalancerDNSName}"
+      - HTTP: !If [SSLScheme, 'https', 'http']
+        LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
+  SGname:
+    Description: The name of the SecurityGroup
+    Value: !Ref SecurityGroup
+    Export: {
+      Name: !Join ['', [!Ref 'AWS::StackName', '-SGname']]
+    }
+  DBEndpointAddress:
+    Description: The Database Connection String
+    Value: !GetAtt DB.Endpoint.Address
+  DBEncryptionKey:
+    Condition: UseDatabaseEncryption
+    Description: The alias of the encryption key created for RDS
+    Value: !Ref EncryptionKeyAlias
+  EFSCname:
+    Description: The cname of the EFS
+    Value: !If
+      - UseHostedZone
+      - !Ref EFSCname
+      - !Ref ElasticFileSystem
+    Export: {
+      Name: !Join ['', [!Ref 'AWS::StackName', '-EFSCname']]
+    }
