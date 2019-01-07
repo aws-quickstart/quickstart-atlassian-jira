@@ -713,6 +713,9 @@ Outputs:
   LoadBalancerURL:
     Description: The Load Balancer URL
     Value: !GetAtt 'JiraDCStack.Outputs.LoadBalancerURL'
+  BastionIP:
+    Description: Bastion node IP (use as a jumpbox to connect to the nodes)
+    Value: !GetAtt 'VPCStack.Outputs.BastionPubIp'    
   SGname:
     Description: The name of the SecurityGroup
     Value: !GetAtt 'JiraDCStack.Outputs.SGname'
