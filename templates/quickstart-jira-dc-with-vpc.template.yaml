@@ -1,0 +1,731 @@
+---
+# Bring up diffs between this file and the BitbucketDataCenter.template.yaml, ConfluenceDataCenter.template.yaml, and CrowdDataCenter.template.yaml
+# As a rule, we should work to minimize our diffs between these files as best we can, so that future changes are easy to make across all supported CloudFormation templates.
+# Using YAML as our file format will allow us to put a block comment at the top of the file saying exactly this.
+AWSTemplateFormatVersion: 2010-09-09
+Description: Atlassian Jira Data Center with VPC
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Jira setup
+        Parameters:
+          - JiraProduct
+          - JiraVersion
+      - Label:
+          default: Deployment information
+        Parameters:
+          - DeployEnvironment
+      - Label:
+          default: Cluster nodes
+        Parameters:
+          - ClusterNodeInstanceType
+          - ClusterNodeMax
+          - ClusterNodeMin
+          - ClusterNodeVolumeSize
+      - Label:
+          default: Database
+        Parameters:
+          - DBInstanceClass
+          - DBIops
+          - DBMasterUserPassword
+          - DBMultiAZ
+          - DBPassword
+          - DBStorage
+          - DBStorageEncrypted
+          - DBStorageType
+      - Label:
+          default: Networking
+        Parameters:
+          - AvailabilityZones
+          - AssociatePublicIpAddress
+          - CidrBlock
+          - KeyName
+          - SSLCertificateARN
+      - Label:
+          default: DNS (Optional)
+        Parameters:
+          - CustomDnsName
+          - HostedZone
+      - Label:
+          default: Advanced (Optional)
+        Parameters:
+          - JiraDownloadUrl
+          - LocalAnsibleGitRepo
+          - LocalAnsibleGitSshKeyName
+          - StartCollectd
+      - Label:
+          default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+        Parameters:
+            - TomcatContextPath
+            - CatalinaOpts
+            - JvmHeapOverride
+            - DBPoolMaxSize
+            - DBPoolMinSize
+            - DBMaxIdle
+            - DBMaxWaitMillis
+            - DBMinEvictableIdleTimeMillis
+            - DBMinIdle
+            - DBRemoveAbandoned
+            - DBRemoveAbandonedTimeout
+            - DBTestOnBorrow
+            - DBTestWhileIdle
+            - DBTimeBetweenEvictionRunsMillis
+            - MailEnabled
+            - TomcatAcceptCount
+            - TomcatConnectionTimeout
+            - TomcatDefaultConnectorPort
+            - TomcatEnableLookups
+            - TomcatMaxThreads
+            - TomcatMinSpareThreads
+            - TomcatProtocol
+            - TomcatRedirectPort
+            - TomcatScheme
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+    ParameterLabels:
+      AssociatePublicIpAddress:
+        default: Assign public IP
+      AvailabilityZones:
+        default: Availability Zones
+      CatalinaOpts:
+        default: Catalina options
+      CidrBlock:
+        default: Permitted IP range
+      ClusterNodeMax:
+        default: Maximum number of cluster nodes
+      ClusterNodeMin:
+        default: Minimum number of cluster nodes
+      ClusterNodeInstanceType:
+        default: Cluster node instance type
+      ClusterNodeVolumeSize:
+        default: Cluster node instance volume size
+      CustomDnsName:
+        default: Existing DNS name (optional)
+      DBInstanceClass:
+        default: Database instance class
+      DBIops:
+        default: RDS Provisioned IOPS
+      DBMasterUserPassword:
+        default: Master (admin) password *
+      DBMaxIdle:
+        default: DB Maximum Idle
+      DBMaxWaitMillis:
+        default: DB Maximum Wait
+      DBMinEvictableIdleTimeMillis:
+        default: DB Minimum Evictable Idle Time
+      DBMinIdle:
+        default: DB Minimum Idle Connections
+      DBMultiAZ:
+        default: Enable RDS Multi-AZ deployment
+      DBPassword:
+        default: Application user database password *
+      DBPoolMaxSize:
+        default: DB Pool Maximum Size
+      DBPoolMinSize:
+        default: DB Pool Minimum Size
+      DBRemoveAbandoned:
+        default: DB Remove Abandoned?
+      DBRemoveAbandonedTimeout:
+        default: DB Remove Abandoned Timeout
+      DBStorage:
+        default: Database storage
+      DBStorageEncrypted:
+        default: Database encryption
+      DBStorageType:
+        default: Database storage type
+      DBTestOnBorrow:
+        default: DB Test On Borrow?
+      DBTestWhileIdle:
+        default: DB Test While Idle?
+      DBTimeBetweenEvictionRunsMillis:
+        default: DB Time Between Eviction Runs
+      DeployEnvironment:
+        default: Deployment Environment
+      HostedZone:
+        default: Route 53 Hosted Zone (optional)
+      JiraProduct:
+        default: Jira Product *
+      JiraVersion:
+        default: Version *
+      JiraDownloadUrl:
+        default: Jira Download URL
+      JvmHeapOverride:
+        default: JVM Heap Size Override
+      KeyName:
+        default: Key Name *
+      LocalAnsibleGitRepo:
+        default: Git repo for local-ansible
+      LocalAnsibleGitSshKeyName:
+        default: Git SSH key name for local-ansible
+      MailEnabled:
+        default: Enable App to Process Email
+      SSLCertificateARN:
+        default: SSL Certificate ARN
+      TomcatAcceptCount:
+        default: Tomcat Accept Count
+      TomcatConnectionTimeout:
+        default: Tomcat Connection Timeout
+      TomcatContextPath:
+        default: Tomcat Context Path
+      TomcatDefaultConnectorPort:
+        default: Tomcat Default Connector Port
+      TomcatEnableLookups:
+        default: Tomcat Enable DNS Lookups
+      TomcatMaxThreads:
+        default: Tomcat Maximum Threads
+      TomcatMinSpareThreads:
+        default: Tomcat Minimum Spare Threads
+      TomcatProtocol:
+        default: Tomcat Protocol
+      TomcatRedirectPort:
+        default: Tomcat Redirect Port
+      TomcatScheme:
+        default: Tomcat protocol Scheme
+
+      QSS3BucketName:
+        default: Quick Start S3 Bucket Name
+      QSS3KeyPrefix:
+        default: Quick Start S3 Key Prefix
+
+Parameters:
+
+  # Jira DC template parameters
+  AssociatePublicIpAddress:
+    Default: true
+    AllowedValues: [true, false]
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Controls if the EC2 instances are assigned a public IP address
+    Type: String
+  CatalinaOpts:
+    Default: ''
+    Description: Pass in any additional jvm options to tune Catalina
+    Type: String
+  CidrBlock:
+    Default: '0.0.0.0/0'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: The CIDR IP range that is permitted to access the Confluence URL. Use 0.0.0.0/0 if you want public access from the internet.
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+  ClusterNodeInstanceType:
+    Default: t3.medium
+    AllowedValues:
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c5.9xlarge
+      - c5.18xlarge
+      - c5d.large
+      - c5d.xlarge
+      - c5d.2xlarge
+      - c5d.4xlarge
+      - c5d.9xlarge
+      - c5d.18xlarge
+      - d2.xlarge
+      - d2.2xlarge
+      - d2.4xlarge
+      - d2.8xlarge
+      - h1.2xlarge
+      - h1.4xlarge
+      - h1.8xlarge
+      - h1.16xlarge
+      - i3.large
+      - i3.xlarge
+      - i3.2xlarge
+      - i3.4xlarge
+      - i3.8xlarge
+      - i3.16xlarge
+      - i3.metal
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.12xlarge
+      - m5.24xlarge
+      - m5d.large
+      - m5d.xlarge
+      - m5d.2xlarge
+      - m5d.4xlarge
+      - m5d.12xlarge
+      - m5d.24xlarge
+      - r4.large
+      - r4.xlarge
+      - r4.2xlarge
+      - r4.4xlarge
+      - r4.8xlarge
+      - r4.16xlarge
+      - r5.large
+      - r5.xlarge
+      - r5.2xlarge
+      - r5.4xlarge
+      - r5.12xlarge
+      - r5.24xlarge
+      - r5d.large
+      - r5d.xlarge
+      - r5d.2xlarge
+      - r5d.4xlarge
+      - r5d.12xlarge
+      - r5d.24xlarge
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+      - t3.2xlarge
+      - x1.16xlarge
+      - x1.32xlarge
+      - x1e.xlarge
+      - x1e.2xlarge
+      - x1e.4xlarge
+      - x1e.8xlarge
+      - x1e.16xlarge
+      - x1e.32xlarge
+      - z1d.large
+      - z1d.xlarge
+      - z1d.2xlarge
+      - z1d.3xlarge
+      - z1d.6xlarge
+      - z1d.12xlarge
+    ConstraintDescription: Must be an EC2 instance type from the selection list
+    Description: Instance type for the cluster application nodes.
+    Type: String
+  ClusterNodeMax:
+    Default: 1
+    Type: Number
+  ClusterNodeMin:
+    Default: 1
+    Description: Set to 1 for new deployment. Can be updated post launch.
+    Type: Number
+  ClusterNodeVolumeSize:
+    Default: 50
+    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)
+    Type: Number
+  CustomDnsName:
+    Default: ""
+    Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
+    Type: String
+  DBInstanceClass:
+    Default: db.t2.medium
+    AllowedValues:
+      - db.m4.large
+      - db.m4.xlarge
+      - db.m4.2xlarge
+      - db.m4.4xlarge
+      - db.m4.10xlarge
+      - db.m4.16xlarge
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+      - db.r4.16xlarge
+      - db.t2.medium
+      - db.t2.large
+      - db.t2.xlarge
+      - db.t2.2xlarge
+    ConstraintDescription: Must be a valid RDS instance class, from the selection list
+    Description: RDS instance type
+    Type: String
+  DBIops:
+    Default: 1000
+    ConstraintDescription: 'Must be in the range 1000 - 30000'
+    Description: 'Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00'
+    MaxValue: 30000
+    MinValue: 1000
+    Type: Number
+  DBMasterUserPassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: Must be at least 8 alphanumeric characters.
+    Description: Database admin account password.
+    NoEcho: True
+    MaxLength: 128
+    MinLength: 8
+    Type: String
+  DBMaxIdle:
+    Default: 20
+    Description: The maximum number of database connections that are allowed to remain idle in the pool
+    Type: String
+  DBMaxWaitMillis:
+    Default: 10000
+    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error
+    Type: String
+  DBMinEvictableIdleTimeMillis:
+    Default: 180000
+    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction
+    Type: String
+  DBMinIdle:
+    Default: 10
+    Description: The minimum number of idle database connections that are kept open at any time
+    Type: String
+  DBMultiAZ:
+    Default: true
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Type: String
+  DBPassword:
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: Must be at least 8 alphanumeric characters.
+    Description: Database user account password.
+    MinLength: 8
+    MaxLength: 128
+    NoEcho: true
+    Type: String
+  DBPoolMaxSize:
+    Default: 20
+    Description: The maximum number of database connections that can be opened at any time
+    Type: String
+  DBPoolMinSize:
+    Default: 20
+    Description: The minimum number of idle database connections that are kept open at any time
+    Type: String
+  DBRemoveAbandoned:
+    Default: true
+    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout
+    Type: String
+  DBRemoveAbandonedTimeout:
+    Default: 60
+    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned
+    Type: String
+  DBStorage:
+    Default: 200
+    Description: Database allocated storage size, in gigabytes (GB)
+    Type: Number
+  DBStorageEncrypted:
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    Description: Whether or not to encrypt the database
+    Type: String
+  DBStorageType:
+    Default: General Purpose (SSD)
+    AllowedValues:
+      - General Purpose (SSD)
+      - Provisioned IOPS
+    ConstraintDescription: Must be 'General Purpose (SSD)' or 'Provisioned IOPS'.
+    Description: Database storage type
+    Type: String
+  DBTestOnBorrow:
+    Default: false
+    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira
+    Type: String
+  DBTestWhileIdle:
+    Default: true
+    Description: Periodically tests if the database connection is valid when it is idle
+    Type: String
+  DBTimeBetweenEvictionRunsMillis:
+    Default: 60000
+    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
+    Type: String
+  DeployEnvironment:
+    Default: prod
+    AllowedValues:
+      - prod
+      - stg
+      - dr
+    ConstraintDescription: Must be either Production (prod), Staging (stg), or Disaster Recovery (dr).
+    Description: Environment of the application - either Production, Staging, or Disaster Recovery (DR)
+    Type: String
+  HostedZone:
+    Default: ''
+    ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
+    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
+    Type: String
+  JiraDownloadUrl:
+    Default: ''
+    Description: This parameter is used to download a custom Jira version for testing purposes. Leave this parameter blank to automatically download the official version you specified earlier.
+    Type: String
+    ConstraintDescription: Must be a valid Jira download url from version 7 or higher
+  JiraProduct:
+    Default: All
+    Description: The Jira Product to install. Installs latest available version of the selected product
+    Type: String
+    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
+    AllowedValues:
+      - All
+      - Core
+      - ServiceDesk
+      - Software
+  JiraVersion:
+    Default: latest
+    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
+    ConstraintDescription: Must be a valid Jira version number, for example 7.2.3. Find valid versions at https://jira.atlassian.com/display/DOC/Jira+Release+Notes
+    Description: The version of Jira to install
+    Type: String
+  JvmHeapOverride:
+    Default: ''
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Type: String
+  KeyName:
+    Default: ''
+    ConstraintDescription: Must be the name of an existing EC2 Key Pair.
+    Description: The EC2 Key Pair to allow SSH access to the instances
+    Type: String
+  LocalAnsibleGitRepo:
+    Default: ''
+    Description: For additional node customization, provide repo location to git clone. This must be in format git@bitbucket.org:atlassian/atlassian-local-ansible-example.git if using Bitbucket Cloud, or ssh://git@stash.example.com:7997/my-local-ansible.git (ie protocol included) if using Bitbucket Server.
+    Type: String
+  LocalAnsibleGitSshKeyName:
+    Default: ''
+    Description: If your git repo is private, provide an AWS Systems Manager ParameterStore key name that holds an SSH private key that can access the repo
+    Type: String
+  MailEnabled:
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Default: true
+    Description: Enable mail processing and sending
+    Type: String
+  SubDomainName:
+    Description: Leave this field blank to use your stack name as the sub-domain.
+    Default: ''
+    Type: String
+  SSLCertificateARN:
+    Default: ''
+    Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
+    MinLength: 0
+    MaxLength: 90
+    Type: String
+  StartCollectd:
+    Default: true
+    AllowedValues:
+      - true
+      - false
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Start the collectd service
+    Type: String
+  TomcatAcceptCount:
+    Default: 10
+    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
+    Type: String
+  TomcatConnectionTimeout:
+    Default: 20000
+    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented
+    Type: String
+  TomcatContextPath:
+    Default: ''
+    AllowedPattern: '^(\/[A-z_\-0-9\.]+)?$'
+    Description: The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/"
+    Type: String
+  TomcatDefaultConnectorPort:
+    Default: 8080
+    Description: The port on which to serve the application
+    Type: String
+  TomcatEnableLookups:
+    Default: false
+    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client
+    Type: String
+  TomcatMaxThreads:
+    Default: 200
+    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled
+    Type: String
+  TomcatMinSpareThreads:
+    Default: 10
+    Description: The minimum number of threads always kept running
+    Type: String
+  TomcatProtocol:
+    Default: 'HTTP/1.1'
+    Description: Sets the protocol to handle incoming traffic
+    Type: String
+  TomcatRedirectPort:
+    Default: 8443
+    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
+    Type: String
+  TomcatScheme:
+    Default: http
+    Description: "The name of the protocol you wish to have returned, ie 'https' for an SSL Connector. The value of this setting also configures Tomcat's proxy port (443/80) and secure (true/false) settings appropriately."
+    Type: String
+    AllowedValues: [http, https]
+
+    # VPC parameters
+  AccessCIDR:
+    Default: 0.0.0.0/0
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR Block allowed to access Atlassian Servcies
+    Type: String
+  AvailabilityZones:
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: You must specify 2 AZs here; 
+      if more are specified only the first 2 will be used.'
+    Type: List<AWS::EC2::AvailabilityZone::Name>
+  PrivateSubnet1CIDR:
+    Default: 10.0.0.0/19
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR block for private subnet 1 located in Availability Zone 1.
+    Type: String
+  PrivateSubnet2CIDR:
+    Default: 10.0.32.0/19
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR block for private subnet 2 located in Availability Zone 2.
+    Type: String
+  PublicSubnet1CIDR:
+    Default: 10.0.128.0/20
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR Block for the public DMZ subnet 1 located in Availability Zone 1
+    Type: String
+  PublicSubnet2CIDR:
+    Default: 10.0.144.0/20
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2
+    Type: String
+  QSS3BucketName:
+    Default: 'atlassian-aws-resources'
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: Quick Start bucket name can include numbers, lowercase
+      letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
+      (-).
+    Description: S3 bucket name for the Quick Start assets. Quick Start bucket name
+      can include numbers, lowercase letters, uppercase letters, and hyphens (-).
+      It cannot start or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    Default: ''
+    AllowedPattern: ^[0-9a-zA-Z-/]*$
+    ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens (-), and forward slash (/).
+    Description: S3 key prefix for the Quick Start assets. Quick Start key prefix
+      can include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
+  VPCCIDR:
+    Default: 10.0.0.0/16
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR Block for the VPC
+    Type: String
+
+Conditions:
+  UseDatabaseEncryption:
+    !Equals [!Ref DBStorageEncrypted, true]
+  GovCloudCondition: !Equals
+    - !Ref 'AWS::Region'
+    - us-gov-west-1
+
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-vpc-for-atlassian-services.yaml
+        - QSS3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      Parameters:
+        AccessCIDR: !Ref 'AccessCIDR'
+        AvailabilityZones: !Join
+          - ','
+          - !Ref 'AvailabilityZones'
+        KeyPairName: !Ref 'KeyName'
+        PrivateSubnet1CIDR: !Ref 'PrivateSubnet1CIDR'
+        PrivateSubnet2CIDR: !Ref 'PrivateSubnet2CIDR'
+        PublicSubnet1CIDR: !Ref 'PublicSubnet1CIDR'
+        PublicSubnet2CIDR: !Ref 'PublicSubnet2CIDR'
+        VPCCIDR: !Ref 'VPCCIDR'
+
+  JiraDCStack:
+    DependsOn: VPCStack
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-jira-dc.template.yaml
+        - QSS3Region: !If
+            - GovCloudCondition
+            - s3-us-gov-west-1
+            - s3
+      Parameters:
+        AssociatePublicIpAddress: !Ref 'AssociatePublicIpAddress'
+        CatalinaOpts: !Ref 'CatalinaOpts'
+        CidrBlock: !Ref 'CidrBlock'
+        ClusterNodeInstanceType: !Ref 'ClusterNodeInstanceType'
+        ClusterNodeMax: !Ref 'ClusterNodeMax'
+        ClusterNodeMin: !Ref 'ClusterNodeMin'
+        ClusterNodeVolumeSize: !Ref 'ClusterNodeVolumeSize'
+        CustomDnsName: !Ref 'CustomDnsName'
+        DBInstanceClass: !Ref 'DBInstanceClass'
+        DBIops: !Ref 'DBIops'
+        DBMasterUserPassword: !Ref 'DBMasterUserPassword'
+        DBMaxIdle: !Ref 'DBMaxIdle'
+        DBMaxWaitMillis: !Ref 'DBMaxWaitMillis'
+        DBMinEvictableIdleTimeMillis: !Ref 'DBMinEvictableIdleTimeMillis'
+        DBMinIdle: !Ref 'DBMinIdle'
+        DBMultiAZ: !Ref 'DBMultiAZ'
+        DBPassword: !Ref 'DBPassword'
+        DBPoolMaxSize: !Ref 'DBPoolMaxSize'
+        DBPoolMinSize: !Ref 'DBPoolMinSize'
+        DBRemoveAbandoned: !Ref 'DBRemoveAbandoned'
+        DBRemoveAbandonedTimeout: !Ref 'DBRemoveAbandonedTimeout'
+        DBStorage: !Ref 'DBStorage'
+        DBStorageEncrypted: !Ref 'DBStorageEncrypted'
+        DBStorageType: !Ref 'DBStorageType'
+        DBTestOnBorrow: !Ref 'DBTestOnBorrow'
+        DBTestWhileIdle: !Ref 'DBTestWhileIdle'
+        DBTimeBetweenEvictionRunsMillis: !Ref 'DBTimeBetweenEvictionRunsMillis'
+        DeployEnvironment: !Ref 'DeployEnvironment'
+        HostedZone: !Ref 'HostedZone'
+        JiraDownloadUrl: !Ref 'JiraDownloadUrl'
+        JiraProduct: !Ref 'JiraProduct'
+        JiraVersion: !Ref 'JiraVersion'
+        JvmHeapOverride: !Ref 'JvmHeapOverride'
+        KeyName: !Ref 'KeyName'
+        LocalAnsibleGitRepo: !Ref 'LocalAnsibleGitRepo'
+        LocalAnsibleGitSshKeyName: !Ref 'LocalAnsibleGitSshKeyName'
+        MailEnabled: !Ref 'MailEnabled'
+        SubDomainName: !Ref 'SubDomainName'
+        SSLCertificateARN: !Ref 'SSLCertificateARN'
+        StartCollectd: !Ref 'StartCollectd'
+        TomcatAcceptCount: !Ref 'TomcatAcceptCount'
+        TomcatConnectionTimeout: !Ref 'TomcatConnectionTimeout'
+        TomcatContextPath: !Ref 'TomcatContextPath'
+        TomcatDefaultConnectorPort: !Ref 'TomcatDefaultConnectorPort'
+        TomcatEnableLookups: !Ref 'TomcatEnableLookups'
+        TomcatMaxThreads: !Ref 'TomcatMaxThreads'
+        TomcatMinSpareThreads: !Ref 'TomcatMinSpareThreads'
+        TomcatProtocol: !Ref 'TomcatProtocol'
+        TomcatRedirectPort: !Ref 'TomcatRedirectPort'
+        TomcatScheme: !Ref 'TomcatScheme'
+
+Outputs:
+  ServiceURL:
+    Description: The URL to access this Atlassian service
+    Value: !GetAtt 'JiraDCStack.Outputs.ServiceURL'
+  LoadBalancerURL:
+    Description: The Load Balancer URL
+    Value: !GetAtt 'JiraDCStack.Outputs.LoadBalancerURL'
+  BastionIP:
+    Description: Bastion node IP (use as a jumpbox to connect to the nodes)
+    Value: !GetAtt 'VPCStack.Outputs.BastionPubIp'    
+  SGname:
+    Description: The name of the SecurityGroup
+    Value: !GetAtt 'JiraDCStack.Outputs.SGname'
+  DBEndpointAddress:
+    Description: The Database Connection String
+    Value: !GetAtt 'JiraDCStack.Outputs.DBEndpointAddress'
+  DBEncryptionKey:
+    Condition: UseDatabaseEncryption
+    Description: The alias of the encryption key created for RDS
+    Value: !GetAtt 'JiraDCStack.Outputs.DBEncryptionKey'
+  EFSCname:
+    Description: The cname of the EFS
+    Value: !GetAtt 'JiraDCStack.Outputs.EFSCname'
