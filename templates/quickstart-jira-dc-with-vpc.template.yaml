@@ -41,7 +41,7 @@ Metadata:
           - AvailabilityZones
           - AssociatePublicIpAddress
           - CidrBlock
-          - KeyName
+          - KeyPairName
           - SSLCertificateARN
       - Label:
           default: DNS (Optional)
@@ -156,7 +156,7 @@ Metadata:
         default: Jira Download URL
       JvmHeapOverride:
         default: JVM Heap Size Override
-      KeyName:
+      KeyPairName:
         default: Key Name *
       LocalAnsibleGitRepo:
         default: Git repo for local-ansible
@@ -478,7 +478,7 @@ Parameters:
     Default: ''
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
-  KeyName:
+  KeyPairName:
     Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
@@ -637,7 +637,7 @@ Resources:
         AvailabilityZones: !Join
           - ','
           - !Ref 'AvailabilityZones'
-        KeyPairName: !Ref 'KeyName'
+        KeyPairName: !Ref 'KeyPairName'
         PrivateSubnet1CIDR: !Ref 'PrivateSubnet1CIDR'
         PrivateSubnet2CIDR: !Ref 'PrivateSubnet2CIDR'
         PublicSubnet1CIDR: !Ref 'PublicSubnet1CIDR'
@@ -688,7 +688,7 @@ Resources:
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
         JvmHeapOverride: !Ref 'JvmHeapOverride'
-        KeyName: !Ref 'KeyName'
+        KeyPairName: !Ref 'KeyPairName'
         LocalAnsibleGitRepo: !Ref 'LocalAnsibleGitRepo'
         LocalAnsibleGitSshKeyName: !Ref 'LocalAnsibleGitSshKeyName'
         MailEnabled: !Ref 'MailEnabled'

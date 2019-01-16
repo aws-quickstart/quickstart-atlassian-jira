@@ -40,7 +40,7 @@
         "ParameterValue":"quickstart-atlassian-jira/"
     },
     {
-        "ParameterKey": "KeyName",
+        "ParameterKey": "KeyPairName",
         "ParameterValue": "replaced-by-taskcat-override-file"
     }
 ]
