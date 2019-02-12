@@ -40,6 +40,14 @@
         "ParameterValue":"quickstart-atlassian-jira/"
     },
     {
+        "ParameterKey":"CidrBlock",
+        "ParameterValue":"10.0.0.0/16"
+    },
+    {
+        "ParameterKey":"AccessCIDR",
+        "ParameterValue":"10.0.0.0/16"
+    },
+    {
         "ParameterKey": "KeyPairName",
         "ParameterValue": "replaced-by-taskcat-override-file"
     }
