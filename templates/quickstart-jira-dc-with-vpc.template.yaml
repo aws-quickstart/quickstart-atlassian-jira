@@ -208,7 +208,7 @@ Parameters:
   CidrBlock:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
-    Description: CIDR Block allowed to access Atlassian Service. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
+    Description: CIDR block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
     Type: String
     MinLength: 9
     MaxLength: 18
@@ -562,7 +562,7 @@ Parameters:
     # VPC parameters
   AccessCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    Description: CIDR Block allowed to access Atlassian Service. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
+    Description: CIDR Block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
     Type: String
   AvailabilityZones:
     Description: 'List of Availability Zones to use for the subnets in the VPC. Note: You must specify 2 AZs here; 

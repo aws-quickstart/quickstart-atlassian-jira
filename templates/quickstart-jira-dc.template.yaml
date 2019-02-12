@@ -188,7 +188,7 @@ Parameters:
   CidrBlock:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
-    Description: CIDR Block allowed to access Atlassian Service. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
+    Description: CIDR Block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
     Type: String
     MinLength: 9
     MaxLength: 18
