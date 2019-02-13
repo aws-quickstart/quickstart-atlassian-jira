@@ -87,7 +87,10 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+
     ParameterLabels:
+      AccessCIDR:
+        default: Trusted IP range
       AssociatePublicIpAddress:
         default: Assign public IP
       AvailabilityZones:
@@ -164,8 +167,18 @@ Metadata:
         default: Git SSH key name for local-ansible
       MailEnabled:
         default: Enable App to Process Email
+      PrivateSubnet1CIDR:
+        default: AZ1 private IP address block
+      PrivateSubnet2CIDR:
+        default: AZ2 private IP address block
+      PublicSubnet1CIDR:
+        default: AZ1 public IP address block        
+      PublicSubnet2CIDR:
+        default: AZ2 public IP address block
       SSLCertificateARN:
         default: SSL Certificate ARN
+      SubDomainName:
+        default: Subdomain for the product
       TomcatAcceptCount:
         default: Tomcat Accept Count
       TomcatConnectionTimeout:
@@ -192,8 +205,10 @@ Metadata:
       QSS3KeyPrefix:
         default: Quick Start S3 Key Prefix
 
-Parameters:
+      VPCCIDR:
+        default: IP address block for the VPC
 
+Parameters:
   # Jira DC template parameters
   AssociatePublicIpAddress:
     Default: true
@@ -309,6 +324,7 @@ Parameters:
     Description: Instance type for the cluster application nodes.
     Type: String
   ClusterNodeMax:
+    Description: Maximum number of nodes in the cluster.
     Default: 1
     Type: Number
   ClusterNodeMin:
@@ -377,6 +393,7 @@ Parameters:
     Description: The minimum number of idle database connections that are kept open at any time
     Type: String
   DBMultiAZ:
+    Description: Whether to provision a multi-AZ RDS instance.
     Default: true
     AllowedValues:
       - true
@@ -509,6 +526,7 @@ Parameters:
     MaxLength: 90
     Type: String
   StartCollectd:
+    Description: Start the 'collectd' metrics agent.
     Default: true
     AllowedValues:
       - true
