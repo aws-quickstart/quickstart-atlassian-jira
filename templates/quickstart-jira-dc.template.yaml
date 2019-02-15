@@ -457,8 +457,8 @@ Parameters:
       - Software
   JiraVersion:
     Default: 7.13.1
-    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))'
-    ConstraintDescription: Must be a valid Jira version number, for example 7.13.1. Find valid versions at https://jira.atlassian.com/display/DOC/Jira+Release+Notes
+    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
+    ConstraintDescription: Must be a valid Jira version number or 'latest', for example 7.13.1. Find valid versions at https://jira.atlassian.com/display/DOC/Jira+Release+Notes
     Description: The version of Jira to install
     Type: String
   JvmHeapOverride:
