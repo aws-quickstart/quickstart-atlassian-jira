@@ -38,11 +38,18 @@ Metadata:
       - Label:
           default: Networking
         Parameters:
+          - AccessCIDR
           - AvailabilityZones
           - AssociatePublicIpAddress
           - CidrBlock
           - KeyPairName
+          - PrivateSubnet1CIDR
+          - PrivateSubnet2CIDR
+          - PublicSubnet1CIDR
+          - PublicSubnet2CIDR
           - SSLCertificateARN
+          - SubDomainName
+          - VPCCIDR
       - Label:
           default: DNS (Optional)
         Parameters:
