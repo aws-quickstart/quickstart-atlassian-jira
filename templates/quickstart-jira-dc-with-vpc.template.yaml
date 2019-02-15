@@ -177,6 +177,8 @@ Metadata:
         default: AZ2 public IP address block
       SSLCertificateARN:
         default: SSL Certificate ARN
+      StartCollectd:
+        default: Start the collectd metrics agent
       SubDomainName:
         default: Subdomain for the product
       TomcatAcceptCount:
@@ -532,7 +534,6 @@ Parameters:
       - true
       - false
     ConstraintDescription: Must be 'true' or 'false'.
-    Description: Start the collectd service
     Type: String
   TomcatAcceptCount:
     Default: 10
