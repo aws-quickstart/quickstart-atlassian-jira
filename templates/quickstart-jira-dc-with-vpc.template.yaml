@@ -532,7 +532,6 @@ Parameters:
       - true
       - false
     ConstraintDescription: Must be 'true' or 'false'.
-    Description: Start the collectd service
     Type: String
   TomcatAcceptCount:
     Default: 10
