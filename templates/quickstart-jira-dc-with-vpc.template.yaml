@@ -486,9 +486,9 @@ Parameters:
       - Software
   JiraVersion:
     Default: 7.13.1
-    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))'
-    ConstraintDescription: Must be a valid Jira version number, for example 7.13.1. Find valid versions at https://jira.atlassian.com/display/DOC/Jira+Release+Notes
-    Description: The version of Jira to install
+    AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 7.13.1 for Jira Software or 4.0.0 for Jira Service Desk.
+    Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
     Default: ''
