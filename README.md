@@ -1,23 +1,26 @@
-# Atlassian Jira Data Center Quick Start
+# quickstart-atlassian-jira
+## Jira Software and Jira Service Desk Data Center on the AWS Cloud
 
-This repository contains quickstart templates that will create recommended
-Jira Data center deployment in AWS.
+Use this Quick Start to deploy one of the following Jira products from Atlassian on the AWS Cloud:
 
-You can start easily following [documentation on AWS Quick Starts portal](https://aws.amazon.com/quickstart/architecture/jira/).
+* Jira Software Data Center
+* Jira Service Desk Data Center
 
-## Important
+This Quick Start uses the [Atlassian Standard Infrastructure (ASI)](https://fwd.aws/xYyYy) as a foundation. You can choose to build a new ASI for your deployment or deploy Jira into your existing ASI. You can also deploy Bitbucket Data Center and Confluence Data Center within the same ASI.
+
+![Quick Start architecture for Jira on AWS](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/jira-on-aws-architecture.png)
+
+For architectural details, best practices, step-by-step instructions, and customization options, see the 
+[deployment guide](https://fwd.aws/Wz3Qb).
 
 ### Network prerequisites
 
-Before running this template, you need to create the required AWS networking infrastructure
-(VPC, subnets) via [atlassian-quickstart-services](https://github.com/aws-quickstart/quickstart-atlassian-services).
-This is described in details in [documentation](https://aws.amazon.com/quickstart/architecture/jira/)
-on the portal.
+You need to create the required AWS networking infrastructure
+(VPC, subnets) by using the [atlassian-quickstart-services](https://github.com/aws-quickstart/quickstart-atlassian-services) template, or by deploying the Jira master template, which creates a new ASI.
+For details, see the [deployment guide](https://fwd.aws/Wz3Qb).
 
 ### Contributing & issues
 
-Please note that issues are disabled for this repository as it is only a
+Please note that issues are disabled for this repository, because it is a
 downstream repository that is not actively supported.
-Pull requests, issues and comments are welcomed in the upstream repository:
-
-**[Upstream repository link](https://bitbucket.org/atlassian/atlassian-aws-deployment/src/master/quickstarts/)**
+We welcome pull requests, issues, and comments in the **[upstream repository](https://bitbucket.org/atlassian/atlassian-aws-deployment/src/master/quickstarts/)**.
