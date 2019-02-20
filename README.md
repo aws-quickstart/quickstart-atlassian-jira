@@ -16,7 +16,7 @@ For architectural details, best practices, step-by-step instructions, and custom
 ### Network prerequisites
 
 You need to create the required AWS networking infrastructure
-(VPC, subnets) by using the [atlassian-quickstart-services](https://github.com/aws-quickstart/quickstart-atlassian-services) template, or by deploying the Jira master template, which creates a new ASI.
+(VPC, subnets) by using the [ASI Quick Start](https://fwd.aws/xYyYy), or by deploying Jira with a new ASI.
 For details, see the [deployment guide](https://fwd.aws/Wz3Qb).
 
 ### Contributing & issues
@@ -24,3 +24,5 @@ For details, see the [deployment guide](https://fwd.aws/Wz3Qb).
 Please note that issues are disabled for this repository, because it is a
 downstream repository that is not actively supported.
 We welcome pull requests, issues, and comments in the **[upstream repository](https://bitbucket.org/atlassian/atlassian-aws-deployment/src/master/quickstarts/)**.
+
+If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/). 
