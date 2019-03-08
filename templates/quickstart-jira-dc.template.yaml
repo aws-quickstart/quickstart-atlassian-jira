@@ -567,6 +567,8 @@ Conditions:
     !Not [!Equals [!Ref TomcatContextPath, '']]
   UseCustomDnsName:
     !Not [!Equals [!Ref CustomDnsName, '']]
+  UseSubDomainName:
+    !Not [!Equals [!Ref SubDomainName, '']]
   UseDatabaseEncryption:
     !Equals [!Ref DBStorageEncrypted, true]
   UseHostedZone:
@@ -1022,7 +1024,7 @@ Resources:
                     - !Sub ["ATL_JVM_HEAP=${AtlJvmHeap}", AtlJvmHeap: !If [OverrideHeap, !Ref 'JvmHeapOverride', !FindInMap [AWSInstanceType2Arch, !Ref ClusterNodeInstanceType, Jvmheap]]]
                     - !Sub ["ATL_LOCALANSIBLE_REPO=${AnsibleRepo}", AnsibleRepo: !Ref LocalAnsibleGitRepo]
                     - !Sub ["ATL_LOCALANSIBLE_SSHKEYNAME=${AnsibleKey}", AnsibleKey: !Ref LocalAnsibleGitSshKeyName]
-                    - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !Ref CustomDnsName, !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
+                    - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !If [UseSubDomainName, !Join ['.', [!Ref SubDomainName, !Ref CustomDnsName]], !Join ['.', [!Ref "AWS::StackName", !Ref CustomDnsName]]], !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
                     - !Sub ["ATL_TOMCAT_ACCEPTCOUNT=${TomcatAcceptCount}", TomcatAcceptCount: !Ref TomcatAcceptCount]
                     - !Sub ["ATL_TOMCAT_CONNECTIONTIMEOUT=${TomcatConnectionTimeout}", TomcatConnectionTimeout: !Ref TomcatConnectionTimeout]
                     - !Sub ["ATL_TOMCAT_CONTEXTPATH=${TomcatContextPath}", TomcatContextPath: !Ref TomcatContextPath]
@@ -1202,7 +1204,7 @@ Resources:
     Properties:
       HostedZoneName: !Ref HostedZone
       Comment: Route53 cname for the efs
-      Name: !If [ UseHostedZone, !Join ['.', [!Ref 'AWS::StackName', 'efs', !Ref 'HostedZone']], '']
+      Name: !If [ UseHostedZone, !Join ['.', [!If [UseSubDomainName, !Ref SubDomainName, !Ref "AWS::StackName"], 'efs', !Ref 'HostedZone']], '']
       Type: CNAME
       TTL: 900
       ResourceRecords:
@@ -1294,7 +1296,7 @@ Resources:
     Properties:
       HostedZoneName: !Ref HostedZone
       Comment: Route53 cname for the ALB
-      Name: !Join ['.', [!Ref "AWS::StackName", !Ref 'HostedZone']]
+      Name: !Join ['.', [!If [UseSubDomainName, !Ref SubDomainName, !Ref "AWS::StackName"], !Ref 'HostedZone']]
       Type: CNAME
       TTL: 900
       ResourceRecords:
@@ -1358,9 +1360,9 @@ Outputs:
     Value: !If
       - UseCustomDnsName
       - !Sub
-        - "${HTTP}://${CustomDNSName}${ContextPath}"
+        - "${HTTP}://${CustomDomain}${ContextPath}"
         - HTTP: !If [SSLScheme, 'https', 'http']
-          CustomDNSName: !Ref CustomDnsName
+          CustomDomain: !If ['UseSubDomainName', !Join ['.', [!Ref SubDomainName, !Ref CustomDnsName]], !Join ['.', [!Ref 'AWS::StackName', !Ref CustomDnsName]]]
           ContextPath: !Ref TomcatContextPath
       - !If
         - UseHostedZone
