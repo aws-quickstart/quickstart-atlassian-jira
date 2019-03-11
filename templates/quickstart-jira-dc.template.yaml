@@ -43,6 +43,7 @@ Metadata:
         Parameters:
           - CustomDnsName
           - HostedZone
+          - SubDomainName
       - Label:
           default: Advanced (Optional)
         Parameters:
