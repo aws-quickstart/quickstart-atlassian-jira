@@ -844,49 +844,52 @@ Mappings:
       Jvmheap: 12288m
   AWSRegionArch2AMI:
     ap-northeast-1:
-      HVM64: ami-0ca18d789792dd86c
+      HVM64: ami-072093ab5f08fbe3b
       HVMG2: NOT_SUPPORTED
     ap-northeast-2:
-      HVM64: ami-01f36db52dee23aab
+      HVM64: ami-0e2359fb70eda4d79
       HVMG2: NOT_SUPPORTED
     ap-south-1:
-      HVM64: ami-04f8e5e43cf3d3598
+      HVM64: ami-05f7063f273f37088
       HVMG2: NOT_SUPPORTED
     ap-southeast-1:
-      HVM64: ami-02374883cbf71d077
+      HVM64: ami-0eb88348e93af9f43
       HVMG2: NOT_SUPPORTED
     ap-southeast-2:
-      HVM64: ami-017794318025aa3bc
+      HVM64: ami-0eb6d7d2b68cdeab4
       HVMG2: NOT_SUPPORTED
     ca-central-1:
-      HVM64: ami-0b390c923fe1430dd
+      HVM64: ami-0a61be2abd3f3648a
       HVMG2: NOT_SUPPORTED
     eu-central-1:
-      HVM64: ami-0f6c0e422da085bec
+      HVM64: ami-0f2fa2f5f1668f53f
+      HVMG2: NOT_SUPPORTED
+    eu-north-1:
+      HVM64: ami-078f9a95d35b69971
       HVMG2: NOT_SUPPORTED
     eu-west-1:
-      HVM64: ami-0c43954598f5811a8
+      HVM64: ami-0ad4d869664a3666a
       HVMG2: NOT_SUPPORTED
     eu-west-2:
-      HVM64: ami-0749bcbc016a19f9d
+      HVM64: ami-03767a3e917c2bc3c
       HVMG2: NOT_SUPPORTED
     eu-west-3:
-      HVM64: ami-0af9a4728feb99dfb
+      HVM64: ami-0b9bd60f54692ae7c
       HVMG2: NOT_SUPPORTED
     sa-east-1:
-      HVM64: ami-01f89536bbfb78d97
+      HVM64: ami-047cd0ab01774cd34
       HVMG2: NOT_SUPPORTED
     us-east-1:
-      HVM64: ami-0f22200d3d5f3f0e5
+      HVM64: ami-0a031942da363c31a
       HVMG2: NOT_SUPPORTED
     us-east-2:
-      HVM64: ami-07301a07342ceedaa
+      HVM64: ami-0e4e7a87b2d2a3747
       HVMG2: NOT_SUPPORTED
     us-west-1:
-      HVM64: ami-06de6ef005dcfd2d2
+      HVM64: ami-0d4b7e04901b7aaa7
       HVMG2: NOT_SUPPORTED
     us-west-2:
-      HVM64: ami-08dfd2f0ecf863c9b
+      HVM64: ami-09b0fee40f3d347d6
       HVMG2: NOT_SUPPORTED
   JIRAProduct2NameAndVersion:
     All:
