@@ -842,55 +842,57 @@ Mappings:
     z1d.12xlarge:
       Arch: HVM64
       Jvmheap: 12288m
+
   AWSRegionArch2AMI:
     ap-northeast-1:
-      HVM64: ami-072093ab5f08fbe3b
+      HVM64: ami-0f9ae750e8274075b
       HVMG2: NOT_SUPPORTED
     ap-northeast-2:
-      HVM64: ami-0e2359fb70eda4d79
+      HVM64: ami-047f7b46bd6dd5d84
       HVMG2: NOT_SUPPORTED
     ap-south-1:
-      HVM64: ami-05f7063f273f37088
+      HVM64: ami-0889b8a448de4fc44
       HVMG2: NOT_SUPPORTED
     ap-southeast-1:
-      HVM64: ami-0eb88348e93af9f43
+      HVM64: ami-0b419c3a4b01d1859
       HVMG2: NOT_SUPPORTED
     ap-southeast-2:
-      HVM64: ami-0eb6d7d2b68cdeab4
+      HVM64: ami-04481c741a0311bbb
       HVMG2: NOT_SUPPORTED
     ca-central-1:
-      HVM64: ami-0a61be2abd3f3648a
+      HVM64: ami-03338e1f67dae0168
       HVMG2: NOT_SUPPORTED
     eu-central-1:
-      HVM64: ami-0f2fa2f5f1668f53f
+      HVM64: ami-09def150731bdbcc2
       HVMG2: NOT_SUPPORTED
     eu-north-1:
-      HVM64: ami-078f9a95d35b69971
+      HVM64: ami-d16fe6af
       HVMG2: NOT_SUPPORTED
     eu-west-1:
-      HVM64: ami-0ad4d869664a3666a
+      HVM64: ami-07683a44e80cd32c5
       HVMG2: NOT_SUPPORTED
     eu-west-2:
-      HVM64: ami-03767a3e917c2bc3c
+      HVM64: ami-09ead922c1dad67e4
       HVMG2: NOT_SUPPORTED
     eu-west-3:
-      HVM64: ami-0b9bd60f54692ae7c
+      HVM64: ami-0451ae4fd8dd178f7
       HVMG2: NOT_SUPPORTED
     sa-east-1:
-      HVM64: ami-047cd0ab01774cd34
+      HVM64: ami-0669a96e355eac82f
       HVMG2: NOT_SUPPORTED
     us-east-1:
-      HVM64: ami-0a031942da363c31a
+      HVM64: ami-0de53d8956e8dcf80
       HVMG2: NOT_SUPPORTED
     us-east-2:
-      HVM64: ami-0e4e7a87b2d2a3747
+      HVM64: ami-02bcbb802e03574ba
       HVMG2: NOT_SUPPORTED
     us-west-1:
-      HVM64: ami-0d4b7e04901b7aaa7
+      HVM64: ami-0019ef04ac50be30f
       HVMG2: NOT_SUPPORTED
     us-west-2:
-      HVM64: ami-09b0fee40f3d347d6
+      HVM64: ami-061392db613a6357b
       HVMG2: NOT_SUPPORTED
+
   JIRAProduct2NameAndVersion:
     All:
       name: jira-all
