@@ -966,6 +966,7 @@ Resources:
         - Key: Cluster
           Value: !Ref AWS::StackName
           PropagateAtLaunch: true
+
   ClusterNodeLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     DependsOn:
@@ -976,16 +977,6 @@ Resources:
       Comment: ''
       AWS::CloudFormation::Init:
         config:
-          packages:
-            !If
-              - DoCollectd
-              - yum:
-                  collectd: []
-                  collectd-java: []
-                  collectd-generic-jmx: []
-                  collectd-rrdtool: []
-                  collectd-disk: []
-              - !Ref "AWS::NoValue"
           files:
             /etc/atl:
               mode: "000640"
@@ -997,6 +988,7 @@ Resources:
                   -
                     - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
+                    - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !Sub ["ATL_CATALINA_OPTS=\"${CatalinaOpts} ${MailOpts}\"", { CatalinaOpts: !Ref CatalinaOpts, MailOpts: !If [DisableMail, '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true -Datlassian.mail.popdisabled=true', ''] }]
                     - !Sub ["ATL_DB_HOST=${DBEndpointAddress}", DBEndpointAddress: !GetAtt DB.Endpoint.Address]
                     - !Sub ["ATL_DB_MAXIDLE=${DBMaxIdle}", DBMaxIdle: !Ref DBMaxIdle]
@@ -1049,102 +1041,29 @@ Resources:
                     - "ATL_RELEASE_S3_BUCKET=atlassian-software"
                     - "ATL_RELEASE_S3_PATH=releases"
                     - "ATL_SSL_SELF_CERT_ENABLED=false"
-            /etc/cfn/cfn-hup.conf:
-              content:
-                !Join
-                  - "\n"
-                  -
-                    - "[main]"
-                    - !Sub ["region=${Region}", Region: !Ref "AWS::Region"]
-                    - !Sub ["stack=${StackId}", StackId: !Ref "AWS::StackId"]
-              mode: "000400"
-              owner: root
-              group: root
-            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
-              content:
-                !Join
-                  - "\n"
-                  -
-                    - "[cfn-auto-reloader-hook]"
-                    - triggers=post.update
-                    - "path=Resources.ClusterNodeLaunchConfig.Metadata.AWS::CloudFormation::Init"
-                    - !Sub
-                      - "action=/opt/aws/bin/cfn-init -v --stack ${StackName} --resource ClusterNodeLaunchConfig --region ${Region}"
-                      - StackName: !Ref "AWS::StackName"
-                        Region: !Ref "AWS::Region"
-                    - runas=root
-            /tmp/bootstrap_local_ansible:
-              content: !Sub |
-                #!/usr/bin/env bash
-                # bootstrap any local-ansible repo that is passed in on this template
 
-                localansiblerepopath=/home/localansible
-                gitkeylocation=/root/.ssh/gitkey
-
-                # ensure awscli is up to date
-                pip install --upgrade awscli
-                gitkey=$(aws --region=${AWS::Region} ssm get-parameters --names "${LocalAnsibleGitSshKeyName}" --with-decryption | jq --raw-output '.Parameters[0] .Value')
-                echo -e $gitkey > $gitkeylocation
-                chmod 600 $gitkeylocation
-                export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $gitkeylocation"
-
-                mkdir -p $localansiblerepopath
-                cd $localansiblerepopath
-                git clone "${LocalAnsibleGitRepo}"
-                cp $localansiblerepopath/*/local-ansible-run /usr/local/bin/local-ansible-run
-                chmod 750 /usr/local/bin/local-ansible-run
-              mode: "000750"
-              owner: root
-              group: root
           commands:
-            010_make_mount_point:
-              command: mkdir -p /media/atl
+            070_create_atl_dir:
+              test: "test ! -d /opt/atlassian/"
+              command: mkdir -p /opt/atlassian
               ignoreErrors: false
-            020_add_nfs_mount:
-              command:
-                !Join
-                  - ""
-                  -
-                    - "echo "
-                    - !If
-                      - UseHostedZone
-                      - !Ref EFSCname
-                      - !Sub
-                          - $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone).${ElasticFileSystem}".efs."${Region}".amazonaws.com"
-                          - ElasticFileSystem: !Ref ElasticFileSystem
-                            Region: !Ref "AWS::Region"
-                    - ":/ /media/atl nfs4 rw,vers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0 >>/etc/fstab"
-              ignoreErrors: false
-            030_mount_all:
-              command: mount -a
+            071_install_git:
+              command: yum install -y git
               ignoreErrors: true
-            040_make_shared_home_dir:
-              command: mkdir -p /media/atl/jira/shared
-              ignoreErrors: false
-            050_ssm_group:
-              command: groupadd ssm-user --gid 400 || groupmod -g 400 ssm-user
-            051_ssm_user:
-              command: useradd ssm-user --uid 400 -g ssm-user || usermod -u 400 ssm-user
-            052_ensure_ssm:
-              command: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+            072_install_git:
+              command: amazon-linux-extras install -y ansible2
               ignoreErrors: true
-            090_bootstrap_local_ansible:
-              command: /tmp/bootstrap_local_ansible > /var/log/bootstrap_local_ansible.log 2>&1
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: true
-                ensureRunning: true
-                files:
-                  - /etc/cfn/cfn-hup.conf
-                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
-              collectd:
-                !If [DoCollectd, {enabled: true, ensureRunning: true}, !Ref 'AWS::NoValue']
-              rpcbind:
-                enabled: true
-                ensureRunning: true
-                packages:
-                  yum: [nfs-utils]
+            072_clone_atl_scripts:
+              test: "test ! -d /opt/atlassian/dc-deployments-automation/"
+              # For development you can clone an explicit branch, e.g:
+              # command: git clone -b DCD-my-working-branch https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
+              # FIXME: Should make the branch a parameter?
+              command: git clone https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
+              ignoreErrors: true
+            080_run_atl_init_node:
+              command: cd /opt/atlassian/dc-deployments-automation/ && ./bin/ansible-with-atl-env inv/localhost aws_jira_dc_node.yml /var/log/ansible-bootstrap.log
+              ignoreErrors: true
+
     Properties:
       AssociatePublicIpAddress: false
       BlockDeviceMappings:
@@ -1177,7 +1096,7 @@ Resources:
               - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", Region: !Ref "AWS::Region"]
               - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", StackName: !Ref "AWS::StackName"]
               - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", Region: !Ref "AWS::Region"]
-# Elastic file system
+
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
