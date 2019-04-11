@@ -9,5 +9,5 @@ global:
 
 tests:
   jira:
-    parameter_input: testing-params/quickstart-jira-dc-customdns-ssl-ci.json
+    parameter_input: params/ssl-and-dns/quickstart-jira-dc-customdns-ssl-ci.json
     template_file: quickstart-jira-dc.template.yaml
