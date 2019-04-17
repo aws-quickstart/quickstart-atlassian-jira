@@ -1046,11 +1046,12 @@ Resources:
               test: "test ! -d /opt/atlassian/"
               command: mkdir -p /opt/atlassian
               ignoreErrors: false
-            071_install_git:
-              command: yum install -y git
+            071_install_packages:
+              command: yum install -y git python-virtualenv
               ignoreErrors: true
-            072_install_git:
-              command: amazon-linux-extras install -y ansible2
+            072_install_ansible:
+              # The Amazon Linux 2 Ansible package is 2.4, which has issue interacting with RDS.
+              command: cd /opt/atlassian/dc-deployments-automation/ && virtualenv .venv && source .venv/bin/activate && pip install ansible==2.7.10
               ignoreErrors: true
             072_clone_atl_scripts:
               test: "test ! -d /opt/atlassian/dc-deployments-automation/"
