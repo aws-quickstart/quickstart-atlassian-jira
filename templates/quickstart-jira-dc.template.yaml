@@ -1057,7 +1057,7 @@ Resources:
               command: git clone https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
               ignoreErrors: true
             080_run_atl_init_node:
-              command: cd /opt/atlassian/dc-deployments-automation/ && ./bin/install-ansible && ./bin/ansible-with-atl-env inv/localhost aws_jira_dc_node.yml /var/log/ansible-bootstrap.log
+              command: cd /opt/atlassian/dc-deployments-automation/ && ./bin/install-ansible && ./bin/ansible-with-atl-env inv/aws_node_local aws_jira_dc_node.yml /var/log/ansible-bootstrap.log
               ignoreErrors: true
 
     Properties:
