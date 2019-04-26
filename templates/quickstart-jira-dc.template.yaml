@@ -986,6 +986,8 @@ Resources:
                 'Fn::Join':
                   - "\n"
                   -
+                    - "ATL_PRODUCT_FAMILY=jira"
+                    - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !Ref "JiraProduct"]
                     - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
                     - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
