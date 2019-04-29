@@ -58,9 +58,6 @@ Metadata:
       - Label:
           default: Advanced (Optional)
         Parameters:
-          - JiraDownloadUrl
-          - LocalAnsibleGitRepo
-          - LocalAnsibleGitSshKeyName
           - StartCollectd
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
@@ -162,16 +159,10 @@ Metadata:
         default: Jira Product *
       JiraVersion:
         default: Version *
-      JiraDownloadUrl:
-        default: Jira Download URL
       JvmHeapOverride:
         default: JVM Heap Size Override
       KeyPairName:
         default: Key Name *
-      LocalAnsibleGitRepo:
-        default: Git repo for local-ansible
-      LocalAnsibleGitSshKeyName:
-        default: Git SSH key name for local-ansible
       MailEnabled:
         default: Enable App to Process Email
       PrivateSubnet1CIDR:
@@ -478,11 +469,6 @@ Parameters:
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
     Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
     Type: String
-  JiraDownloadUrl:
-    Default: ''
-    Description: This parameter is used to download a custom Jira version for testing purposes. Leave this parameter blank to automatically download the official version you specified earlier.
-    Type: String
-    ConstraintDescription: Must be a valid Jira download url from version 7 or higher
   JiraProduct:
     Default: All
     Description: The Jira product to install.
@@ -507,14 +493,6 @@ Parameters:
     Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
-  LocalAnsibleGitRepo:
-    Default: ''
-    Description: For additional node customization, provide repo location to git clone. This must be in format git@bitbucket.org:atlassian/atlassian-local-ansible-example.git if using Bitbucket Cloud, or ssh://git@stash.example.com:7997/my-local-ansible.git (ie protocol included) if using Bitbucket Server.
-    Type: String
-  LocalAnsibleGitSshKeyName:
-    Default: ''
-    Description: If your git repo is private, provide an AWS Systems Manager ParameterStore key name that holds an SSH private key that can access the repo
     Type: String
   MailEnabled:
     AllowedValues:
@@ -708,13 +686,10 @@ Resources:
         DBTimeBetweenEvictionRunsMillis: !Ref 'DBTimeBetweenEvictionRunsMillis'
         DeployEnvironment: !Ref 'DeployEnvironment'
         HostedZone: !Ref 'HostedZone'
-        JiraDownloadUrl: !Ref 'JiraDownloadUrl'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
         JvmHeapOverride: !Ref 'JvmHeapOverride'
         KeyPairName: !Ref 'KeyPairName'
-        LocalAnsibleGitRepo: !Ref 'LocalAnsibleGitRepo'
-        LocalAnsibleGitSshKeyName: !Ref 'LocalAnsibleGitSshKeyName'
         MailEnabled: !Ref 'MailEnabled'
         SubDomainName: !Ref 'SubDomainName'
         SSLCertificateARN: !Ref 'SSLCertificateARN'
