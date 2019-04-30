@@ -429,15 +429,16 @@ Parameters:
     Default: All
     Description: The Jira product to install.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
+    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
     AllowedValues:
+      - All
       - Core
       - Software
       - ServiceDesk
   JiraVersion:
     Default: 8.1.0
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
-    ConstraintDescription: Must be a valid version number or 'latest'; for example, 7.13.1 for Jira Software or 4.0.0 for Jira Service Desk.
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software. ServiceDesk installed on top of Jira Software, so uses the same version scheme.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
@@ -463,7 +464,7 @@ Parameters:
     Type: String
   SSLCertificateARN:
     Default: ''
-    Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
+    Description: "Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created."
     MinLength: 0
     MaxLength: 90
     Type: String
@@ -855,6 +856,10 @@ Mappings:
       HVMG2: NOT_SUPPORTED
 
   JIRAProduct2NameAndVersion:
+    All:
+      name: jira-all
+      shortdisplayname: '"Jira All"'
+      fulldisplayname: '"Atlassian Jira All"'
     Core:
       name: jira-core
       shortdisplayname: '"Jira Core"'
