@@ -56,10 +56,6 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Advanced (Optional)
-        Parameters:
-          - StartCollectd
-      - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
             - TomcatContextPath
@@ -175,8 +171,6 @@ Metadata:
         default: AZ2 public IP address block
       SSLCertificateARN:
         default: SSL Certificate ARN
-      StartCollectd:
-        default: Start the collectd metrics agent
       SubDomainName:
         default: Subdomain for the product
       TomcatAcceptCount:
@@ -473,14 +467,13 @@ Parameters:
     Default: All
     Description: The Jira product to install.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
+    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
     AllowedValues:
-      - All
       - Core
-      - ServiceDesk
       - Software
+      - ServiceDesk
   JiraVersion:
-    Default: 7.13.1
+    Default: 8.1.0
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 7.13.1 for Jira Software or 4.0.0 for Jira Service Desk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
@@ -511,14 +504,6 @@ Parameters:
     Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
     MinLength: 0
     MaxLength: 90
-    Type: String
-  StartCollectd:
-    Description: Start the 'collectd' metrics agent.
-    Default: true
-    AllowedValues:
-      - true
-      - false
-    ConstraintDescription: Must be 'true' or 'false'.
     Type: String
   TomcatAcceptCount:
     Default: 10
@@ -693,7 +678,6 @@ Resources:
         MailEnabled: !Ref 'MailEnabled'
         SubDomainName: !Ref 'SubDomainName'
         SSLCertificateARN: !Ref 'SSLCertificateARN'
-        StartCollectd: !Ref 'StartCollectd'
         TomcatAcceptCount: !Ref 'TomcatAcceptCount'
         TomcatConnectionTimeout: !Ref 'TomcatConnectionTimeout'
         TomcatContextPath: !Ref 'TomcatContextPath'

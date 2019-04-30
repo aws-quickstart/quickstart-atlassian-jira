@@ -44,10 +44,6 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Advanced (Optional)
-        Parameters:
-          - StartCollectd
-      - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
             - TomcatContextPath
@@ -146,8 +142,6 @@ Metadata:
         default: Enable App to Process Email
       SSLCertificateARN:
         default: SSL Certificate ARN
-      StartCollectd:
-        default: Start the collectd metrics agent
       SubDomainName:
         default: Subdomain for the product
       TomcatAcceptCount:
@@ -435,12 +429,11 @@ Parameters:
     Default: All
     Description: The Jira product to install.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
+    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
     AllowedValues:
-      - All
       - Core
-      - ServiceDesk
       - Software
+      - ServiceDesk
   JiraVersion:
     Default: 8.1.0
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
@@ -473,14 +466,6 @@ Parameters:
     Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
     MinLength: 0
     MaxLength: 90
-    Type: String
-  StartCollectd:
-    Description: Start the 'collectd' metrics agent.
-    Default: true
-    AllowedValues:
-      - true
-      - false
-    ConstraintDescription: Must be 'true' or 'false'.
     Type: String
   TomcatAcceptCount:
     Default: 10
@@ -529,8 +514,6 @@ Conditions:
     !Equals [!Ref DBStorageType, Provisioned IOPS]
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
-  DoCollectd:
-    !Equals [!Ref StartCollectd, true]
   DoSetDBMasterUserPassword:
     !Not [!Equals [!Ref DBMasterUserPassword, '']]
   DoSSL:
@@ -872,10 +855,6 @@ Mappings:
       HVMG2: NOT_SUPPORTED
 
   JIRAProduct2NameAndVersion:
-    All:
-      name: jira-all
-      shortdisplayname: '"Jira All"'
-      fulldisplayname: '"Atlassian Jira All"'
     Core:
       name: jira-core
       shortdisplayname: '"Jira Core"'
