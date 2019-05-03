@@ -476,7 +476,7 @@ Parameters:
   JiraVersion:
     Default: 8.1.0
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
-    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software. ServiceDesk installed on top of Jira Software, so uses the same version scheme.
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
