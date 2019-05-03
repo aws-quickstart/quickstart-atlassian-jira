@@ -222,7 +222,7 @@ Parameters:
     MinLength: 9
     MaxLength: 18
   ClusterNodeInstanceType:
-    Default: t3.medium
+    Default: c5.xlarge
     AllowedValues:
       - c4.large
       - c4.xlarge
@@ -334,7 +334,7 @@ Parameters:
     Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
     Type: String
   DBInstanceClass:
-    Default: db.t2.medium
+    Default: db.m4.large
     AllowedValues:
       - db.m4.large
       - db.m4.xlarge
