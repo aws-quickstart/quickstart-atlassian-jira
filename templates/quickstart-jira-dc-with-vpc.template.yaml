@@ -467,9 +467,8 @@ Parameters:
     Default: All
     Description: The Jira product to install.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All".'
+    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk".'
     AllowedValues:
-      - All
       - Core
       - Software
       - ServiceDesk
