@@ -426,7 +426,7 @@ Parameters:
     Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
     Type: String
   JiraProduct:
-    Default: All
+    Default: Software
     Description: The Jira product to install.
     Type: String
     ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
