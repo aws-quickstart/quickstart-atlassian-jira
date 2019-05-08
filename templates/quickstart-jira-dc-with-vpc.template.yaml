@@ -14,10 +14,6 @@ Metadata:
           - JiraProduct
           - JiraVersion
       - Label:
-          default: Deployment information
-        Parameters:
-          - DeployEnvironment
-      - Label:
           default: Cluster nodes
         Parameters:
           - ClusterNodeInstanceType
@@ -147,8 +143,6 @@ Metadata:
         default: DB Test While Idle?
       DBTimeBetweenEvictionRunsMillis:
         default: DB Time Between Eviction Runs
-      DeployEnvironment:
-        default: Deployment Environment
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       JiraProduct:
@@ -449,15 +443,6 @@ Parameters:
     Default: 60000
     Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
     Type: String
-  DeployEnvironment:
-    Default: prod
-    AllowedValues:
-      - prod
-      - stg
-      - dr
-    ConstraintDescription: Must be either Production (prod), Staging (stg), or Disaster Recovery (dr).
-    Description: Environment of the application - either Production, Staging, or Disaster Recovery (DR)
-    Type: String
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -669,7 +654,6 @@ Resources:
         DBTestOnBorrow: !Ref 'DBTestOnBorrow'
         DBTestWhileIdle: !Ref 'DBTestWhileIdle'
         DBTimeBetweenEvictionRunsMillis: !Ref 'DBTimeBetweenEvictionRunsMillis'
-        DeployEnvironment: !Ref 'DeployEnvironment'
         HostedZone: !Ref 'HostedZone'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
