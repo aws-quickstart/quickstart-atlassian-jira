@@ -1009,6 +1009,28 @@ Resources:
                     - "ATL_RELEASE_S3_PATH=releases"
                     - "ATL_SSL_SELF_CERT_ENABLED=false"
 
+            /opt/atlassian/bin/clone_deployment_repo:
+              content: !Sub |
+                #!/bin/bash
+                key_location=/root/.ssh/deployment_repo_key
+                key_name="${DeploymentAutomationKeyName}"
+
+                if [[ ! -z "$key_name" ]]; then
+                    # Ensure awscli is up to date
+                    pip install --upgrade awscli
+                    key_val=$(aws --region=${AWS::Region} ssm get-parameters --names "$key_name" --with-decryption | jq --raw-output '.Parameters[0] .Value')
+                    echo -e $key_val > $key_location
+                    chmod 600 $key_location
+                    export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $key_location"
+                else:
+                    export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+                fi
+
+                git clone "${DeploymentAutomationRepository}" -b "${DeploymentAutomationBranch}" /opt/atlassian/dc-deployments-automation/
+              mode: "000750"
+              owner: root
+              group: root
+
           commands:
             070_create_atl_dir:
               test: "test ! -d /opt/atlassian/"
@@ -1019,7 +1041,7 @@ Resources:
               ignoreErrors: true
             072_clone_atl_scripts:
               test: "test ! -d /opt/atlassian/dc-deployments-automation/"
-              command: git clone https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
+              command: /opt/atlassian/bin/clone_deployment_repo
               ignoreErrors: true
             080_run_atl_init_node:
               command: cd /opt/atlassian/dc-deployments-automation/ && ./bin/install-ansible && ./bin/ansible-with-atl-env inv/aws_node_local aws_jira_dc_node.yml /var/log/ansible-bootstrap.log
