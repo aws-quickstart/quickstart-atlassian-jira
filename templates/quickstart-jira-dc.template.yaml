@@ -40,32 +40,38 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
+          default: Cluster Node Deployment Repository; this is used to install and configures the application.
+        Parameters:
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationKeyName
+      - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
-            - TomcatContextPath
-            - CatalinaOpts
-            - JvmHeapOverride
-            - DBPoolMaxSize
-            - DBPoolMinSize
-            - DBMaxIdle
-            - DBMaxWaitMillis
-            - DBMinEvictableIdleTimeMillis
-            - DBMinIdle
-            - DBRemoveAbandoned
-            - DBRemoveAbandonedTimeout
-            - DBTestOnBorrow
-            - DBTestWhileIdle
-            - DBTimeBetweenEvictionRunsMillis
-            - MailEnabled
-            - TomcatAcceptCount
-            - TomcatConnectionTimeout
-            - TomcatDefaultConnectorPort
-            - TomcatEnableLookups
-            - TomcatMaxThreads
-            - TomcatMinSpareThreads
-            - TomcatProtocol
-            - TomcatRedirectPort
-            - TomcatScheme
+          - TomcatContextPath
+          - CatalinaOpts
+          - JvmHeapOverride
+          - DBPoolMaxSize
+          - DBPoolMinSize
+          - DBMaxIdle
+          - DBMaxWaitMillis
+          - DBMinEvictableIdleTimeMillis
+          - DBMinIdle
+          - DBRemoveAbandoned
+          - DBRemoveAbandonedTimeout
+          - DBTestOnBorrow
+          - DBTestWhileIdle
+          - DBTimeBetweenEvictionRunsMillis
+          - MailEnabled
+          - TomcatAcceptCount
+          - TomcatConnectionTimeout
+          - TomcatDefaultConnectorPort
+          - TomcatEnableLookups
+          - TomcatMaxThreads
+          - TomcatMinSpareThreads
+          - TomcatProtocol
+          - TomcatRedirectPort
+          - TomcatScheme
 
     ParameterLabels:
       AssociatePublicIpAddress:
@@ -122,6 +128,12 @@ Metadata:
         default: DB Test While Idle?
       DBTimeBetweenEvictionRunsMillis:
         default: DB Time Between Eviction Runs
+      DeploymentAutomationRepository:
+        default: Deployment Automation Git Repository URL
+      DeploymentAutomationBranch:
+        default: Deployment Automation Branch
+      DeploymentAutomationKeyName:
+        default: SSH keyname to use with the repository (Optional)
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       JiraProduct:
@@ -405,6 +417,18 @@ Parameters:
     Default: 60000
     Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
     Type: String
+  DeploymentAutomationRepository:
+    Default: 'https://bitbucket.org/atlassian/dc-deployments-automation.git'
+    Type: String
+    Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
+  DeploymentAutomationBranch:
+    Default: "master"
+    Type: String
+    Description: The deployment automation repository branch to pull from.
+  DeploymentAutomationKeyName:
+    Default: ""
+    Type: String
+    Description: Named KeyPair name to use with this repository. The key should be uploaded the EC2 region. (Optional)
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -970,6 +994,9 @@ Resources:
                     - !Sub ["ATL_TOMCAT_REDIRECTPORT=${TomcatRedirectPort}", TomcatRedirectPort: !Ref TomcatRedirectPort]
                     - !Sub ["ATL_TOMCAT_SCHEME=${TomcatScheme}", TomcatScheme: !If [SSLScheme, https, http]]
                     - !Sub ["ATL_TOMCAT_SECURE=${TomcatSecure}", TomcatSecure: !If [SSLScheme, true, false]]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY=${DeployRepository}", DeployRepository: !Ref "DeploymentAutomationRepository"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
                     - "ATL_DB_DRIVER=org.postgresql.Driver"
                     - "ATL_JDBC_DB_NAME=jira"
                     - "ATL_JDBC_USER=atljira"
@@ -992,9 +1019,6 @@ Resources:
               ignoreErrors: true
             072_clone_atl_scripts:
               test: "test ! -d /opt/atlassian/dc-deployments-automation/"
-              # For development you can clone an explicit branch, e.g:
-              # command: git clone -b DCD-my-working-branch https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
-              # FIXME: Should make the branch a parameter?
               command: git clone https://bitbucket.org/atlassian/dc-deployments-automation.git /opt/atlassian/dc-deployments-automation
               ignoreErrors: true
             080_run_atl_init_node:
