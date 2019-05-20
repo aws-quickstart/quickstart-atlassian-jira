@@ -40,7 +40,7 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Cluster Node Deployment Repository; this is used to install and configures the application.
+          default: Cluster Node Deployment Repository; this is used to install and configure the application.
         Parameters:
           - DeploymentAutomationRepository
           - DeploymentAutomationBranch
@@ -953,11 +953,23 @@ Resources:
                   - "\n"
                   -
                     - "ATL_PRODUCT_FAMILY=jira"
+                    - "ATL_DB_DRIVER=org.postgresql.Driver"
+                    - "ATL_JDBC_DB_NAME=jira"
+                    - "ATL_JDBC_USER=atljira"
+                    - "ATL_APP_DATA_MOUNT_ENABLED=false"
+                    - "ATL_ENABLED_PRODUCTS=Jira"
+                    - "ATL_ENABLED_SHARED_HOMES="
+                    - "ATL_NGINX_ENABLED=false"
+                    - "ATL_POSTGRES_ENABLED=false"
+                    - "ATL_RELEASE_S3_BUCKET=atlassian-software"
+                    - "ATL_RELEASE_S3_PATH=releases"
+                    - "ATL_SSL_SELF_CERT_ENABLED=false"
+                    -
                     - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !Ref "JiraProduct"]
                     - !Sub ["ATL_PRODUCT_VERSION=${ProductVersion}", ProductVersion: !Ref JiraVersion]
+                    - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
-                    - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !Sub ["ATL_CATALINA_OPTS=\"${CatalinaOpts} ${MailOpts}\"", { CatalinaOpts: !Ref CatalinaOpts, MailOpts: !If [DisableMail, '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true -Datlassian.mail.popdisabled=true', ''] }]
                     - !Sub ["ATL_DB_HOST=${DBEndpointAddress}", DBEndpointAddress: !GetAtt DB.Endpoint.Address]
                     - !Sub ["ATL_DB_MAXIDLE=${DBMaxIdle}", DBMaxIdle: !Ref DBMaxIdle]
@@ -997,17 +1009,6 @@ Resources:
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY=${DeployRepository}", DeployRepository: !Ref "DeploymentAutomationRepository"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
-                    - "ATL_DB_DRIVER=org.postgresql.Driver"
-                    - "ATL_JDBC_DB_NAME=jira"
-                    - "ATL_JDBC_USER=atljira"
-                    - "ATL_APP_DATA_MOUNT_ENABLED=false"
-                    - "ATL_ENABLED_PRODUCTS=Jira"
-                    - "ATL_ENABLED_SHARED_HOMES="
-                    - "ATL_NGINX_ENABLED=false"
-                    - "ATL_POSTGRES_ENABLED=false"
-                    - "ATL_RELEASE_S3_BUCKET=atlassian-software"
-                    - "ATL_RELEASE_S3_PATH=releases"
-                    - "ATL_SSL_SELF_CERT_ENABLED=false"
 
             /opt/atlassian/bin/clone_deployment_repo:
               content: !Sub |
