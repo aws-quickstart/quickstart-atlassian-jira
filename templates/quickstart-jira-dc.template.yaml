@@ -1015,9 +1015,10 @@ Resources:
                 key_location=/root/.ssh/deployment_repo_key
                 key_name="${DeploymentAutomationKeyName}"
 
+                yum install -y git
                 if [[ ! -z "$key_name" ]]; then
                     # Ensure awscli is up to date
-                    pip install --upgrade awscli
+                    yum install -y awscli jq
                     key_val=$(aws --region=${AWS::Region} ssm get-parameters --names "$key_name" --with-decryption | jq --raw-output '.Parameters[0] .Value')
                     echo -e $key_val > $key_location
                     chmod 600 $key_location
