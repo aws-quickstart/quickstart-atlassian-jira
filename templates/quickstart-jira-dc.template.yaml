@@ -1023,7 +1023,7 @@ Resources:
                     echo -e $key_val > $key_location
                     chmod 600 $key_location
                     export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $key_location"
-                else:
+                else
                     export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
                 fi
 
