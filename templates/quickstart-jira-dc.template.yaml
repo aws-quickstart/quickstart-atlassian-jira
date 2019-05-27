@@ -148,8 +148,6 @@ Metadata:
         default: Enable App to Process Email
       SSLCertificateARN:
         default: SSL Certificate ARN
-      SubDomainName:
-        default: Subdomain for the product
       TomcatAcceptCount:
         default: Tomcat Accept Count
       TomcatConnectionTimeout:
@@ -465,10 +463,6 @@ Parameters:
     ConstraintDescription: Must be 'true' or 'false'.
     Default: true
     Description: Enable mail processing and sending
-    Type: String
-  SubDomainName:
-    Description: Leave this field blank to use your stack name as the sub-domain.
-    Default: ''
     Type: String
   SSLCertificateARN:
     Default: ''

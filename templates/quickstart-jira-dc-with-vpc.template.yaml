@@ -44,7 +44,6 @@ Metadata:
           - PublicSubnet1CIDR
           - PublicSubnet2CIDR
           - SSLCertificateARN
-          - SubDomainName
           - VPCCIDR
       - Label:
           default: DNS (Optional)
@@ -177,8 +176,6 @@ Metadata:
         default: AZ2 public IP address block
       SSLCertificateARN:
         default: SSL Certificate ARN
-      SubDomainName:
-        default: Subdomain for the product
       TomcatAcceptCount:
         default: Tomcat Accept Count
       TomcatConnectionTimeout:
@@ -504,10 +501,6 @@ Parameters:
     Default: true
     Description: Enable mail processing and sending
     Type: String
-  SubDomainName:
-    Description: Leave this field blank to use your stack name as the sub-domain.
-    Default: ''
-    Type: String
   SSLCertificateARN:
     Default: ''
     Description: "Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created."
@@ -687,7 +680,6 @@ Resources:
         JvmHeapOverride: !Ref 'JvmHeapOverride'
         KeyPairName: !Ref 'KeyPairName'
         MailEnabled: !Ref 'MailEnabled'
-        SubDomainName: !Ref 'SubDomainName'
         SSLCertificateARN: !Ref 'SSLCertificateARN'
         TomcatAcceptCount: !Ref 'TomcatAcceptCount'
         TomcatConnectionTimeout: !Ref 'TomcatConnectionTimeout'
