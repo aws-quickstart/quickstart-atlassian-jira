@@ -55,6 +55,7 @@ Metadata:
         Parameters:
           - DeploymentAutomationRepository
           - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
           - DeploymentAutomationKeyName
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
@@ -152,6 +153,8 @@ Metadata:
         default: Deployment Automation Git Repository URL
       DeploymentAutomationBranch:
         default: Deployment Automation Branch
+      DeploymentAutomationPlaybook:
+        default: The Ansible playbook to invoke to initialise the instance.
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
       HostedZone:
@@ -460,10 +463,14 @@ Parameters:
     Default: "master"
     Type: String
     Description: The deployment automation repository branch to pull from.
+  DeploymentAutomationPlaybook:
+    Default: "aws_jira_dc_node.yml"
+    Type: String
+    Description: The Ansible playbook to invoke to initialise the Jira node on first start.
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be uploaded the EC2 region. (Optional)
+    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
