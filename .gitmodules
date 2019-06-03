@@ -1,4 +1,4 @@
 [submodule "submodules/quickstart-atlassian-services"]
 	path = submodules/quickstart-atlassian-services
-	url = git@github.com:aws-quickstart/quickstart-atlassian-services.git
+	url = https://github.com/aws-quickstart/quickstart-atlassian-services.git
 	branch = master
