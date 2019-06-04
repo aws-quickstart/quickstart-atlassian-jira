@@ -419,7 +419,7 @@ Parameters:
     Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
     Type: String
   DeploymentAutomationRepository:
-    Default: 'https://bitbucket.org/atlassian/dc-deployments-automation.git'
+    Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
     Type: String
     Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
   DeploymentAutomationBranch:
