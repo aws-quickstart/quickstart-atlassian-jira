@@ -460,7 +460,7 @@ Parameters:
     Type: String
   KeyPairName:
     Default: ''
-    ConstraintDescription: Must be the name of an SSH key which has been imported into the AWS SSM parameter store.
+    ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: String
   MailEnabled:
