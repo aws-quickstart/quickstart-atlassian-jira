@@ -10,10 +10,6 @@ Metadata:
           - JiraProduct
           - JiraVersion
       - Label:
-          default: Deployment information
-        Parameters:
-          - DeployEnvironment
-      - Label:
           default: Cluster nodes
         Parameters:
           - ClusterNodeInstanceType
@@ -44,39 +40,39 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Advanced (Optional)
+          default: Cluster Node Deployment Repository; this is used to install and configure the application.
         Parameters:
-          - JiraDownloadUrl
-          - LocalAnsibleGitRepo
-          - LocalAnsibleGitSshKeyName
-          - StartCollectd
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
+          - DeploymentAutomationKeyName
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
-            - TomcatContextPath
-            - CatalinaOpts
-            - JvmHeapOverride
-            - DBPoolMaxSize
-            - DBPoolMinSize
-            - DBMaxIdle
-            - DBMaxWaitMillis
-            - DBMinEvictableIdleTimeMillis
-            - DBMinIdle
-            - DBRemoveAbandoned
-            - DBRemoveAbandonedTimeout
-            - DBTestOnBorrow
-            - DBTestWhileIdle
-            - DBTimeBetweenEvictionRunsMillis
-            - MailEnabled
-            - TomcatAcceptCount
-            - TomcatConnectionTimeout
-            - TomcatDefaultConnectorPort
-            - TomcatEnableLookups
-            - TomcatMaxThreads
-            - TomcatMinSpareThreads
-            - TomcatProtocol
-            - TomcatRedirectPort
-            - TomcatScheme
+          - TomcatContextPath
+          - CatalinaOpts
+          - JvmHeapOverride
+          - DBPoolMaxSize
+          - DBPoolMinSize
+          - DBMaxIdle
+          - DBMaxWaitMillis
+          - DBMinEvictableIdleTimeMillis
+          - DBMinIdle
+          - DBRemoveAbandoned
+          - DBRemoveAbandonedTimeout
+          - DBTestOnBorrow
+          - DBTestWhileIdle
+          - DBTimeBetweenEvictionRunsMillis
+          - MailEnabled
+          - TomcatAcceptCount
+          - TomcatConnectionTimeout
+          - TomcatDefaultConnectorPort
+          - TomcatEnableLookups
+          - TomcatMaxThreads
+          - TomcatMinSpareThreads
+          - TomcatProtocol
+          - TomcatRedirectPort
+          - TomcatScheme
 
     ParameterLabels:
       AssociatePublicIpAddress:
@@ -133,32 +129,28 @@ Metadata:
         default: DB Test While Idle?
       DBTimeBetweenEvictionRunsMillis:
         default: DB Time Between Eviction Runs
-      DeployEnvironment:
-        default: Deployment Environment
+      DeploymentAutomationRepository:
+        default: Deployment Automation Git Repository URL
+      DeploymentAutomationBranch:
+        default: Deployment Automation Branch
+      DeploymentAutomationPlaybook:
+        default: The Ansible playbook to invoke to initialise the instance.
+      DeploymentAutomationKeyName:
+        default: SSH keyname to use with the repository (Optional)
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       JiraProduct:
         default: Jira Product *
       JiraVersion:
         default: Version *
-      JiraDownloadUrl:
-        default: Jira Download URL
       JvmHeapOverride:
         default: JVM Heap Size Override
       KeyPairName:
         default: Key Name *
-      LocalAnsibleGitRepo:
-        default: Git repo for local-ansible
-      LocalAnsibleGitSshKeyName:
-        default: Git SSH key name for local-ansible
       MailEnabled:
         default: Enable App to Process Email
       SSLCertificateARN:
         default: SSL Certificate ARN
-      StartCollectd:
-        default: Start the collectd metrics agent
-      SubDomainName:
-        default: Subdomain for the product
       TomcatAcceptCount:
         default: Tomcat Accept Count
       TomcatConnectionTimeout:
@@ -426,39 +418,40 @@ Parameters:
     Default: 60000
     Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
     Type: String
-  DeployEnvironment:
-    Default: prod
-    AllowedValues:
-      - prod
-      - stg
-      - dr
-    ConstraintDescription: Must be either Production (prod), Staging (stg), or Disaster Recovery (dr).
-    Description: Environment of the application - either Production, Staging, or Disaster Recovery (DR)
+  DeploymentAutomationRepository:
+    Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
     Type: String
+    Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
+  DeploymentAutomationBranch:
+    Default: "master"
+    Type: String
+    Description: The deployment automation repository branch to pull from.
+  DeploymentAutomationPlaybook:
+    Default: "aws_jira_dc_node.yml"
+    Type: String
+    Description: The Ansible playbook to invoke to initialise the Jira node on first start.
+  DeploymentAutomationKeyName:
+    Default: ""
+    Type: String
+    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
     Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
     Type: String
-  JiraDownloadUrl:
-    Default: ''
-    Description: This parameter is used to download a custom Jira version for testing purposes. Leave this parameter blank to automatically download the official version you specified earlier.
-    Type: String
-    ConstraintDescription: Must be a valid Jira download url from version 7 or higher
   JiraProduct:
-    Default: All
+    Default: Software
     Description: The Jira product to install.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", "ServiceDesk", or "All"'
+    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
     AllowedValues:
-      - All
       - Core
-      - ServiceDesk
       - Software
+      - ServiceDesk
   JiraVersion:
-    Default: 7.13.1
+    Default: 7.13.3
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
-    ConstraintDescription: Must be a valid version number or 'latest'; for example, 7.13.1 for Jira Software or 4.0.0 for Jira Service Desk.
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
@@ -470,14 +463,6 @@ Parameters:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
     Type: String
-  LocalAnsibleGitRepo:
-    Default: ''
-    Description: For additional node customization, provide repo location to git clone. This must be in format git@bitbucket.org:atlassian/atlassian-local-ansible-example.git if using Bitbucket Cloud, or ssh://git@stash.example.com:7997/my-local-ansible.git (ie protocol included) if using Bitbucket Server.
-    Type: String
-  LocalAnsibleGitSshKeyName:
-    Default: ''
-    Description: If your git repo is private, provide an AWS Systems Manager ParameterStore key name that holds an SSH private key that can access the repo
-    Type: String
   MailEnabled:
     AllowedValues:
       - true
@@ -486,23 +471,11 @@ Parameters:
     Default: true
     Description: Enable mail processing and sending
     Type: String
-  SubDomainName:
-    Description: Leave this field blank to use your stack name as the sub-domain.
-    Default: ''
-    Type: String
   SSLCertificateARN:
     Default: ''
-    Description: Amazon Resource Name (ARN) of your SSL certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.
+    Description: "Amazon Resource Name (ARN) of your SSL certificate. Every certificate created with the AWS Certificate Manager has a corresponding ARN. To use a certificate generated outside of AWS, you need to import it into AWS Certificate Manager first. AWS Certificate Manager will provide you with its ARN, which you can use here."
     MinLength: 0
     MaxLength: 90
-    Type: String
-  StartCollectd:
-    Description: Start the 'collectd' metrics agent.
-    Default: true
-    AllowedValues:
-      - true
-      - false
-    ConstraintDescription: Must be 'true' or 'false'.
     Type: String
   TomcatAcceptCount:
     Default: 10
@@ -551,8 +524,6 @@ Conditions:
     !Equals [!Ref DBStorageType, Provisioned IOPS]
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
-  DoCollectd:
-    !Equals [!Ref StartCollectd, true]
   DoSetDBMasterUserPassword:
     !Not [!Equals [!Ref DBMasterUserPassword, '']]
   DoSSL:
@@ -842,60 +813,58 @@ Mappings:
     z1d.12xlarge:
       Arch: HVM64
       Jvmheap: 12288m
+
   AWSRegionArch2AMI:
     ap-northeast-1:
-      HVM64: ami-0cf893fd749668192
+      HVM64: ami-00d101850e971728d
       HVMG2: NOT_SUPPORTED
     ap-northeast-2:
-      HVM64: ami-0cce7f639d43e2f99
+      HVM64: ami-08ab3f7e72215fe91
       HVMG2: NOT_SUPPORTED
     ap-south-1:
-      HVM64: ami-0edf5109c7db7c9bb
+      HVM64: ami-00e782930f1c3dbc7
       HVMG2: NOT_SUPPORTED
     ap-southeast-1:
-      HVM64: ami-0f942b3a5ec25ba6e
+      HVM64: ami-0b5a47f8865280111
       HVMG2: NOT_SUPPORTED
     ap-southeast-2:
-      HVM64: ami-0ce26b744dd2725aa
+      HVM64: ami-0fb7513bcdc525c3b
       HVMG2: NOT_SUPPORTED
     ca-central-1:
-      HVM64: ami-0f00911ac0ecc4a49
+      HVM64: ami-08a9b721ecc5b0a53
       HVMG2: NOT_SUPPORTED
     eu-central-1:
-      HVM64: ami-095c850f256a0d0dc
+      HVM64: ami-0ebe657bc328d4e82
       HVMG2: NOT_SUPPORTED
     eu-north-1:
-      HVM64: ami-00628695157bd2bf2
+      HVM64: ami-1fb13961
       HVMG2: NOT_SUPPORTED
     eu-west-1:
-      HVM64: ami-03aa2fe7416c30d2a
+      HVM64: ami-030dbca661d402413
       HVMG2: NOT_SUPPORTED
     eu-west-2:
-      HVM64: ami-06fa36fac77d3abaf
+      HVM64: ami-0009a33f033d8b7b6
       HVMG2: NOT_SUPPORTED
     eu-west-3:
-      HVM64: ami-0e654b8758d77a751
+      HVM64: ami-0ebb3a801d5fb8b9b
       HVMG2: NOT_SUPPORTED
     sa-east-1:
-      HVM64: ami-00ff53cf89edb1a09
+      HVM64: ami-058141e091292ecf0
       HVMG2: NOT_SUPPORTED
     us-east-1:
-      HVM64: ami-052677aeee7ed18cc
+      HVM64: ami-0c6b1d09930fac512
       HVMG2: NOT_SUPPORTED
     us-east-2:
-      HVM64: ami-0348a3f275784a7b7
+      HVM64: ami-0ebbf2179e615c338
       HVMG2: NOT_SUPPORTED
     us-west-1:
-      HVM64: ami-0531c5f098fcb4e52
+      HVM64: ami-015954d5e5548d13b
       HVMG2: NOT_SUPPORTED
     us-west-2:
-      HVM64: ami-06692483732a50428
+      HVM64: ami-0cb72367e98845d43
       HVMG2: NOT_SUPPORTED
+
   JIRAProduct2NameAndVersion:
-    All:
-      name: jira-all
-      shortdisplayname: '"Jira All"'
-      fulldisplayname: '"Atlassian Jira All"'
     Core:
       name: jira-core
       shortdisplayname: '"Jira Core"'
@@ -964,6 +933,7 @@ Resources:
         - Key: Cluster
           Value: !Ref AWS::StackName
           PropagateAtLaunch: true
+
   ClusterNodeLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     DependsOn:
@@ -974,16 +944,6 @@ Resources:
       Comment: ''
       AWS::CloudFormation::Init:
         config:
-          packages:
-            !If
-              - DoCollectd
-              - yum:
-                  collectd: []
-                  collectd-java: []
-                  collectd-generic-jmx: []
-                  collectd-rrdtool: []
-                  collectd-disk: []
-              - !Ref "AWS::NoValue"
           files:
             /etc/atl:
               mode: "000640"
@@ -993,6 +953,22 @@ Resources:
                 'Fn::Join':
                   - "\n"
                   -
+                    - "ATL_PRODUCT_FAMILY=jira"
+                    - "ATL_DB_DRIVER=org.postgresql.Driver"
+                    - "ATL_JDBC_DB_NAME=jira"
+                    - "ATL_JDBC_USER=atljira"
+                    - "ATL_APP_DATA_MOUNT_ENABLED=false"
+                    - "ATL_ENABLED_PRODUCTS=Jira"
+                    - "ATL_ENABLED_SHARED_HOMES="
+                    - "ATL_NGINX_ENABLED=false"
+                    - "ATL_POSTGRES_ENABLED=false"
+                    - "ATL_RELEASE_S3_BUCKET=atlassian-software"
+                    - "ATL_RELEASE_S3_PATH=releases"
+                    - "ATL_SSL_SELF_CERT_ENABLED=false"
+                    - ""
+                    - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !Ref "JiraProduct"]
+                    - !Sub ["ATL_PRODUCT_VERSION=${ProductVersion}", ProductVersion: !Ref JiraVersion]
+                    - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
                     - !Sub ["ATL_CATALINA_OPTS=\"${CatalinaOpts} ${MailOpts}\"", { CatalinaOpts: !Ref CatalinaOpts, MailOpts: !If [DisableMail, '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true -Datlassian.mail.popdisabled=true', ''] }]
@@ -1001,7 +977,7 @@ Resources:
                     - !Sub ["ATL_DB_MAXWAITMILLIS=${DBMaxWaitMillis}", DBMaxWaitMillis: !Ref DBMaxWaitMillis]
                     - !Sub ["ATL_DB_MINEVICTABLEIDLETIMEMILLIS=${DBMinEvictableIdleTimeMillis}", DBMinEvictableIdleTimeMillis: !Ref DBMinEvictableIdleTimeMillis]
                     - !Sub ["ATL_DB_MINIDLE=${DBMinIdle}", DBMinIdle: !Ref DBMinIdle]
-                    - !Sub ["ATL_DB_PASSWORD=${DBMasterUserPassword}", DBMasterUserPassword: !Ref DBMasterUserPassword]
+                    - !Sub ["ATL_DB_ROOT_PASSWORD='${DBMasterUserPassword}'", DBMasterUserPassword: !Ref DBMasterUserPassword]
                     - !Sub ["ATL_DB_POOLMAXSIZE=${DBPoolMaxSize}", DBPoolMaxSize: !Ref DBPoolMaxSize]
                     - !Sub ["ATL_DB_POOLMINSIZE=${DBPoolMinSize}", DBPoolMinSize: !Ref DBPoolMinSize]
                     - !Sub ["ATL_DB_PORT=${DBEndpointPort}", DBEndpointPort: !GetAtt DB.Endpoint.Port]
@@ -1010,18 +986,13 @@ Resources:
                     - !Sub ["ATL_DB_TESTONBORROW=${DBTestOnBorrow}", DBTestOnBorrow: !Ref DBTestOnBorrow]
                     - !Sub ["ATL_DB_TESTWHILEIDLE=${DBTestWhileIdle}", DBTestWhileIdle: !Ref DBTestWhileIdle]
                     - !Sub ["ATL_DB_TIMEBETWEENEVICTIONRUNSMILLIS=${DBTimeBetweenEvictionRunsMillis}", DBTimeBetweenEvictionRunsMillis: !Ref DBTimeBetweenEvictionRunsMillis]
-                    - !Sub ["ATL_ENVIRONMENT=${DeployEnvironment}", DeployEnvironment: !Ref DeployEnvironment]
                     - !Sub ["ATL_HOSTEDZONE=${HostedZone}", HostedZone: !Ref HostedZone]
-                    - !Sub ["ATL_JDBC_PASSWORD=${DBPassword}", DBPassword: !Ref DBPassword]
+                    - !Sub ["ATL_JDBC_PASSWORD='${DBPassword}'", DBPassword: !Ref DBPassword]
                     - !Sub ["ATL_JDBC_URL=jdbc:postgresql://${DBEndpointAddress}:${DBEndpointPort}/jira", { DBEndpointAddress: !GetAtt DB.Endpoint.Address, DBEndpointPort: !GetAtt DB.Endpoint.Port }]
                     - !Sub ["ATL_JIRA_FULL_DISPLAY_NAME=${JiraFullDisplayName}", JiraFullDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "fulldisplayname"]]
-                    - !Sub ["ATL_JIRA_INSTALLER_DOWNLOAD_URL=${JiraDownloadUrl}", JiraDownloadUrl: !Ref JiraDownloadUrl]
                     - !Sub ["ATL_JIRA_NAME=${JiraProductName}", JiraProductName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]]
                     - !Sub ["ATL_JIRA_SHORT_DISPLAY_NAME=${JiraShortDisplayName}", JiraShortDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "shortdisplayname"]]
-                    - !Sub ["ATL_JIRA_VERSION=${JiraVersion}", JiraVersion: !Ref JiraVersion]
                     - !Sub ["ATL_JVM_HEAP=${AtlJvmHeap}", AtlJvmHeap: !If [OverrideHeap, !Ref 'JvmHeapOverride', !FindInMap [AWSInstanceType2Arch, !Ref ClusterNodeInstanceType, Jvmheap]]]
-                    - !Sub ["ATL_LOCALANSIBLE_REPO=${AnsibleRepo}", AnsibleRepo: !Ref LocalAnsibleGitRepo]
-                    - !Sub ["ATL_LOCALANSIBLE_SSHKEYNAME=${AnsibleKey}", AnsibleKey: !Ref LocalAnsibleGitSshKeyName]
                     - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !Ref CustomDnsName, !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
                     - !Sub ["ATL_TOMCAT_ACCEPTCOUNT=${TomcatAcceptCount}", TomcatAcceptCount: !Ref TomcatAcceptCount]
                     - !Sub ["ATL_TOMCAT_CONNECTIONTIMEOUT=${TomcatConnectionTimeout}", TomcatConnectionTimeout: !Ref TomcatConnectionTimeout]
@@ -1035,114 +1006,51 @@ Resources:
                     - !Sub ["ATL_TOMCAT_REDIRECTPORT=${TomcatRedirectPort}", TomcatRedirectPort: !Ref TomcatRedirectPort]
                     - !Sub ["ATL_TOMCAT_SCHEME=${TomcatScheme}", TomcatScheme: !If [SSLScheme, https, http]]
                     - !Sub ["ATL_TOMCAT_SECURE=${TomcatSecure}", TomcatSecure: !If [SSLScheme, true, false]]
-                    - "ATL_APP_DATA_MOUNT_ENABLED=false"
-                    - "ATL_DB_NAME=jira"
-                    - "ATL_DB_USER=jira"
-                    - "ATL_ENABLED_PRODUCTS=Jira"
-                    - "ATL_ENABLED_SHARED_HOMES="
-                    - "ATL_JDBC_DRIVER=org.postgresql.Driver"
-                    - "ATL_JDBC_USER=atljira"
-                    - "ATL_NGINX_ENABLED=false"
-                    - "ATL_POSTGRES_ENABLED=false"
-                    - "ATL_RELEASE_S3_BUCKET=atlassian-software"
-                    - "ATL_RELEASE_S3_PATH=releases"
-                    - "ATL_SSL_SELF_CERT_ENABLED=false"
-            /etc/cfn/cfn-hup.conf:
-              content:
-                !Join
-                  - "\n"
-                  -
-                    - "[main]"
-                    - !Sub ["region=${Region}", Region: !Ref "AWS::Region"]
-                    - !Sub ["stack=${StackId}", StackId: !Ref "AWS::StackId"]
-              mode: "000400"
-              owner: root
-              group: root
-            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
-              content:
-                !Join
-                  - "\n"
-                  -
-                    - "[cfn-auto-reloader-hook]"
-                    - triggers=post.update
-                    - "path=Resources.ClusterNodeLaunchConfig.Metadata.AWS::CloudFormation::Init"
-                    - !Sub
-                      - "action=/opt/aws/bin/cfn-init -v --stack ${StackName} --resource ClusterNodeLaunchConfig --region ${Region}"
-                      - StackName: !Ref "AWS::StackName"
-                        Region: !Ref "AWS::Region"
-                    - runas=root
-            /tmp/bootstrap_local_ansible:
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY=${DeployRepository}", DeployRepository: !Ref "DeploymentAutomationRepository"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
+
+            /opt/atlassian/bin/clone_deployment_repo:
               content: !Sub |
-                #!/usr/bin/env bash
-                # bootstrap any local-ansible repo that is passed in on this template
+                #!/bin/bash
+                key_location=/root/.ssh/deployment_repo_key
+                key_name="${DeploymentAutomationKeyName}"
 
-                localansiblerepopath=/home/localansible
-                gitkeylocation=/root/.ssh/gitkey
+                yum install -y git
+                if [[ ! -z "$key_name" ]]; then
+                    # Ensure awscli is up to date
+                    yum install -y awscli jq
+                    key_val=$(aws --region=${AWS::Region} ssm get-parameters --names "$key_name" --with-decryption | jq --raw-output '.Parameters[0] .Value')
+                    echo -e $key_val > $key_location
+                    chmod 600 $key_location
+                    export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $key_location"
+                else
+                    export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+                fi
 
-                # ensure awscli is up to date
-                pip install --upgrade awscli
-                gitkey=$(aws --region=${AWS::Region} ssm get-parameters --names "${LocalAnsibleGitSshKeyName}" --with-decryption | jq --raw-output '.Parameters[0] .Value')
-                echo -e $gitkey > $gitkeylocation
-                chmod 600 $gitkeylocation
-                export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $gitkeylocation"
-
-                mkdir -p $localansiblerepopath
-                cd $localansiblerepopath
-                git clone "${LocalAnsibleGitRepo}"
-                cp $localansiblerepopath/*/local-ansible-run /usr/local/bin/local-ansible-run
-                chmod 750 /usr/local/bin/local-ansible-run
+                git clone "${DeploymentAutomationRepository}" -b "${DeploymentAutomationBranch}" /opt/atlassian/dc-deployments-automation/
               mode: "000750"
               owner: root
               group: root
+
           commands:
-            010_make_mount_point:
-              command: mkdir -p /media/atl
+            070_create_atl_dir:
+              test: "test ! -d /opt/atlassian/"
+              command: mkdir -p /opt/atlassian
               ignoreErrors: false
-            020_add_nfs_mount:
-              command:
-                !Join
-                  - ""
-                  -
-                    - "echo "
-                    - !If
-                      - UseHostedZone
-                      - !Ref EFSCname
-                      - !Sub
-                          - $(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone).${ElasticFileSystem}".efs."${Region}".amazonaws.com"
-                          - ElasticFileSystem: !Ref ElasticFileSystem
-                            Region: !Ref "AWS::Region"
-                    - ":/ /media/atl nfs4 rw,vers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0 >>/etc/fstab"
-              ignoreErrors: false
-            030_mount_all:
-              command: mount -a
+            071_install_packages:
+              command: yum install -y git python-virtualenv
               ignoreErrors: true
-            040_make_shared_home_dir:
-              command: mkdir -p /media/atl/jira/shared
-              ignoreErrors: false
-            050_ssm_group:
-              command: groupadd ssm-user --gid 400 || groupmod -g 400 ssm-user
-            051_ssm_user:
-              command: useradd ssm-user --uid 400 -g ssm-user || usermod -u 400 ssm-user
-            052_ensure_ssm:
-              command: yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+            072_clone_atl_scripts:
+              test: "test ! -d /opt/atlassian/dc-deployments-automation/"
+              command: /opt/atlassian/bin/clone_deployment_repo
               ignoreErrors: true
-            090_bootstrap_local_ansible:
-              command: /tmp/bootstrap_local_ansible > /var/log/bootstrap_local_ansible.log 2>&1
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: true
-                ensureRunning: true
-                files:
-                  - /etc/cfn/cfn-hup.conf
-                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
-              collectd:
-                !If [DoCollectd, {enabled: true, ensureRunning: true}, !Ref 'AWS::NoValue']
-              rpcbind:
-                enabled: true
-                ensureRunning: true
-                packages:
-                  yum: [nfs-utils]
+            080_run_atl_init_node:
+              command: !Sub |
+                cd /opt/atlassian/dc-deployments-automation/ && ./bin/install-ansible && ./bin/ansible-with-atl-env inv/aws_node_local ${DeploymentAutomationPlaybook} /var/log/ansible-bootstrap.log
+              ignoreErrors: true
+
     Properties:
       AssociatePublicIpAddress: false
       BlockDeviceMappings:
@@ -1175,7 +1083,7 @@ Resources:
               - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", Region: !Ref "AWS::Region"]
               - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", StackName: !Ref "AWS::StackName"]
               - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", Region: !Ref "AWS::Region"]
-# Elastic file system
+
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
