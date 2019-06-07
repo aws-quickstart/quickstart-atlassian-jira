@@ -689,6 +689,7 @@ Resources:
         DeploymentAutomationRepository: !Ref 'DeploymentAutomationRepository'
         DeploymentAutomationBranch: !Ref 'DeploymentAutomationBranch'
         DeploymentAutomationKeyName: !Ref 'DeploymentAutomationKeyName'
+        DeploymentAutomationPlaybook: !Ref 'DeploymentAutomationPlaybook'
         HostedZone: !Ref 'HostedZone'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'

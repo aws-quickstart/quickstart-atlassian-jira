@@ -561,12 +561,8 @@ Parameters:
     Type: String
 
 Conditions:
-  DBProvisionedIops:
-    !Equals [!Ref DBStorageType, Provisioned IOPS]
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
-  DoSetDBMasterUserPassword:
-    !Not [!Equals [!Ref DBMasterUserPassword, '']]
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
   KeyProvided:
@@ -982,7 +978,6 @@ Resources:
     DependsOn:
       - EFSMountAz1
       - EFSMountAz2
-      - DB
     Metadata:
       Comment: ''
       AWS::CloudFormation::Init:
@@ -1154,7 +1149,7 @@ Resources:
       Comment: Route53 cname for the efs
       Name: !If [ UseHostedZone, !Join ['.', [!Ref 'AWS::StackName', 'efs', !Ref 'HostedZone']], '']
       Type: CNAME
-      TTL: 900
+      TTL: '900'
       ResourceRecords:
         - !Join ['.', [!Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws.com.']]
 # Database
@@ -1204,7 +1199,7 @@ Resources:
         IdleTimeout: 3600
       CrossZone: true
       Listeners:
-        - LoadBalancerPort: 80
+        - LoadBalancerPort: '80'
           Protocol: HTTP
           InstancePort: !Ref TomcatDefaultConnectorPort
           InstanceProtocol: HTTP
@@ -1222,10 +1217,10 @@ Resources:
           - !Ref AWS::NoValue
       HealthCheck:
         Target: !If [UseContextPath, !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, !Ref TomcatContextPath, '/status']], !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, '/status']]]
-        Timeout: 29
-        Interval: 30
-        UnhealthyThreshold: 2
-        HealthyThreshold: 2
+        Timeout: '29'
+        Interval: '30'
+        UnhealthyThreshold: '2'
+        HealthyThreshold: '2'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
       Subnets: !Split [ ",", !ImportValue ATL-PubNets]
@@ -1242,7 +1237,7 @@ Resources:
       Comment: Route53 cname for the ALB
       Name: !Join ['.', [!Ref "AWS::StackName", !Ref 'HostedZone']]
       Type: CNAME
-      TTL: 900
+      TTL: '900'
       ResourceRecords:
         - !GetAtt LoadBalancer.DNSName
   SecurityGroup:
@@ -1270,7 +1265,7 @@ Resources:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       GroupId: !Ref SecurityGroup
-      IpProtocol: -1
+      IpProtocol: '-1'
       FromPort: -1
       ToPort: -1
       SourceSecurityGroupId: !Ref SecurityGroup
