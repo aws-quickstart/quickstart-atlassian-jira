@@ -307,11 +307,11 @@ Parameters:
     Type: String
   DBEngine:
     Default: 'PostgreSQL'
-    Description: 'Database Engine to use for the application. PostgreSQL or AWS Aurora PostgreSQL'
+    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
     AllowedValues:
       - 'PostgreSQL'
-      - 'AWS Aurora PostgreSQL'
-    ConstraintDescription: Must be 'AWS Aurora PostgreSQL' or 'PostgreSQL'.
+      - 'Amazon Aurora PostgreSQL'
+    ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
   DBInstanceClass:
     Default: db.m5.large
