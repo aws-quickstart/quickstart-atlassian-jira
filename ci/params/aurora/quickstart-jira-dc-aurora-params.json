@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "DBEngine",
-    "ParameterValue": "AWS Aurora PostgreSQL"
+    "ParameterValue": "Amazon Aurora PostgreSQL"
   },
   {
     "ParameterKey": "DBInstanceClass",
