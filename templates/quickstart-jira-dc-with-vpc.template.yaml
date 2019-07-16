@@ -493,7 +493,7 @@ Parameters:
     Default: true
     AllowedValues: [true, false]
     ConstraintDescription: Must be 'true' or 'false'.
-    Description: Controls if the load balancer is deployed as internet-facing (visible to all on internet) or internal (private to VPC)
+    Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
     Type: String
   KeyPairName:
     Default: ''
