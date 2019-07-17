@@ -1,7 +1,7 @@
 [
     {
-        "ParameterKey": "AvailabilityZones",
-        "ParameterValue": "$[taskcat_genaz_2]"
+        "ParameterKey": "AssociatePublicIpAddress",
+        "ParameterValue": "true"
     },
     {
         "ParameterKey": "DBMasterUserPassword",
@@ -24,27 +24,23 @@
         "ParameterValue": "Provisioned IOPS"
     },
     {
-        "ParameterKey": "CustomDnsName",
-        "ParameterValue": "qsjiraci.awsqs.com"
-    },
-    {
-        "ParameterKey":"QSS3BucketName",
-        "ParameterValue":"$[taskcat_autobucket]"
-    },
-    {
-        "ParameterKey":"QSS3KeyPrefix",
-        "ParameterValue":"quickstart-atlassian-jira/"
-    },
-    {
-        "ParameterKey":"CidrBlock",
-        "ParameterValue":"10.0.0.0/16"
-    },
-    {
-        "ParameterKey":"AccessCIDR",
-        "ParameterValue":"10.0.0.0/16"
-    },
-    {
         "ParameterKey": "KeyPairName",
+        "ParameterValue": "replaced-by-taskcat-override-file"
+    },
+    {
+        "ParameterKey": "CidrBlock",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "CustomDnsName",
+        "ParameterValue": "replaced-by-taskcat-override-file"
+    },
+    {
+        "ParameterKey": "TomcatScheme",
+        "ParameterValue": "https"
+    },
+    {
+        "ParameterKey": "SSLCertificateARN",
         "ParameterValue": "replaced-by-taskcat-override-file"
     }
 ]
