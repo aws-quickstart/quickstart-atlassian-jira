@@ -30,7 +30,7 @@ Metadata:
       - Label:
           default: Networking
         Parameters:
-          - AssociatePublicIpAddress
+          - InternetFacingLoadBalancer
           - CidrBlock
           - KeyPairName
           - SSLCertificateARN
@@ -75,8 +75,6 @@ Metadata:
           - TomcatScheme
 
     ParameterLabels:
-      AssociatePublicIpAddress:
-        default: Assign public IP
       CatalinaOpts:
         default: Catalina options
       CidrBlock:
@@ -139,6 +137,8 @@ Metadata:
         default: SSH keyname to use with the repository (Optional)
       HostedZone:
         default: Route 53 Hosted Zone (optional)
+      InternetFacingLoadBalancer:
+        default: Make instance internet facing
       JiraProduct:
         default: Jira Product *
       JiraVersion:
@@ -173,12 +173,6 @@ Metadata:
         default: Tomcat protocol Scheme
 
 Parameters:
-  AssociatePublicIpAddress:
-    Default: true
-    AllowedValues: [true, false]
-    ConstraintDescription: Must be 'true' or 'false'.
-    Description: Controls if the EC2 instances are assigned a public IP address
-    Type: String
   CatalinaOpts:
     Default: ''
     Description: Pass in any additional jvm options to tune Catalina
@@ -439,6 +433,12 @@ Parameters:
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
     Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
     Type: String
+  InternetFacingLoadBalancer:
+    Default: true
+    AllowedValues: [true, false]
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
+    Type: String
   JiraProduct:
     Default: Software
     Description: The Jira product to install.
@@ -543,7 +543,7 @@ Conditions:
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp:
-    !Equals [!Ref AssociatePublicIpAddress, 'true']
+    !Equals [!Ref InternetFacingLoadBalancer, 'true']
 Mappings:
   AWSInstanceType2Arch:
     c4.xlarge:
