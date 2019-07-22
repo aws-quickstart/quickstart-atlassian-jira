@@ -37,7 +37,7 @@ Metadata:
         Parameters:
           - AccessCIDR
           - AvailabilityZones
-          - AssociatePublicIpAddress
+          - InternetFacingLoadBalancer
           - KeyPairName
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
@@ -93,8 +93,6 @@ Metadata:
     ParameterLabels:
       AccessCIDR:
         default: Trusted IP range
-      AssociatePublicIpAddress:
-        default: Assign public IP
       AvailabilityZones:
         default: Availability Zones
       CatalinaOpts:
@@ -159,6 +157,8 @@ Metadata:
         default: SSH keyname to use with the repository (Optional)
       HostedZone:
         default: Route 53 Hosted Zone (optional)
+      InternetFacingLoadBalancer:
+        default: Make instance internet facing
       JiraProduct:
         default: Jira Product *
       JiraVersion:
@@ -210,12 +210,6 @@ Metadata:
 
 Parameters:
   # Jira DC template parameters
-  AssociatePublicIpAddress:
-    Default: true
-    AllowedValues: [true, false]
-    ConstraintDescription: Must be 'true' or 'false'.
-    Description: Controls if the EC2 instances are assigned a public IP address
-    Type: String
   CatalinaOpts:
     Default: ''
     Description: Pass in any additional jvm options to tune Catalina
@@ -512,6 +506,12 @@ Parameters:
     Default: ''
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
+  InternetFacingLoadBalancer:
+    Default: true
+    AllowedValues: [true, false]
+    ConstraintDescription: Must be 'true' or 'false'.
+    Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
+    Type: String
   KeyPairName:
     Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
@@ -664,7 +664,7 @@ Resources:
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-jira-dc.template.yaml
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
-        AssociatePublicIpAddress: !Ref 'AssociatePublicIpAddress'
+        InternetFacingLoadBalancer: !Ref 'InternetFacingLoadBalancer'
         CatalinaOpts: !Ref 'CatalinaOpts'
         CidrBlock: !Ref 'AccessCIDR'
         ClusterNodeInstanceType: !Ref 'ClusterNodeInstanceType'
