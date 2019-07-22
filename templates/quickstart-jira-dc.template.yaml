@@ -19,7 +19,7 @@ Metadata:
       - Label:
           default: Database
         Parameters:
-          - DBEngine
+          # - DBEngine
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -90,8 +90,8 @@ Metadata:
         default: Cluster node instance volume size
       CustomDnsName:
         default: Existing DNS name (optional)
-      DBEngine:
-        default: The database engine to deploy with
+      # DBEngine:
+      #   default: The database engine to deploy with
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -299,14 +299,15 @@ Parameters:
     Default: ""
     Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
     Type: String
-  DBEngine:
-    Default: 'PostgreSQL'
-    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
-    AllowedValues:
-      - 'PostgreSQL'
-      - 'Amazon Aurora PostgreSQL'
-    ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
-    Type: String
+  # This parameter will be enabled when support for Aurora is added. Currently "dark" feature.
+  # DBEngine:
+  #   Default: 'PostgreSQL'
+  #   Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
+  #   AllowedValues:
+  #     - 'PostgreSQL'
+  #     - 'Amazon Aurora PostgreSQL'
+  #   ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
+  #   Type: String
   DBInstanceClass:
     Default: db.m5.large
     AllowedValues:
@@ -1166,7 +1167,7 @@ Resources:
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-database-for-atlassian-services.yaml
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
-        DatabaseImplementation: !Ref DBEngine
+        DatabaseImplementation: PostgreSQL
         DBSecurityGroup: !Ref SecurityGroup
         DBAutoMinorVersionUpgrade: "true"
         DBBackupRetentionPeriod: "1"
