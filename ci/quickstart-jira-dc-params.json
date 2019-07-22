@@ -4,7 +4,7 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
-        "ParameterKey": "AssociatePublicIpAddress",
+        "ParameterKey": "InternetFacingLoadBalancer",
         "ParameterValue": "false"
     },
     {

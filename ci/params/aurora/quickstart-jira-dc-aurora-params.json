@@ -1,6 +1,6 @@
 [
   {
-    "ParameterKey": "AssociatePublicIpAddress",
+    "ParameterKey": "InternetFacingLoadBalancer",
     "ParameterValue": "false"
   },
   {

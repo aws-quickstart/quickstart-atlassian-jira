@@ -1,11 +1,11 @@
 [
     {
-        "ParameterKey": "AssociatePublicIpAddress",
+        "ParameterKey": "InternetFacingLoadBalancer",
         "ParameterValue": "true"
     },
     {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "$[taskcat_genpass_8]"
+        "ParameterValue": "$[taskcat_genpass_8S]"
     },
     {
         "ParameterKey": "DBMultiAZ",
@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "DBPassword",
-        "ParameterValue": "$[taskcat_genpass_8]"
+        "ParameterValue": "$[taskcat_genpass_8S]"
     },
     {
         "ParameterKey": "DBStorage",
