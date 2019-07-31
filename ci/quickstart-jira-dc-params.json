@@ -4,10 +4,6 @@
         "ParameterValue": "$[taskcat_genaz_2]"
     },
     {
-        "ParameterKey": "InternetFacingLoadBalancer",
-        "ParameterValue": "false"
-    },
-    {
         "ParameterKey": "DBMasterUserPassword",
         "ParameterValue": "$[taskcat_genpass_8S]"
     },
