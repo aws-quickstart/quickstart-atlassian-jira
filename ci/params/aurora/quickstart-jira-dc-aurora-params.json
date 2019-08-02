@@ -1,0 +1,38 @@
+[
+  {
+    "ParameterKey": "InternetFacingLoadBalancer",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DBMasterUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "$[taskcat_autobucket]"
+  },
+  {
+    "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": "quickstart-atlassian-jira/"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "replaced-by-taskcat-override-file"
+  },
+  {
+    "ParameterKey": "DBEngine",
+    "ParameterValue": "Amazon Aurora PostgreSQL"
+  },
+  {
+    "ParameterKey": "DBInstanceClass",
+    "ParameterValue": "db.r4.large"
+  }
+]
