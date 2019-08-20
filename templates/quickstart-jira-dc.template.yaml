@@ -1103,7 +1103,6 @@ Resources:
           Ebs:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
-          Ebs: {}
           NoDevice: true
       KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
