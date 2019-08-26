@@ -968,8 +968,7 @@ Resources:
       LaunchConfigurationName: !Ref ClusterNodeLaunchConfig
       MaxSize: !Ref ClusterNodeMax
       MinSize: !Ref ClusterNodeMin
-      LoadBalancerNames:
-        - !Ref LoadBalancer
+      TargetGroupARNs: [!Ref MainTargetGroup]
       VPCZoneIdentifier: !Split [ ",", !ImportValue ATL-PriNets]
       Tags:
         - Key: Name
@@ -1192,48 +1191,64 @@ Resources:
 
 # Loadbalancer
   LoadBalancer:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      AppCookieStickinessPolicy:
-        - CookieName: JSESSIONID
-          PolicyName: JSessionIdStickiness
-      ConnectionDrainingPolicy:
-        Enabled: true
-        Timeout: 30
-      ConnectionSettings:
-        IdleTimeout: 3600
-      CrossZone: true
-      Listeners:
-        - LoadBalancerPort: '80'
-          Protocol: HTTP
-          InstancePort: !Ref TomcatDefaultConnectorPort
-          InstanceProtocol: HTTP
-          PolicyNames:
-            - JSessionIdStickiness
-        - !If
-          - DoSSL
-          - LoadBalancerPort: '443'
-            Protocol: HTTPS
-            InstancePort: !Ref TomcatDefaultConnectorPort
-            InstanceProtocol: HTTP
-            PolicyNames:
-              - JSessionIdStickiness
-            SSLCertificateId: !Ref SSLCertificateARN
-          - !Ref AWS::NoValue
-      HealthCheck:
-        Target: !If [UseContextPath, !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, !Ref TomcatContextPath, '/status']], !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, '/status']]]
-        Timeout: '29'
-        Interval: '30'
-        UnhealthyThreshold: '2'
-        HealthyThreshold: '2'
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
       Subnets: !Split [ ",", !ImportValue ATL-PubNets]
       Tags:
         - Key: Name
-          Value: !Sub ["${StackName}-LoadBalancer", {StackName: !Ref 'AWS::StackName'}]
+          Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
         - Key: Cluster
           Value: !Ref AWS::StackName
+
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn:
+            !If
+              - DoSSL
+              - !Ref SSLCertificateARN
+              - !Ref AWS::NoValue
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MainTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: !If [DoSSL, 443, 80]
+      Protocol: !If [DoSSL, HTTPS, HTTP]
+
+  MainTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: !Ref TomcatDefaultConnectorPort
+      Protocol: HTTP
+      VpcId: !ImportValue ATL-VPCID
+      HealthCheckIntervalSeconds: 20
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      Matcher:
+        HttpCode: '200'
+      HealthCheckPath: !If [UseContextPath, !Join ['', [!Ref 'TomcatContextPath', '/status']], '/status']
+      HealthCheckPort: !Ref TomcatDefaultConnectorPort
+      HealthCheckProtocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: 'true'
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: deregistration_delay.timeout_seconds
+          Value: '30'
+      Tags:
+        - Key: Name
+          Value: MainTargetGroup
+        - Key: Cluster
+          Value: !Ref AWS::StackName
+    DependsOn:
+      - LoadBalancer
   LoadBalancerCname:
     Condition: UseHostedZone
     Type: AWS::Route53::RecordSet
