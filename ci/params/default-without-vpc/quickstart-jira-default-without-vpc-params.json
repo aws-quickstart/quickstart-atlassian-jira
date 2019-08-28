@@ -1,0 +1,34 @@
+[
+    {
+        "ParameterKey": "InternetFacingLoadBalancer",
+        "ParameterValue": "true"
+    },
+    {
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "$[taskcat_genpass_8S]"
+    },
+    {
+        "ParameterKey": "DBMultiAZ",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "DBPassword",
+        "ParameterValue": "$[taskcat_genpass_8S]"
+    },
+    {
+        "ParameterKey": "DBStorage",
+        "ParameterValue": "100"
+    },
+    {
+        "ParameterKey": "DBStorageType",
+        "ParameterValue": "Provisioned IOPS"
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": "replaced-by-taskcat-override-file"
+    },
+    {
+        "ParameterKey": "CidrBlock",
+        "ParameterValue": "0.0.0.0/0"
+    }
+]

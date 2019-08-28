@@ -33,6 +33,6 @@
   },
   {
     "ParameterKey": "DBInstanceClass",
-    "ParameterValue": "db.r4.large"
+    "ParameterValue": "db.r5.large"
   }
 ]

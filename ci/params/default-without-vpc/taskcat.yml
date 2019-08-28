@@ -8,6 +8,6 @@ global:
   reporting: true
 
 tests:
-  jira-aurora:
-    parameter_input: params/aurora/quickstart-jira-dc-aurora-params.json
+  jira:
+    parameter_input: params/default-without-vpc/quickstart-jira-default-without-vpc-params.json
     template_file: quickstart-jira-dc.template.yaml
