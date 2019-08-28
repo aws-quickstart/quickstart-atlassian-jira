@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "$[taskcat_genpass_8S]"
+        "ParameterValue": "$[taskcat_genpass_8A]#"
     },
     {
         "ParameterKey": "DBMultiAZ",
@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "DBPassword",
-        "ParameterValue": "$[taskcat_genpass_8S]"
+        "ParameterValue": "$[taskcat_genpass_8A]#"
     },
     {
         "ParameterKey": "DBStorage",

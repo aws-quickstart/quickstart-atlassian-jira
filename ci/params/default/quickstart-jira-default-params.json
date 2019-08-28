@@ -5,7 +5,7 @@
     },
     {
         "ParameterKey": "DBMasterUserPassword",
-        "ParameterValue": "$[taskcat_genpass_8S]"
+        "ParameterValue": "$[taskcat_genpass_8A]#"
     },
     {
         "ParameterKey": "DBMultiAZ",
@@ -13,7 +13,7 @@
     },
     {
         "ParameterKey": "DBPassword",
-        "ParameterValue": "$[taskcat_genpass_8S]"
+        "ParameterValue": "$[taskcat_genpass_8A]#"
     },
     {
         "ParameterKey": "DBStorage",
@@ -30,5 +30,13 @@
     {
         "ParameterKey": "CidrBlock",
         "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-atlassian-jira/"
     }
 ]
