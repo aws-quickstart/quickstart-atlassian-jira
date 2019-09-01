@@ -32,15 +32,11 @@
         "ParameterValue": "0.0.0.0/0"
     },
     {
-        "ParameterKey": "CustomDnsName",
-        "ParameterValue": "replaced-by-taskcat-override-file"
+        "ParameterKey": "QSS3BucketName",
+        "ParameterValue": "$[taskcat_autobucket]"
     },
     {
-        "ParameterKey": "TomcatScheme",
-        "ParameterValue": "https"
-    },
-    {
-        "ParameterKey": "SSLCertificateARN",
-        "ParameterValue": "replaced-by-taskcat-override-file"
+        "ParameterKey": "QSS3KeyPrefix",
+        "ParameterValue": "quickstart-atlassian-jira/"
     }
 ]
