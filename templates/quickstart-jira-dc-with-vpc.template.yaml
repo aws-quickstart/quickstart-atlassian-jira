@@ -23,7 +23,7 @@ Metadata:
       - Label:
           default: Database
         Parameters:
-          # - DBEngine
+          - DBEngine
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -107,8 +107,8 @@ Metadata:
         default: Cluster node instance volume size
       CustomDnsName:
         default: Existing DNS name (optional)
-      # DBEngine:
-      #   default: The database engine to deploy with
+      DBEngine:
+        default: The database engine to deploy with
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -326,15 +326,14 @@ Parameters:
     Default: ""
     Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
     Type: String
-  # This parameter will be enabled when support for Aurora is added. Currently "dark" feature.
-  # DBEngine:
-  #   Default: 'PostgreSQL'
-  #   Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
-  #   AllowedValues:
-  #     - 'PostgreSQL'
-  #     - 'Amazon Aurora PostgreSQL'
-  #   ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
-  #   Type: String
+  DBEngine:
+    Default: 'PostgreSQL'
+    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
+    AllowedValues:
+      - 'PostgreSQL'
+      - 'Amazon Aurora PostgreSQL'
+    ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
+    Type: String
   DBInstanceClass:
     Default: db.m5.large
     AllowedValues:
@@ -344,12 +343,12 @@ Parameters:
       - db.m5.4xlarge
       - db.m5.12xlarge
       - db.m5.24xlarge
-      - r5.large
-      - r5.xlarge
-      - r5.2xlarge
-      - r5.4xlarge
-      - r5.12xlarge
-      - r5.24xlarge
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.12xlarge
+      - db.r5.24xlarge
       - db.r4.large
       - db.r4.xlarge
       - db.r4.2xlarge
@@ -371,12 +370,12 @@ Parameters:
       - db.t2.xlarge
       - db.t2.2xlarge
     ConstraintDescription: Must be a valid RDS instance class, from the selection list
-    Description: RDS instance type # (must be r family if using Aurora)
+    Description: RDS instance type (must be r family if using Aurora).
     Type: String
   DBIops:
     Default: 1000
     ConstraintDescription: 'Must be in the range 1000 - 30000'
-    Description: 'Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00.' # (not used for Aurora)
+    Description: 'Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00 (not used for Aurora).'
     MaxValue: 30000
     MinValue: 1000
     Type: Number
@@ -438,7 +437,7 @@ Parameters:
     Type: String
   DBStorage:
     Default: 200
-    Description: Database allocated storage size, in gigabytes (GB). If you choose Provisioned IOPS, storage should be between 100 and 6144. # (not used for Aurora)
+    Description: Database allocated storage size, in gigabytes (GB). If you choose Provisioned IOPS, storage should be between 100 and 6144 (not used for Aurora).
     Type: Number
   DBStorageEncrypted:
     Default: false
@@ -453,7 +452,7 @@ Parameters:
       - General Purpose (SSD)
       - Provisioned IOPS
     ConstraintDescription: Must be 'General Purpose (SSD)' or 'Provisioned IOPS'.
-    Description: Database storage type #(not used for Aurora)
+    Description: Database storage type (not used for Aurora).
     Type: String
   DBTestOnBorrow:
     Default: false
@@ -575,7 +574,7 @@ Parameters:
     Type: String
     AllowedValues: [http, https]
 
-    # VPC parameters
+  # VPC parameters
   AccessCIDR:
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
     Description: CIDR Block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
@@ -673,7 +672,7 @@ Resources:
         ClusterNodeMin: !Ref 'ClusterNodeMin'
         ClusterNodeVolumeSize: !Ref 'ClusterNodeVolumeSize'
         CustomDnsName: !Ref 'CustomDnsName'
-        # DBEngine: !Ref DBEngine
+        DBEngine: !Ref DBEngine
         DBInstanceClass: !Ref 'DBInstanceClass'
         DBIops: !Ref 'DBIops'
         DBMasterUserPassword: !Ref 'DBMasterUserPassword'

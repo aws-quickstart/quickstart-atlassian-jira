@@ -5,11 +5,11 @@
   },
   {
     "ParameterKey": "DBMasterUserPassword",
-    "ParameterValue": "$[taskcat_genpass_8S]"
+    "ParameterValue": "f925dO1ry_"
   },
   {
     "ParameterKey": "DBPassword",
-    "ParameterValue": "$[taskcat_genpass_8S]"
+    "ParameterValue": "f925dO1ry_"
   },
   {
     "ParameterKey": "QSS3BucketName",
@@ -33,6 +33,6 @@
   },
   {
     "ParameterKey": "DBInstanceClass",
-    "ParameterValue": "db.r4.large"
+    "ParameterValue": "db.r5.large"
   }
 ]
