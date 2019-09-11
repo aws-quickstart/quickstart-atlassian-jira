@@ -33,7 +33,7 @@
     },
     {
         "ParameterKey":"QSS3KeyPrefix",
-        "ParameterValue":"quickstart-atlassian-services/"
+        "ParameterValue":"quickstart-atlassian-jira/"
     },
     {
         "ParameterKey":"AccessCIDR",
