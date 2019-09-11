@@ -47,6 +47,7 @@ Metadata:
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
           - DeploymentAutomationKeyName
+          - EnableCWLogs
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
@@ -138,6 +139,8 @@ Metadata:
         default: The Ansible playbook to invoke to initialise the instance.
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
+      EnableCWLogs:
+        default: Enable sending logs to CloudWatch? (This may occur additional charges.)
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       InternetFacingLoadBalancer:
@@ -455,6 +458,12 @@ Parameters:
     Default: ""
     Type: String
     Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
+  EnableCWLogs:
+    Default: true
+    Type: String
+    Description: Enable sending logs to CloudWatch? (This may occur additional charges.)
+    AllowedValues: [true, false]
+    ConstraintDescription: Must be 'true' or 'false'.
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -1060,6 +1069,7 @@ Resources:
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
+                    - !Sub ["ATL_AWS_ENABLE_CW_LOGS=${EnableCWLogs}", EnableCWLogs: !Ref "EnableCWLogs"]
 
             /opt/atlassian/bin/clone_deployment_repo:
               content: !Sub |
