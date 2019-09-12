@@ -140,7 +140,7 @@ Metadata:
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
       CloudWatchIntegration:
-        default: Enable CloudWatch Features
+        default: Enable CloudWatch integration
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       InternetFacingLoadBalancer:
