@@ -705,6 +705,7 @@ Resources:
         DeploymentAutomationBranch: !Ref 'DeploymentAutomationBranch'
         DeploymentAutomationKeyName: !Ref 'DeploymentAutomationKeyName'
         DeploymentAutomationPlaybook: !Ref 'DeploymentAutomationPlaybook'
+        CloudWatchIntegration: !Ref 'CloudWatchIntegration'
         HostedZone: !Ref 'HostedZone'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
