@@ -495,10 +495,9 @@ Parameters:
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
   KeyPairName:
-    Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
   MailEnabled:
     AllowedValues:
       - true

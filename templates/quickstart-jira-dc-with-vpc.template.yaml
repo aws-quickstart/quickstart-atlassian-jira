@@ -522,10 +522,9 @@ Parameters:
     Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
     Type: String
   KeyPairName:
-    Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
   MailEnabled:
     AllowedValues:
       - true
