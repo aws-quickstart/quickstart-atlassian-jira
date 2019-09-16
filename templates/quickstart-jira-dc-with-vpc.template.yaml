@@ -25,6 +25,7 @@ Metadata:
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
           - DeploymentAutomationKeyName
+          - DeploymentAutomationCustomParams
       - Label:
           default: Database
         Parameters:
@@ -152,7 +153,9 @@ Metadata:
       DeploymentAutomationPlaybook:
         default: The Ansible playbook to invoke to initialize the instance
       DeploymentAutomationKeyName:
-        default: SSH keyname to use with the repository
+        default: SSH keyname to use with the repository (Optional)
+      DeploymentAutomationCustomParams:
+        default: Custom command-line parameters for Ansible. (Optional)
       CloudWatchIntegration:
         default: Enable CloudWatch integration
       HostedZone:
@@ -477,7 +480,11 @@ Parameters:
   DeploymentAutomationPlaybook:
     Default: "aws_jira_dc_node.yml"
     Type: String
-    Description: The Ansible playbook to invoke to initialize the Jira node on first start.
+    Description: The Ansible playbook to invoke to initialise the Jira node on first start.
+  DeploymentAutomationCustomParams:
+    Default: ""
+    Type: String
+    Description: Additional command-line options for the `ansible-playbook` command. See the repository README for more details. (Optional)
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
@@ -701,6 +708,7 @@ Resources:
         DeploymentAutomationBranch: !Ref 'DeploymentAutomationBranch'
         DeploymentAutomationKeyName: !Ref 'DeploymentAutomationKeyName'
         DeploymentAutomationPlaybook: !Ref 'DeploymentAutomationPlaybook'
+        DeploymentAutomationCustomParams: !Ref 'DeploymentAutomationCustomParams'
         CloudWatchIntegration: !Ref 'CloudWatchIntegration'
         HostedZone: !Ref 'HostedZone'
         JiraProduct: !Ref 'JiraProduct'
