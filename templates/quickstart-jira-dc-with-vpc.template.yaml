@@ -19,8 +19,13 @@ Metadata:
           - ClusterNodeInstanceType
           - ClusterNodeMax
           - ClusterNodeMin
-          - ClusterNodeVolumeSize
-      - Label:
+          - ClusterNodeVolumeSize 
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
+          - DeploymentAutomationKeyName
+          - CloudWatchIntegration
+     - Label:
           default: Database
         Parameters:
           - DBEngine
@@ -50,14 +55,6 @@ Metadata:
         Parameters:
           - CustomDnsName
           - HostedZone
-      - Label:
-          default: Cluster Node Deployment Repository; this is used to install and configure the application.
-        Parameters:
-          - DeploymentAutomationRepository
-          - DeploymentAutomationBranch
-          - DeploymentAutomationPlaybook
-          - DeploymentAutomationKeyName
-          - CloudWatchIntegration
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
