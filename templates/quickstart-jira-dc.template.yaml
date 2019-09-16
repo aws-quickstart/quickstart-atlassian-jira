@@ -580,8 +580,6 @@ Conditions:
     !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
-  KeyProvided:
-    !Not [!Equals [!Ref KeyPairName, '']]
   SSLScheme:
     !Equals [!Ref TomcatScheme, 'https']
   OverrideHeap:
@@ -1121,7 +1119,7 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
+      KeyName: !Ref KeyPairName
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
