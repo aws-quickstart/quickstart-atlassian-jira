@@ -16,6 +16,7 @@ Metadata:
       - Label:
           default: Cluster nodes
         Parameters:
+          - CloudWatchIntegration
           - ClusterNodeInstanceType
           - ClusterNodeMax
           - ClusterNodeMin
@@ -24,7 +25,6 @@ Metadata:
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
           - DeploymentAutomationKeyName
-          - CloudWatchIntegration
      - Label:
           default: Database
         Parameters:
