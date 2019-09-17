@@ -458,7 +458,7 @@ Parameters:
   CloudWatchIntegration:
     Default: "Metrics and Logs"
     Type: String
-    Description: "Enable CloudWatch metrics and optionally log gathering? Note: This may incur additional charges."
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
     AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
     ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
