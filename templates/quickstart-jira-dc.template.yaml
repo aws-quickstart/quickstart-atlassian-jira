@@ -12,10 +12,15 @@ Metadata:
       - Label:
           default: Cluster nodes
         Parameters:
+          - CloudWatchIntegration
           - ClusterNodeInstanceType
           - ClusterNodeMax
           - ClusterNodeMin
           - ClusterNodeVolumeSize
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
+          - DeploymentAutomationKeyName
       - Label:
           default: Database
         Parameters:
@@ -40,13 +45,6 @@ Metadata:
         Parameters:
           - CustomDnsName
           - HostedZone
-      - Label:
-          default: Cluster Node Deployment Repository; this is used to install and configure the application.
-        Parameters:
-          - DeploymentAutomationRepository
-          - DeploymentAutomationBranch
-          - DeploymentAutomationPlaybook
-          - DeploymentAutomationKeyName
       - Label:
           default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
         Parameters:
@@ -138,6 +136,8 @@ Metadata:
         default: The Ansible playbook to invoke to initialise the instance.
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       HostedZone:
         default: Route 53 Hosted Zone (optional)
       InternetFacingLoadBalancer:
@@ -455,6 +455,12 @@ Parameters:
     Default: ""
     Type: String
     Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -486,10 +492,9 @@ Parameters:
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
   KeyPairName:
-    Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
   MailEnabled:
     AllowedValues:
       - true
@@ -569,10 +574,12 @@ Parameters:
 Conditions:
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
+  EnableCloudWatch:
+    !Not [!Equals [!Ref CloudWatchIntegration, 'Off']]
+  EnableCloudWatchLogs:
+    !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
-  KeyProvided:
-    !Not [!Equals [!Ref KeyPairName, '']]
   SSLScheme:
     !Equals [!Ref TomcatScheme, 'https']
   OverrideHeap:
@@ -939,6 +946,7 @@ Resources:
             Action: ['sts:AssumeRole']
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
       Path: /
       Policies:
         - PolicyName: JiraClusterNodePolicy
@@ -1060,6 +1068,9 @@ Resources:
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
 
+                    - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH=${EnableCW}", EnableCW: !If [EnableCloudWatch, true, false]]
+                    - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH_LOGS=${EnableCWLogs}", EnableCWLogs: !If [EnableCloudWatchLogs, true, false]]
+
             /opt/atlassian/bin/clone_deployment_repo:
               content: !Sub |
                 #!/bin/bash
@@ -1108,7 +1119,7 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
+      KeyName: !Ref KeyPairName
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
