@@ -25,7 +25,7 @@ Metadata:
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
           - DeploymentAutomationKeyName
-     - Label:
+      - Label:
           default: Database
         Parameters:
           - DBEngine
