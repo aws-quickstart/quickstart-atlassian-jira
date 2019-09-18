@@ -46,7 +46,7 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+          default: Application Tuning (Optional)
         Parameters:
           - TomcatContextPath
           - CatalinaOpts
@@ -133,13 +133,13 @@ Metadata:
       DeploymentAutomationBranch:
         default: Deployment Automation Branch
       DeploymentAutomationPlaybook:
-        default: The Ansible playbook to invoke to initialise the instance.
+        default: The Ansible playbook to invoke to initialize the instance
       DeploymentAutomationKeyName:
-        default: SSH keyname to use with the repository (Optional)
+        default: SSH keyname to use with the repository
       CloudWatchIntegration:
         default: Enable CloudWatch integration
       HostedZone:
-        default: Route 53 Hosted Zone (optional)
+        default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
         default: Make instance internet facing
       JiraProduct:
@@ -442,7 +442,7 @@ Parameters:
   DeploymentAutomationRepository:
     Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
     Type: String
-    Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
+    Description: The deployment automation repository to use for per-node initialization. Leave this as default unless you have customizations.
   DeploymentAutomationBranch:
     Default: "master"
     Type: String
@@ -450,11 +450,11 @@ Parameters:
   DeploymentAutomationPlaybook:
     Default: "aws_jira_dc_node.yml"
     Type: String
-    Description: The Ansible playbook to invoke to initialise the Jira node on first start.
+    Description: The Ansible playbook to invoke to initialize the Jira node on first start.
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
+    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store.
   CloudWatchIntegration:
     Default: "Metrics and Logs"
     Type: String
