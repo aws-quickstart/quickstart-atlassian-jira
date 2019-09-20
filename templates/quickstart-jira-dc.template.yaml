@@ -20,6 +20,7 @@ Metadata:
           - DeploymentAutomationRepository
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
+          - DeploymentAutomationCustomParams
           - DeploymentAutomationKeyName
       - Label:
           default: Database
@@ -135,7 +136,9 @@ Metadata:
       DeploymentAutomationPlaybook:
         default: The Ansible playbook to invoke to initialize the instance
       DeploymentAutomationKeyName:
-        default: SSH keyname to use with the repository
+        default: SSH keyname to use with the repository (Optional)
+      DeploymentAutomationCustomParams:
+        default: Custom command-line parameters for Ansible. (Optional)
       CloudWatchIntegration:
         default: Enable CloudWatch integration
       HostedZone:
@@ -451,6 +454,10 @@ Parameters:
     Default: "aws_jira_dc_node.yml"
     Type: String
     Description: The Ansible playbook to invoke to initialize the Jira node on first start.
+  DeploymentAutomationCustomParams:
+    Default: ""
+    Type: String
+    Description: Additional command-line options for the `ansible-playbook` command. See the repository README for more details. (Optional)
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
@@ -1067,6 +1074,7 @@ Resources:
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_CUSTOM_PARAMS='${DeployRepositoryCustomParams}'", DeployRepositoryCustomParams: !Ref "DeploymentAutomationCustomParams"]
 
                     - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH=${EnableCW}", EnableCW: !If [EnableCloudWatch, true, false]]
                     - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH_LOGS=${EnableCWLogs}", EnableCWLogs: !If [EnableCloudWatchLogs, true, false]]
