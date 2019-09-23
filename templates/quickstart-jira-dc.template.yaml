@@ -1020,6 +1020,7 @@ Resources:
                     - "ATL_DB_DRIVER=org.postgresql.Driver"
                     - "ATL_JDBC_DB_NAME=jira"
                     - "ATL_JDBC_USER=atljira"
+                    - "ATL_JVM_OPTS='-XX:+ExplicitGCInvokesConcurrent -XX:ReservedCodeCacheSize=512M'"
                     - "ATL_APP_DATA_MOUNT_ENABLED=false"
                     - "ATL_ENABLED_PRODUCTS=Jira"
                     - "ATL_ENABLED_SHARED_HOMES="
