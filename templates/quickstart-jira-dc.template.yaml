@@ -1322,6 +1322,23 @@ Resources:
     Properties:
       AliasName: !Sub "alias/${AWS::StackName}"
       TargetKeyId: !Ref EncryptionKey
+
+# Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
+  CloudWatchDashboard:
+    DependsOn:
+      - DB
+    Condition: EnableCloudWatch
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-cloudwatch-dashboard.yaml
+        - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
+      Parameters:
+        ProductStackName: !Sub "${AWS::StackName}"
+        ProductFamilyName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]
+        AsgToMonitor: !Ref ClusterNodeGroup
+        DatabaseIdentifier: !Sub ["${DBStackNamePrefix}-db", {DBStackNamePrefix: !Ref 'AWS::StackName'}]
+
 Outputs:
   ServiceURL:
     Description: The URL to access this Atlassian service
@@ -1372,3 +1389,7 @@ Outputs:
     Export: {
       Name: !Join ['', [!Ref 'AWS::StackName', '-EFSCname']]
     }
+  CloudWatchDashboardURL:
+    Description: CloudWatch monitoring dashboard URL
+    Value: !GetAtt CloudWatchDashboard.Outputs.Dashboard
+    Condition: EnableCloudWatch
