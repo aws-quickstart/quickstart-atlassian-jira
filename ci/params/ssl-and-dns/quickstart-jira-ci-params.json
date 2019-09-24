@@ -36,10 +36,6 @@
         "ParameterValue": "replaced-by-taskcat-override-file"
     },
     {
-        "ParameterKey": "TomcatScheme",
-        "ParameterValue": "https"
-    },
-    {
         "ParameterKey": "SSLCertificateARN",
         "ParameterValue": "replaced-by-taskcat-override-file"
     },

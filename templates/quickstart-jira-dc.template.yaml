@@ -72,7 +72,6 @@ Metadata:
           - TomcatMinSpareThreads
           - TomcatProtocol
           - TomcatRedirectPort
-          - TomcatScheme
 
     ParameterLabels:
       CatalinaOpts:
@@ -175,8 +174,6 @@ Metadata:
         default: Tomcat Protocol
       TomcatRedirectPort:
         default: Tomcat Redirect Port
-      TomcatScheme:
-        default: Tomcat protocol Scheme
 
 Parameters:
   CatalinaOpts:
@@ -513,7 +510,7 @@ Parameters:
     Type: String
   SSLCertificateARN:
     Default: ''
-    Description: "Amazon Resource Name (ARN) of your SSL certificate. Every certificate created with the AWS Certificate Manager has a corresponding ARN. To use a certificate generated outside of AWS, you need to import it into AWS Certificate Manager first. AWS Certificate Manager will provide you with its ARN, which you can use here."
+    Description: "Amazon Resource Name (ARN) of your SSL certificate. Supplying this will automatically enable HTTPS on the product and load balancer, configured to use the corresponding certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you’ll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it’s successfully created."
     MinLength: 0
     MaxLength: 90
     Type: String
@@ -554,11 +551,6 @@ Parameters:
     Default: 8443
     Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
     Type: String
-  TomcatScheme:
-    Default: http
-    Description: "The name of the protocol you wish to have returned, ie 'https' for an SSL Connector. The value of this setting also configures Tomcat's proxy port (443/80) and secure (true/false) settings appropriately."
-    Type: String
-    AllowedValues: [http, https]
   QSS3BucketName:
     Default: 'aws-quickstart'
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -990,8 +982,7 @@ Resources:
       LaunchConfigurationName: !Ref ClusterNodeLaunchConfig
       MaxSize: !Ref ClusterNodeMax
       MinSize: !Ref ClusterNodeMin
-      LoadBalancerNames:
-        - !Ref LoadBalancer
+      TargetGroupARNs: [!Ref MainTargetGroup]
       VPCZoneIdentifier: !Split [ ",", !ImportValue ATL-PriNets]
       Tags:
         - Key: Name
@@ -1036,7 +1027,7 @@ Resources:
                     - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !Ref "JiraProduct"]
                     - !Sub ["ATL_PRODUCT_VERSION=${ProductVersion}", ProductVersion: !Ref JiraVersion]
                     - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
-                    - !If [SSLScheme, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
+                    - !If [DoSSL, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
                     - !Sub ["ATL_CATALINA_OPTS=\"${CatalinaOpts} ${MailOpts}\"", { CatalinaOpts: !Ref CatalinaOpts, MailOpts: !If [DisableMail, '-Datlassian.mail.senddisabled=true -Datlassian.mail.fetchdisabled=true -Datlassian.mail.popdisabled=true', ''] }]
                     - !Sub ["ATL_DB_ENGINE=${DBEngine}", DBEngine: !If [DBEngineAurora, aurora_postgres, !If [DBEnginePostgres, rds_postgres, '']]]
@@ -1070,10 +1061,10 @@ Resources:
                     - !Sub ["ATL_TOMCAT_MAXTHREADS=${TomcatMaxThreads}", TomcatMaxThreads: !Ref TomcatMaxThreads]
                     - !Sub ["ATL_TOMCAT_MINSPARETHREADS=${TomcatMinSpareThreads}", TomcatMinSpareThreads: !Ref TomcatMinSpareThreads]
                     - !Sub ["ATL_TOMCAT_PROTOCOL=${TomcatProtocol}", TomcatProtocol: !Ref TomcatProtocol]
-                    - !Sub ["ATL_TOMCAT_PROXYPORT=${TomcatProxyPort}", TomcatProxyPort: !If [SSLScheme, 443, 80]]
+                    - !Sub ["ATL_TOMCAT_PROXYPORT=${TomcatProxyPort}", TomcatProxyPort: !If [DoSSL, 443, 80]]
                     - !Sub ["ATL_TOMCAT_REDIRECTPORT=${TomcatRedirectPort}", TomcatRedirectPort: !Ref TomcatRedirectPort]
-                    - !Sub ["ATL_TOMCAT_SCHEME=${TomcatScheme}", TomcatScheme: !If [SSLScheme, https, http]]
-                    - !Sub ["ATL_TOMCAT_SECURE=${TomcatSecure}", TomcatSecure: !If [SSLScheme, true, false]]
+                    - !Sub ["ATL_TOMCAT_SCHEME=${TomcatScheme}", TomcatScheme: !If [DoSSL, https, http]]
+                    - !Sub ["ATL_TOMCAT_SECURE=${TomcatSecure}", TomcatSecure: !If [DoSSL, true, false]]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY=${DeployRepository}", DeployRepository: !Ref "DeploymentAutomationRepository"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
@@ -1220,48 +1211,78 @@ Resources:
 
 # Loadbalancer
   LoadBalancer:
-    Type: AWS::ElasticLoadBalancing::LoadBalancer
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      AppCookieStickinessPolicy:
-        - CookieName: JSESSIONID
-          PolicyName: JSessionIdStickiness
-      ConnectionDrainingPolicy:
-        Enabled: true
-        Timeout: 30
-      ConnectionSettings:
-        IdleTimeout: 3600
-      CrossZone: true
-      Listeners:
-        - LoadBalancerPort: '80'
-          Protocol: HTTP
-          InstancePort: !Ref TomcatDefaultConnectorPort
-          InstanceProtocol: HTTP
-          PolicyNames:
-            - JSessionIdStickiness
-        - !If
-          - DoSSL
-          - LoadBalancerPort: '443'
-            Protocol: HTTPS
-            InstancePort: !Ref TomcatDefaultConnectorPort
-            InstanceProtocol: HTTP
-            PolicyNames:
-              - JSessionIdStickiness
-            SSLCertificateId: !Ref SSLCertificateARN
-          - !Ref AWS::NoValue
-      HealthCheck:
-        Target: !If [UseContextPath, !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, !Ref TomcatContextPath, '/status']], !Join ['', ['HTTP:', !Ref TomcatDefaultConnectorPort, '/status']]]
-        Timeout: '29'
-        Interval: '30'
-        UnhealthyThreshold: '2'
-        HealthyThreshold: '2'
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
       Subnets: !Split [ ",", !ImportValue ATL-PubNets]
       Tags:
         - Key: Name
-          Value: !Sub ["${StackName}-LoadBalancer", {StackName: !Ref 'AWS::StackName'}]
+          Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
         - Key: Cluster
           Value: !Ref AWS::StackName
+  LoadBalancerHTTPListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - !If
+          - DoSSL
+          - Type: redirect
+            RedirectConfig:
+              Protocol: HTTPS
+              Port: '443'
+              Host: '#{host}'
+              Path: '/#{path}'
+              Query: '#{query}'
+              StatusCode: HTTP_301
+          - Type: forward
+            TargetGroupArn: !Ref MainTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+  LoadBalancerHTTPSListener:
+    Condition: DoSSL
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref SSLCertificateARN
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MainTargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+  MainTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: !Ref TomcatDefaultConnectorPort
+      Protocol: HTTP
+      VpcId: !ImportValue ATL-VPCID
+      HealthCheckIntervalSeconds: 20
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      Matcher:
+        HttpCode: '200'
+      HealthCheckPath: !If [UseContextPath, !Join ['', [!Ref 'TomcatContextPath', '/status']], '/status']
+      HealthCheckPort: !Ref TomcatDefaultConnectorPort
+      HealthCheckProtocol: HTTP
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: 'true'
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: deregistration_delay.timeout_seconds
+          Value: '30'
+      Tags:
+        - Key: Name
+          Value: MainTargetGroup
+        - Key: Cluster
+          Value: !Ref AWS::StackName
+    DependsOn:
+      - LoadBalancer
   LoadBalancerCname:
     Condition: UseHostedZone
     Type: AWS::Route53::RecordSet
@@ -1350,26 +1371,26 @@ Outputs:
       - UseCustomDnsName
       - !Sub
         - "${HTTP}://${CustomDNSName}${ContextPath}"
-        - HTTP: !If [SSLScheme, 'https', 'http']
+        - HTTP: !If [DoSSL, 'https', 'http']
           CustomDNSName: !Ref CustomDnsName
           ContextPath: !Ref TomcatContextPath
       - !If
         - UseHostedZone
         - !Sub
           - "${HTTP}://${LBCName}${ContextPath}"
-          - HTTP: !If [SSLScheme, 'https', 'http']
+          - HTTP: !If [DoSSL, 'https', 'http']
             LBCName: !Ref LoadBalancerCname
             ContextPath: !Ref TomcatContextPath
         - !Sub
           - "${HTTP}://${LoadBalancerDNSName}${ContextPath}"
-          - HTTP: !If [SSLScheme, 'https', 'http']
+          - HTTP: !If [DoSSL, 'https', 'http']
             LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
             ContextPath: !Ref TomcatContextPath
   LoadBalancerURL:
     Description: The Load Balancer URL
     Value: !Sub
       - "${HTTP}://${LoadBalancerDNSName}"
-      - HTTP: !If [SSLScheme, 'https', 'http']
+      - HTTP: !If [DoSSL, 'https', 'http']
         LoadBalancerDNSName: !GetAtt LoadBalancer.DNSName
   SGname:
     Description: The name of the SecurityGroup
