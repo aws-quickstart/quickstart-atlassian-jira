@@ -151,7 +151,7 @@ Metadata:
       JvmHeapOverride:
         default: JVM Heap Size Override
       KeyPairName:
-        default: Key Name *
+        default: SSH Key Pair Name (optional)
       MailEnabled:
         default: Enable App to Process Email
       SSLCertificateARN:
@@ -458,7 +458,7 @@ Parameters:
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store.
+    Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store.
   CloudWatchIntegration:
     Default: "Metrics and Logs"
     Type: String
@@ -497,8 +497,9 @@ Parameters:
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: AWS::EC2::KeyPair::KeyName
+    Description: The EC2 Key Pair to allow SSH access to the instances. If empty the key pair from Atlassian Standard Infrastructure stack will be used.
+    Type: String
+    Default: ''
   MailEnabled:
     AllowedValues:
       - true
@@ -579,6 +580,10 @@ Conditions:
     !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
+  KeyProvided:
+    !Not [!Equals [!Ref KeyPairName, '']]
+  SSLScheme:
+    !Equals [!Ref TomcatScheme, 'https']
   OverrideHeap:
     !Not [!Equals [!Ref JvmHeapOverride, '']]
   UseContextPath:
@@ -1117,7 +1122,7 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !Ref KeyPairName
+      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
