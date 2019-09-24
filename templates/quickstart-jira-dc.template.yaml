@@ -582,8 +582,6 @@ Conditions:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
-  SSLScheme:
-    !Equals [!Ref TomcatScheme, 'https']
   OverrideHeap:
     !Not [!Equals [!Ref JvmHeapOverride, '']]
   UseContextPath:
