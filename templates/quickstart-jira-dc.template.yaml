@@ -152,7 +152,7 @@ Metadata:
       JvmHeapOverride:
         default: JVM Heap Size Override
       KeyPairName:
-        default: SSH Key-Pair Name (optional)
+        default: SSH Key Pair Name (optional)
       MailEnabled:
         default: Enable App to Process Email
       SSLCertificateARN:
@@ -461,7 +461,7 @@ Parameters:
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store.
+    Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store.
   CloudWatchIntegration:
     Default: "Metrics and Logs"
     Type: String
