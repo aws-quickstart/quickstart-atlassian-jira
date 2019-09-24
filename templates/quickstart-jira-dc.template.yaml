@@ -12,10 +12,16 @@ Metadata:
       - Label:
           default: Cluster nodes
         Parameters:
+          - CloudWatchIntegration
           - ClusterNodeInstanceType
           - ClusterNodeMax
           - ClusterNodeMin
           - ClusterNodeVolumeSize
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
+          - DeploymentAutomationCustomParams
+          - DeploymentAutomationKeyName
       - Label:
           default: Database
         Parameters:
@@ -41,14 +47,7 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Cluster Node Deployment Repository; this is used to install and configure the application.
-        Parameters:
-          - DeploymentAutomationRepository
-          - DeploymentAutomationBranch
-          - DeploymentAutomationPlaybook
-          - DeploymentAutomationKeyName
-      - Label:
-          default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+          default: Application Tuning (Optional)
         Parameters:
           - TomcatContextPath
           - CatalinaOpts
@@ -134,11 +133,15 @@ Metadata:
       DeploymentAutomationBranch:
         default: Deployment Automation Branch
       DeploymentAutomationPlaybook:
-        default: The Ansible playbook to invoke to initialise the instance.
+        default: The Ansible playbook to invoke to initialize the instance
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
+      DeploymentAutomationCustomParams:
+        default: Custom command-line parameters for Ansible. (Optional)
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       HostedZone:
-        default: Route 53 Hosted Zone (optional)
+        default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
         default: Make instance internet facing
       JiraProduct:
@@ -439,7 +442,7 @@ Parameters:
   DeploymentAutomationRepository:
     Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
     Type: String
-    Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
+    Description: The deployment automation repository to use for per-node initialization. Leave this as default unless you have customizations.
   DeploymentAutomationBranch:
     Default: "master"
     Type: String
@@ -447,11 +450,21 @@ Parameters:
   DeploymentAutomationPlaybook:
     Default: "aws_jira_dc_node.yml"
     Type: String
-    Description: The Ansible playbook to invoke to initialise the Jira node on first start.
+    Description: The Ansible playbook to invoke to initialize the Jira node on first start.
+  DeploymentAutomationCustomParams:
+    Default: ""
+    Type: String
+    Description: Additional command-line options for the `ansible-playbook` command. See the repository README for more details. (Optional)
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
+    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store.
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -483,10 +496,9 @@ Parameters:
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
   KeyPairName:
-    Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
   MailEnabled:
     AllowedValues:
       - true
@@ -561,10 +573,12 @@ Parameters:
 Conditions:
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
+  EnableCloudWatch:
+    !Not [!Equals [!Ref CloudWatchIntegration, 'Off']]
+  EnableCloudWatchLogs:
+    !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
-  KeyProvided:
-    !Not [!Equals [!Ref KeyPairName, '']]
   OverrideHeap:
     !Not [!Equals [!Ref JvmHeapOverride, '']]
   UseContextPath:
@@ -929,6 +943,7 @@ Resources:
             Action: ['sts:AssumeRole']
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
       Path: /
       Policies:
         - PolicyName: JiraClusterNodePolicy
@@ -994,6 +1009,7 @@ Resources:
                     - "ATL_DB_DRIVER=org.postgresql.Driver"
                     - "ATL_JDBC_DB_NAME=jira"
                     - "ATL_JDBC_USER=atljira"
+                    - "ATL_JVM_OPTS='-XX:+ExplicitGCInvokesConcurrent -XX:ReservedCodeCacheSize=512M'"
                     - "ATL_APP_DATA_MOUNT_ENABLED=false"
                     - "ATL_ENABLED_PRODUCTS=Jira"
                     - "ATL_ENABLED_SHARED_HOMES="
@@ -1048,6 +1064,10 @@ Resources:
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_BRANCH=${DeployRepositoryBranch}", DeployRepositoryBranch: !Ref "DeploymentAutomationBranch"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_PLAYBOOK=${DeployRepositoryPlaybook}", DeployRepositoryPlaybook: !Ref "DeploymentAutomationPlaybook"]
                     - !Sub ["ATL_DEPLOYMENT_REPOSITORY_KEYNAME=${DeployRepositoryKeyName}", DeployRepositoryKeyName: !Ref "DeploymentAutomationKeyName"]
+                    - !Sub ["ATL_DEPLOYMENT_REPOSITORY_CUSTOM_PARAMS='${DeployRepositoryCustomParams}'", DeployRepositoryCustomParams: !Ref "DeploymentAutomationCustomParams"]
+
+                    - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH=${EnableCW}", EnableCW: !If [EnableCloudWatch, true, false]]
+                    - !Sub ["ATL_AWS_ENABLE_CLOUDWATCH_LOGS=${EnableCWLogs}", EnableCWLogs: !If [EnableCloudWatchLogs, true, false]]
 
             /opt/atlassian/bin/clone_deployment_repo:
               content: !Sub |
@@ -1097,7 +1117,7 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
+      KeyName: !Ref KeyPairName
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
@@ -1322,6 +1342,23 @@ Resources:
     Properties:
       AliasName: !Sub "alias/${AWS::StackName}"
       TargetKeyId: !Ref EncryptionKey
+
+# Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
+  CloudWatchDashboard:
+    DependsOn:
+      - DB
+    Condition: EnableCloudWatch
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-cloudwatch-dashboard.yaml
+        - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
+      Parameters:
+        ProductStackName: !Sub "${AWS::StackName}"
+        ProductFamilyName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]
+        AsgToMonitor: !Ref ClusterNodeGroup
+        DatabaseIdentifier: !Sub ["${DBStackNamePrefix}-db", {DBStackNamePrefix: !Ref 'AWS::StackName'}]
+
 Outputs:
   ServiceURL:
     Description: The URL to access this Atlassian service
@@ -1372,3 +1409,7 @@ Outputs:
     Export: {
       Name: !Join ['', [!Ref 'AWS::StackName', '-EFSCname']]
     }
+  CloudWatchDashboardURL:
+    Description: CloudWatch monitoring dashboard URL
+    Value: !GetAtt CloudWatchDashboard.Outputs.Dashboard
+    Condition: EnableCloudWatch

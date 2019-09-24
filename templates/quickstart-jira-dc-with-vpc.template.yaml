@@ -16,10 +16,16 @@ Metadata:
       - Label:
           default: Cluster nodes
         Parameters:
+          - CloudWatchIntegration
           - ClusterNodeInstanceType
           - ClusterNodeMax
           - ClusterNodeMin
           - ClusterNodeVolumeSize
+          - DeploymentAutomationRepository
+          - DeploymentAutomationBranch
+          - DeploymentAutomationPlaybook
+          - DeploymentAutomationKeyName
+          - DeploymentAutomationCustomParams
       - Label:
           default: Database
         Parameters:
@@ -51,14 +57,7 @@ Metadata:
           - CustomDnsName
           - HostedZone
       - Label:
-          default: Cluster Node Deployment Repository; this is used to install and configure the application.
-        Parameters:
-          - DeploymentAutomationRepository
-          - DeploymentAutomationBranch
-          - DeploymentAutomationPlaybook
-          - DeploymentAutomationKeyName
-      - Label:
-          default: Application Tuning (Optional) - dbref - https://confluence.atlassian.com/display/AdminJIRAServer/Tuning+database+connections tomcatref - http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+          default: Application Tuning (Optional)
         Parameters:
             - TomcatContextPath
             - CatalinaOpts
@@ -152,11 +151,15 @@ Metadata:
       DeploymentAutomationBranch:
         default: Deployment Automation Branch
       DeploymentAutomationPlaybook:
-        default: The Ansible playbook to invoke to initialise the instance.
+        default: The Ansible playbook to invoke to initialize the instance
       DeploymentAutomationKeyName:
         default: SSH keyname to use with the repository (Optional)
+      DeploymentAutomationCustomParams:
+        default: Custom command-line parameters for Ansible. (Optional)
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       HostedZone:
-        default: Route 53 Hosted Zone (optional)
+        default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
         default: Make instance internet facing
       JiraProduct:
@@ -174,7 +177,7 @@ Metadata:
       PrivateSubnet2CIDR:
         default: AZ2 private IP address block
       PublicSubnet1CIDR:
-        default: AZ1 public IP address block        
+        default: AZ1 public IP address block
       PublicSubnet2CIDR:
         default: AZ2 public IP address block
       SSLCertificateARN:
@@ -469,7 +472,7 @@ Parameters:
   DeploymentAutomationRepository:
     Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
     Type: String
-    Description: The deployment automation repository to use for per-node initialisation. Leave this as default unless you have customisations.
+    Description: The deployment automation repository to use for per-node initialization. Leave this as default unless you have customizations.
   DeploymentAutomationBranch:
     Default: "master"
     Type: String
@@ -478,10 +481,20 @@ Parameters:
     Default: "aws_jira_dc_node.yml"
     Type: String
     Description: The Ansible playbook to invoke to initialise the Jira node on first start.
+  DeploymentAutomationCustomParams:
+    Default: ""
+    Type: String
+    Description: Additional command-line options for the `ansible-playbook` command. See the repository README for more details. (Optional)
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
+    Description: Named KeyPair name to use with this repository. The key should be imported into the SSM parameter store.
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -513,10 +526,9 @@ Parameters:
     Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
     Type: String
   KeyPairName:
-    Default: ''
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: The EC2 Key Pair to allow SSH access to the instances
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
   MailEnabled:
     AllowedValues:
       - true
@@ -580,7 +592,7 @@ Parameters:
     Description: CIDR Block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.
     Type: String
   AvailabilityZones:
-    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: You must specify 2 AZs here; 
+    Description: 'List of Availability Zones to use for the subnets in the VPC. Note: You must specify 2 AZs here;
       if more are specified only the first 2 will be used.'
     Type: List<AWS::EC2::AvailabilityZone::Name>
   PrivateSubnet1CIDR:
@@ -696,6 +708,8 @@ Resources:
         DeploymentAutomationBranch: !Ref 'DeploymentAutomationBranch'
         DeploymentAutomationKeyName: !Ref 'DeploymentAutomationKeyName'
         DeploymentAutomationPlaybook: !Ref 'DeploymentAutomationPlaybook'
+        DeploymentAutomationCustomParams: !Ref 'DeploymentAutomationCustomParams'
+        CloudWatchIntegration: !Ref 'CloudWatchIntegration'
         HostedZone: !Ref 'HostedZone'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
@@ -725,7 +739,7 @@ Outputs:
     Value: !GetAtt 'JiraDCStack.Outputs.LoadBalancerURL'
   BastionIP:
     Description: Bastion node IP (use as a jumpbox to connect to the nodes)
-    Value: !GetAtt 'VPCStack.Outputs.BastionPubIp'    
+    Value: !GetAtt 'VPCStack.Outputs.BastionPubIp'
   SGname:
     Description: The name of the SecurityGroup
     Value: !GetAtt 'JiraDCStack.Outputs.SGname'
