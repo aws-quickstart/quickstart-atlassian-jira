@@ -454,11 +454,11 @@ Parameters:
   DeploymentAutomationCustomParams:
     Default: ""
     Type: String
-    Description: Additional command-line options for the `ansible-playbook` command. See https://bitbucket.org/atlassian/dc-deployments-automation/src/master/README.md for more information about overriding parameters.
+    Description: Additional command-line options for the `ansible-playbook` command. See https://bitbucket.org/atlassian/dc-deployments-automation/src/master/README.md for more information about overriding parameters. (Optional)
   DeploymentAutomationKeyName:
     Default: ""
     Type: String
-    Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store.
+    Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
   CloudWatchIntegration:
     Default: "Metrics and Logs"
     Type: String
