@@ -82,7 +82,6 @@ Metadata:
             - TomcatMinSpareThreads
             - TomcatProtocol
             - TomcatRedirectPort
-            - TomcatScheme
       - Label:
           default: AWS Quick Start Configuration
         Parameters:
@@ -200,8 +199,6 @@ Metadata:
         default: Tomcat Protocol
       TomcatRedirectPort:
         default: Tomcat Redirect Port
-      TomcatScheme:
-        default: Tomcat protocol Scheme
 
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
@@ -581,11 +578,6 @@ Parameters:
     Default: 8443
     Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
     Type: String
-  TomcatScheme:
-    Default: http
-    Description: "The name of the protocol you wish to have returned, ie 'https' for an SSL Connector. The value of this setting also configures Tomcat's proxy port (443/80) and secure (true/false) settings appropriately."
-    Type: String
-    AllowedValues: [http, https]
 
   # VPC parameters
   AccessCIDR:
@@ -729,7 +721,6 @@ Resources:
         TomcatMinSpareThreads: !Ref 'TomcatMinSpareThreads'
         TomcatProtocol: !Ref 'TomcatProtocol'
         TomcatRedirectPort: !Ref 'TomcatRedirectPort'
-        TomcatScheme: !Ref 'TomcatScheme'
 
 Outputs:
   ServiceURL:
