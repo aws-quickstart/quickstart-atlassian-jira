@@ -602,6 +602,9 @@ Conditions:
     !Equals [!Ref DBEngine, "PostgreSQL"]
 Mappings:
   AWSInstanceType2Arch:
+    c4.large:
+      Arch: HVM64
+      Jvmheap: 5120m
     c4.xlarge:
       Arch: HVM64
       Jvmheap: 4608m
