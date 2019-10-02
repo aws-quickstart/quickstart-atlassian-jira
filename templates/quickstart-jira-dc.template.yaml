@@ -72,6 +72,11 @@ Metadata:
           - TomcatMinSpareThreads
           - TomcatProtocol
           - TomcatRedirectPort
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
 
     ParameterLabels:
       CatalinaOpts:
@@ -174,6 +179,10 @@ Metadata:
         default: Tomcat Protocol
       TomcatRedirectPort:
         default: Tomcat Redirect Port
+      QSS3BucketName:
+        default: Quick Start S3 Bucket Name
+      QSS3KeyPrefix:
+        default: Quick Start S3 Key Prefix
 
 Parameters:
   CatalinaOpts:
@@ -602,6 +611,9 @@ Conditions:
     !Equals [!Ref DBEngine, "PostgreSQL"]
 Mappings:
   AWSInstanceType2Arch:
+    c4.large:
+      Arch: HVM64
+      Jvmheap: 2304m
     c4.xlarge:
       Arch: HVM64
       Jvmheap: 4608m
