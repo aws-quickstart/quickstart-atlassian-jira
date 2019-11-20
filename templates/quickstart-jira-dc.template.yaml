@@ -1354,6 +1354,38 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: !Ref CidrBlock
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            !Sub
+              - "${NAT1IP}/32"
+              - NAT1IP:
+                  Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            !Sub
+            - "${NAT2IP}/32"
+            - NAT2IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp:
+            !Sub
+            - "${NAT1IP}/32"
+            - NAT1IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp:
+            !Sub
+            - "${NAT2IP}/32"
+            - NAT2IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
