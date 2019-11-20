@@ -77,12 +77,15 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - ExportPrefix
 
     ParameterLabels:
       CatalinaOpts:
         default: Catalina options
       CidrBlock:
         default: Permitted IP range
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       ClusterNodeMax:
         default: Maximum number of cluster nodes
       ClusterNodeMin:
@@ -143,8 +146,8 @@ Metadata:
         default: SSH keyname to use with the repository
       DeploymentAutomationCustomParams:
         default: Custom command-line parameters for Ansible
-      CloudWatchIntegration:
-        default: Enable CloudWatch integration
+      ExportPrefix:
+        default: ASI Exported Prefix
       HostedZone:
         default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
@@ -196,6 +199,12 @@ Parameters:
     Type: String
     MinLength: 9
     MaxLength: 18
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   ClusterNodeInstanceType:
     Default: c5.xlarge
     AllowedValues:
@@ -470,12 +479,11 @@ Parameters:
     Default: ""
     Type: String
     Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
-  CloudWatchIntegration:
-    Default: "Metrics and Logs"
+  ExportPrefix:
+    Default: 'ATL-'
+    Description:
+      Prefix for the exported variables (VPCID, SubnetIDs, KeyName) that are reused by other Atlassian AWS Quickstarts.
     Type: String
-    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
-    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
-    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -974,13 +982,13 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Action:
-                - 'ec2:DescribeInstances'
-                - 'route53:ListHostedZones'
-                - 'route53:ListResourceRecordSet'
+                  - 'ec2:DescribeInstances'
+                  - 'route53:ListHostedZones'
+                  - 'route53:ListResourceRecordSet'
                 Effect: Allow
                 Resource: ['*']
               - Action:
-                - "route53:ChangeResourceRecordSets"
+                  - "route53:ChangeResourceRecordSets"
                 Effect: Allow
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:route53:::healthcheck/*'
@@ -993,7 +1001,7 @@ Resources:
     Properties:
       Path: /
       Roles: [!Ref JiraClusterNodeRole]
-# Jira node config
+  # Jira node config
   ClusterNodeGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -1002,7 +1010,9 @@ Resources:
       MaxSize: !Ref ClusterNodeMax
       MinSize: !Ref ClusterNodeMin
       TargetGroupARNs: [!Ref MainTargetGroup]
-      VPCZoneIdentifier: !Split [ ",", !ImportValue ATL-PriNets]
+      VPCZoneIdentifier: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
       Tags:
         - Key: Name
           Value: !Sub ["${StackName} Jira Node", {StackName: !Ref 'AWS::StackName'}]
@@ -1028,8 +1038,7 @@ Resources:
               content:
                 'Fn::Join':
                   - "\n"
-                  -
-                    - "ATL_PRODUCT_FAMILY=jira"
+                  - - "ATL_PRODUCT_FAMILY=jira"
                     - "ATL_DB_DRIVER=org.postgresql.Driver"
                     - "ATL_JDBC_DB_NAME=jira"
                     - "ATL_JDBC_USER=atljira"
@@ -1141,7 +1150,10 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
+      KeyName: !If
+        - KeyProvided
+        - !Ref KeyPairName
+        - Fn::ImportValue: !Sub "${ExportPrefix}DefaultKey"
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
@@ -1156,14 +1168,14 @@ Resources:
       UserData:
         Fn::Base64:
           !Join
-            - ""
-            -
-              - "#!/bin/bash -xe\n"
-              - "yum update -y aws-cfn-bootstrap\n"
-              - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
-              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", {Region: !Ref "AWS::Region"}]
-              - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
-              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", {Region: !Ref "AWS::Region"}]
+          - ""
+          -
+            - "#!/bin/bash -xe\n"
+            - "yum update -y aws-cfn-bootstrap\n"
+            - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
+            - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", {Region: !Ref "AWS::Region"}]
+            - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
+            - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", {Region: !Ref "AWS::Region"}]
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
@@ -1177,13 +1189,21 @@ Resources:
     Properties:
       FileSystemId: !Ref ElasticFileSystem
       SecurityGroups: [!Ref SecurityGroup]
-      SubnetId: !Select [0, !Split [ ",", !ImportValue ATL-PriNets]]
+      SubnetId: !Select
+      - 0
+      - !Split
+           - ","
+           - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
   EFSMountAz2:
     Type: AWS::EFS::MountTarget
     Properties:
       FileSystemId: !Ref ElasticFileSystem
       SecurityGroups: [!Ref SecurityGroup]
-      SubnetId: !Select [1, !Split [ ",", !ImportValue ATL-PriNets]]
+      SubnetId: !Select
+        - 1
+        - !Split
+          - ","
+          - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
   EFSCname:
     Type: AWS::Route53::RecordSet
     Condition: UseHostedZone
@@ -1195,7 +1215,7 @@ Resources:
       TTL: '900'
       ResourceRecords:
         - !Join ['.', [!Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws.com.']]
-# Database
+  # Database
   DB:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -1214,6 +1234,7 @@ Resources:
         DBAllocatedStorage: !Ref DBStorage
         DBStorageEncrypted: !Ref DBStorageEncrypted
         DBStorageType: !Ref DBStorageType
+        ExportPrefix: !Ref ExportPrefix
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
   DBCname:
@@ -1228,7 +1249,7 @@ Resources:
       ResourceRecords:
         - !GetAtt DB.Outputs.RDSEndPointAddress
 
-# Loadbalancer
+  # Loadbalancer
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -1237,7 +1258,9 @@ Resources:
           Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
-      Subnets: !Split [ ",", !ImportValue ATL-PubNets]
+      Subnets: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${ExportPrefix}PubNets"
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
@@ -1279,7 +1302,8 @@ Resources:
     Properties:
       Port: !Ref TomcatDefaultConnectorPort
       Protocol: HTTP
-      VpcId: !ImportValue ATL-VPCID
+      VpcId:
+        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
       HealthCheckIntervalSeconds: 20
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
@@ -1333,7 +1357,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
-      VpcId: !ImportValue ATL-VPCID
+      VpcId:
+        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -1367,7 +1392,7 @@ Resources:
       AliasName: !Sub "alias/${AWS::StackName}"
       TargetKeyId: !Ref EncryptionKey
 
-# Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
+  # Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
   CloudWatchDashboard:
     DependsOn:
       - DB

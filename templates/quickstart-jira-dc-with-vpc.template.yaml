@@ -87,6 +87,7 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - ExportPrefix
 
     ParameterLabels:
       AccessCIDR:
@@ -95,6 +96,8 @@ Metadata:
         default: Availability Zones
       CatalinaOpts:
         default: Catalina options
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       ClusterNodeMax:
         default: Maximum number of cluster nodes
       ClusterNodeMin:
@@ -155,8 +158,8 @@ Metadata:
         default: SSH keyname to use with the repository
       DeploymentAutomationCustomParams:
         default: Custom command-line parameters for Ansible
-      CloudWatchIntegration:
-        default: Enable CloudWatch integration
+      ExportPrefix:
+        default: ASI Exported Prefix
       HostedZone:
         default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
@@ -214,6 +217,12 @@ Parameters:
     Default: ''
     Description: Pass in any additional jvm options to tune Catalina
     Type: String
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   ClusterNodeInstanceType:
     Default: c5.xlarge
     AllowedValues:
@@ -488,12 +497,11 @@ Parameters:
     Default: ""
     Type: String
     Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
-  CloudWatchIntegration:
-    Default: "Metrics and Logs"
+  ExportPrefix:
+    Default: 'ATL-'
+    Description:
+      Prefix for the exported variables (VPCID, SubnetIDs, KeyName) that are reused by other Atlassian AWS Quickstarts.
     Type: String
-    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
-    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
-    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -656,6 +664,7 @@ Resources:
         AvailabilityZones: !Join
           - ','
           - !Ref 'AvailabilityZones'
+        ExportPrefix: !Ref 'ExportPrefix'
         KeyPairName: !Ref 'KeyPairName'
         PrivateSubnet1CIDR: !Ref 'PrivateSubnet1CIDR'
         PrivateSubnet2CIDR: !Ref 'PrivateSubnet2CIDR'
@@ -671,9 +680,9 @@ Resources:
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-jira-dc.template.yaml
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
-        InternetFacingLoadBalancer: !Ref 'InternetFacingLoadBalancer'
         CatalinaOpts: !Ref 'CatalinaOpts'
         CidrBlock: !Ref 'AccessCIDR'
+        CloudWatchIntegration: !Ref 'CloudWatchIntegration'
         ClusterNodeInstanceType: !Ref 'ClusterNodeInstanceType'
         ClusterNodeMax: !Ref 'ClusterNodeMax'
         ClusterNodeMin: !Ref 'ClusterNodeMin'
@@ -704,8 +713,9 @@ Resources:
         DeploymentAutomationKeyName: !Ref 'DeploymentAutomationKeyName'
         DeploymentAutomationPlaybook: !Ref 'DeploymentAutomationPlaybook'
         DeploymentAutomationCustomParams: !Ref 'DeploymentAutomationCustomParams'
-        CloudWatchIntegration: !Ref 'CloudWatchIntegration'
+        ExportPrefix: !Ref 'ExportPrefix'
         HostedZone: !Ref 'HostedZone'
+        InternetFacingLoadBalancer: !Ref 'InternetFacingLoadBalancer'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
         JvmHeapOverride: !Ref 'JvmHeapOverride'
