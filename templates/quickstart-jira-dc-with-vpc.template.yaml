@@ -159,7 +159,7 @@ Metadata:
       DeploymentAutomationCustomParams:
         default: Custom command-line parameters for Ansible
       ExportPrefix:
-        default: ASI Exported Prefix
+        default: ASI identifier
       HostedZone:
         default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
@@ -500,7 +500,7 @@ Parameters:
   ExportPrefix:
     Default: 'ATL-'
     Description:
-      Prefix for the exported variables (VPCID, SubnetIDs, KeyName) that are reused by other Atlassian AWS Quickstarts.
+      Identifier used in all variables exported from this deployment’s Atlassian Standard Infrastructure (VPCID, SubnetIDs, KeyName). Use different identifier to deploy multiple Atlassian Standard Infrastructures in the same AWS region.
     Type: String
   HostedZone:
     Default: ''
