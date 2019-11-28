@@ -77,12 +77,15 @@ Metadata:
         Parameters:
           - QSS3BucketName
           - QSS3KeyPrefix
+          - ExportPrefix
 
     ParameterLabels:
       CatalinaOpts:
         default: Catalina options
       CidrBlock:
         default: Permitted IP range
+      CloudWatchIntegration:
+        default: Enable CloudWatch integration
       ClusterNodeMax:
         default: Maximum number of cluster nodes
       ClusterNodeMin:
@@ -143,8 +146,8 @@ Metadata:
         default: SSH keyname to use with the repository
       DeploymentAutomationCustomParams:
         default: Custom command-line parameters for Ansible
-      CloudWatchIntegration:
-        default: Enable CloudWatch integration
+      ExportPrefix:
+        default: ASI identifier
       HostedZone:
         default: Route 53 Hosted Zone
       InternetFacingLoadBalancer:
@@ -196,6 +199,12 @@ Parameters:
     Type: String
     MinLength: 9
     MaxLength: 18
+  CloudWatchIntegration:
+    Default: "Metrics and Logs"
+    Type: String
+    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
+    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
+    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   ClusterNodeInstanceType:
     Default: c5.xlarge
     AllowedValues:
@@ -470,12 +479,11 @@ Parameters:
     Default: ""
     Type: String
     Description: Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)
-  CloudWatchIntegration:
-    Default: "Metrics and Logs"
+  ExportPrefix:
+    Default: 'ATL-'
+    Description:
+      Each Atlassian Standard Infrastructure (ASI) uses a unique identifier. If you have multiple ASIs within the same AWS region, use this field to specify where to deploy Jira.
     Type: String
-    Description: "Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether."
-    AllowedValues: ["Off", "Metrics Only", "Metrics and Logs"]
-    ConstraintDescription: "Must be 'Off', 'Metrics Only', or 'Metrics and Logs'"
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -887,58 +895,40 @@ Mappings:
   AWSRegionArch2AMI:
     ap-northeast-1:
       HVM64: ami-00d101850e971728d
-      HVMG2: NOT_SUPPORTED
     ap-northeast-2:
       HVM64: ami-08ab3f7e72215fe91
-      HVMG2: NOT_SUPPORTED
     ap-south-1:
       HVM64: ami-00e782930f1c3dbc7
-      HVMG2: NOT_SUPPORTED
     ap-southeast-1:
       HVM64: ami-0b5a47f8865280111
-      HVMG2: NOT_SUPPORTED
     ap-southeast-2:
       HVM64: ami-0fb7513bcdc525c3b
-      HVMG2: NOT_SUPPORTED
     ca-central-1:
       HVM64: ami-08a9b721ecc5b0a53
-      HVMG2: NOT_SUPPORTED
     eu-central-1:
       HVM64: ami-0ebe657bc328d4e82
-      HVMG2: NOT_SUPPORTED
     eu-north-1:
       HVM64: ami-1fb13961
-      HVMG2: NOT_SUPPORTED
     eu-west-1:
       HVM64: ami-030dbca661d402413
-      HVMG2: NOT_SUPPORTED
     eu-west-2:
       HVM64: ami-0009a33f033d8b7b6
-      HVMG2: NOT_SUPPORTED
     eu-west-3:
       HVM64: ami-0ebb3a801d5fb8b9b
-      HVMG2: NOT_SUPPORTED
     sa-east-1:
       HVM64: ami-058141e091292ecf0
-      HVMG2: NOT_SUPPORTED
     us-east-1:
       HVM64: ami-0c6b1d09930fac512
-      HVMG2: NOT_SUPPORTED
     us-east-2:
       HVM64: ami-0ebbf2179e615c338
-      HVMG2: NOT_SUPPORTED
     us-west-1:
       HVM64: ami-015954d5e5548d13b
-      HVMG2: NOT_SUPPORTED
     us-west-2:
       HVM64: ami-0cb72367e98845d43
-      HVMG2: NOT_SUPPORTED
     us-gov-west-1:
       HVM64: ami-e9a9d388
-      HVMG2: NOT_SUPPORTED
     us-gov-east-1:
       HVM64: ami-a2d938d3
-      HVMG2: NOT_SUPPORTED
 
   JIRAProduct2NameAndVersion:
     Core:
@@ -974,13 +964,13 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Action:
-                - 'ec2:DescribeInstances'
-                - 'route53:ListHostedZones'
-                - 'route53:ListResourceRecordSet'
+                  - 'ec2:DescribeInstances'
+                  - 'route53:ListHostedZones'
+                  - 'route53:ListResourceRecordSet'
                 Effect: Allow
                 Resource: ['*']
               - Action:
-                - "route53:ChangeResourceRecordSets"
+                  - "route53:ChangeResourceRecordSets"
                 Effect: Allow
                 Resource:
                   - !Sub 'arn:${AWS::Partition}:route53:::healthcheck/*'
@@ -993,7 +983,7 @@ Resources:
     Properties:
       Path: /
       Roles: [!Ref JiraClusterNodeRole]
-# Jira node config
+  # Jira node config
   ClusterNodeGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -1002,7 +992,9 @@ Resources:
       MaxSize: !Ref ClusterNodeMax
       MinSize: !Ref ClusterNodeMin
       TargetGroupARNs: [!Ref MainTargetGroup]
-      VPCZoneIdentifier: !Split [ ",", !ImportValue ATL-PriNets]
+      VPCZoneIdentifier: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
       Tags:
         - Key: Name
           Value: !Sub ["${StackName} Jira Node", {StackName: !Ref 'AWS::StackName'}]
@@ -1028,8 +1020,7 @@ Resources:
               content:
                 'Fn::Join':
                   - "\n"
-                  -
-                    - "ATL_PRODUCT_FAMILY=jira"
+                  - - "ATL_PRODUCT_FAMILY=jira"
                     - "ATL_DB_DRIVER=org.postgresql.Driver"
                     - "ATL_JDBC_DB_NAME=jira"
                     - "ATL_JDBC_USER=atljira"
@@ -1141,7 +1132,10 @@ Resources:
             VolumeSize: !Ref ClusterNodeVolumeSize
         - DeviceName: /dev/xvdf
           NoDevice: true
-      KeyName: !If [ KeyProvided, !Ref KeyPairName, !ImportValue ATL-DefaultKey ]
+      KeyName: !If
+        - KeyProvided
+        - !Ref KeyPairName
+        - Fn::ImportValue: !Sub "${ExportPrefix}DefaultKey"
       IamInstanceProfile: !Ref JiraClusterNodeInstanceProfile
       ImageId:
         !FindInMap
@@ -1156,14 +1150,14 @@ Resources:
       UserData:
         Fn::Base64:
           !Join
-            - ""
-            -
-              - "#!/bin/bash -xe\n"
-              - "yum update -y aws-cfn-bootstrap\n"
-              - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
-              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", {Region: !Ref "AWS::Region"}]
-              - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
-              - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", {Region: !Ref "AWS::Region"}]
+          - ""
+          -
+            - "#!/bin/bash -xe\n"
+            - "yum update -y aws-cfn-bootstrap\n"
+            - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
+            - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", {Region: !Ref "AWS::Region"}]
+            - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
+            - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", {Region: !Ref "AWS::Region"}]
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
@@ -1177,13 +1171,21 @@ Resources:
     Properties:
       FileSystemId: !Ref ElasticFileSystem
       SecurityGroups: [!Ref SecurityGroup]
-      SubnetId: !Select [0, !Split [ ",", !ImportValue ATL-PriNets]]
+      SubnetId: !Select
+      - 0
+      - !Split
+           - ","
+           - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
   EFSMountAz2:
     Type: AWS::EFS::MountTarget
     Properties:
       FileSystemId: !Ref ElasticFileSystem
       SecurityGroups: [!Ref SecurityGroup]
-      SubnetId: !Select [1, !Split [ ",", !ImportValue ATL-PriNets]]
+      SubnetId: !Select
+        - 1
+        - !Split
+          - ","
+          - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
   EFSCname:
     Type: AWS::Route53::RecordSet
     Condition: UseHostedZone
@@ -1195,7 +1197,7 @@ Resources:
       TTL: '900'
       ResourceRecords:
         - !Join ['.', [!Ref ElasticFileSystem, 'efs', !Ref 'AWS::Region', 'amazonaws.com.']]
-# Database
+  # Database
   DB:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -1214,6 +1216,7 @@ Resources:
         DBAllocatedStorage: !Ref DBStorage
         DBStorageEncrypted: !Ref DBStorageEncrypted
         DBStorageType: !Ref DBStorageType
+        ExportPrefix: !Ref ExportPrefix
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
   DBCname:
@@ -1228,7 +1231,7 @@ Resources:
       ResourceRecords:
         - !GetAtt DB.Outputs.RDSEndPointAddress
 
-# Loadbalancer
+  # Loadbalancer
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -1237,7 +1240,9 @@ Resources:
           Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
-      Subnets: !Split [ ",", !ImportValue ATL-PubNets]
+      Subnets: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${ExportPrefix}PubNets"
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
@@ -1279,7 +1284,8 @@ Resources:
     Properties:
       Port: !Ref TomcatDefaultConnectorPort
       Protocol: HTTP
-      VpcId: !ImportValue ATL-VPCID
+      VpcId:
+        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
       HealthCheckIntervalSeconds: 20
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
@@ -1330,10 +1336,43 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: !Ref CidrBlock
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            !Sub
+              - "${NAT1IP}/32"
+              - NAT1IP:
+                  Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            !Sub
+            - "${NAT2IP}/32"
+            - NAT2IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp:
+            !Sub
+            - "${NAT1IP}/32"
+            - NAT1IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp:
+            !Sub
+            - "${NAT2IP}/32"
+            - NAT2IP:
+                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
-      VpcId: !ImportValue ATL-VPCID
+      VpcId:
+        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -1367,7 +1406,7 @@ Resources:
       AliasName: !Sub "alias/${AWS::StackName}"
       TargetKeyId: !Ref EncryptionKey
 
-# Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
+  # Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
   CloudWatchDashboard:
     DependsOn:
       - DB
