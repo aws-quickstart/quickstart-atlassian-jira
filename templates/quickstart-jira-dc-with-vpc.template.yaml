@@ -500,7 +500,7 @@ Parameters:
   ExportPrefix:
     Default: 'ATL-'
     Description:
-      Identifier used in all variables exported from this deployment’s Atlassian Standard Infrastructure (VPCID, SubnetIDs, KeyName). Use different identifier to deploy multiple Atlassian Standard Infrastructures in the same AWS region.
+      Identifier used in all variables (VPCID, SubnetIDs, KeyName) exported from this deployment's Atlassian Standard Infrastructure. Use different identifiers if you're deploying multiple Atlassian Standard Infrastructures in the same AWS region.
     Type: String
   HostedZone:
     Default: ''
