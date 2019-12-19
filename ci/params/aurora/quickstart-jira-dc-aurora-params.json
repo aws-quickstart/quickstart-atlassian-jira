@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "InternetFacingLoadBalancer",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "DBMasterUserPassword",
