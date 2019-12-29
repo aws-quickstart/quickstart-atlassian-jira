@@ -1384,6 +1384,7 @@ Resources:
   EncryptionKey:
     Condition: UseDatabaseEncryption
     DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::KMS::Key
     Properties:
       KeyPolicy:
