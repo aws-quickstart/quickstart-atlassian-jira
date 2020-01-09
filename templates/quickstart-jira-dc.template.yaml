@@ -964,6 +964,8 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Action:
+                  - 'autoscaling:DescribeTags'
+                  - 'autoscaling:CreateOrUpdateTags'
                   - 'ec2:DescribeInstances'
                   - 'route53:ListHostedZones'
                   - 'route53:ListResourceRecordSet'
