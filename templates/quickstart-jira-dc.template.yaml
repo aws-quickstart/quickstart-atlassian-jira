@@ -966,6 +966,7 @@ Resources:
               - Action:
                   - 'autoscaling:DescribeTags'
                   - 'autoscaling:CreateOrUpdateTags'
+                  - 'ec2:CreateTags'
                   - 'ec2:DescribeInstances'
                   - 'route53:ListHostedZones'
                   - 'route53:ListResourceRecordSet'
