@@ -968,6 +968,7 @@ Resources:
                   - 'autoscaling:CreateOrUpdateTags'
                   - 'ec2:CreateTags'
                   - 'ec2:DescribeInstances'
+                  - 'ec2:DescribeTags'
                   - 'route53:ListHostedZones'
                   - 'route53:ListResourceRecordSet'
                 Effect: Allow
