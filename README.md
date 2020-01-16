@@ -26,3 +26,17 @@ downstream repository that is not actively supported.
 We welcome pull requests, issues, and comments in the **[upstream repository](https://bitbucket.org/atlassian/atlassian-aws-deployment/src/master/quickstarts/)**.
 
 If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/). 
+
+## Development notes
+
+### Pre-commit hook
+
+It is recommended that you install the hooks under `submodules/quickstart-atlassian-services/scripts/hooks/`; this will
+ensure that the metadata tags in the templates are automatically updated on
+commit. The simplest method of doing this is:
+
+    git config --add core.hooksPath submodules/quickstart-atlassian-services/scripts/hooks/
+
+Alternatively you can invoke
+`submodules/quickstart-atlassian-services/scripts/hooks/update-tags.py`
+manually.
