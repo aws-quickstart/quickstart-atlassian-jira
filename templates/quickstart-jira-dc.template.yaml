@@ -1458,7 +1458,6 @@ Resources:
         ProductStackName: !Sub "${AWS::StackName}"
         ProductFamilyName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]
         AsgToMonitor: !Ref ClusterNodeGroup
-        DatabaseIdentifier: !Sub ["${DBStackNamePrefix}-db", {DBStackNamePrefix: !Ref 'AWS::StackName'}]
 
 Outputs:
   ServiceURL:
