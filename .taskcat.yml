@@ -1,0 +1,25 @@
+project:
+  name: quickstart-atlassian-jira
+  owner: quickstart-eng@amazon.com
+  package_lambda: false
+  regions:
+  - us-east-1
+  s3_bucket: ''
+tests:
+  jira:
+    parameters:
+      AccessCIDR: 10.0.0.0/16
+      AvailabilityZones: $[taskcat_genaz_2]
+      CustomDnsName: qsjiraci.awsqs.com
+      DBMasterUserPassword: f925dO1ry_
+      DBMultiAZ: 'false'
+      DBPassword: f925dO1ry_
+      DBStorage: '100'
+      DBStorageType: Provisioned IOPS
+      KeyPairName: replaced-by-taskcat-override-file
+      QSS3BucketName: $[taskcat_autobucket]
+      QSS3KeyPrefix: quickstart-atlassian-jira/
+    regions:
+    - us-east-1
+    s3_bucket: ''
+    template: templates/quickstart-jira-dc-with-vpc.template.yaml
