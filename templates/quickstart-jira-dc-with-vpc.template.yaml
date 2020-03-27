@@ -534,8 +534,8 @@ Parameters:
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: The EC2 Key Pair to allow SSH access to the instances. If you don't provide one, the Atlassian Standard Infrastructure stack's key pair will be used.
-    Type: String
+    Description: The EC2 Key Pair to allow SSH access to the instances.
+    Type: List<AWS::EC2::Keypair>
     Default: ''
   MailEnabled:
     AllowedValues:
