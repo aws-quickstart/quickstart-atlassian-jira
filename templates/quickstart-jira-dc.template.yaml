@@ -1362,7 +1362,7 @@ Resources:
             !Sub
               - "${BastionIp}/32"
               - BastionIp:
-                  Fn::ImportValue: !Sub '${ExportPrefix}BastionIp'
+                  Fn::ImportValue: !Sub '${ExportPrefix}BastionPrivIp'
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
