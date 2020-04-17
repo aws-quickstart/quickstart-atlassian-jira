@@ -425,7 +425,7 @@ Parameters:
   DBPassword:
     AllowedPattern: '(?=^.{6,255}$)((?=.*\\d)(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[^A-Za-z0-9])(?=.*[a-z])|(?=.*[^A-Za-z0-9])(?=.*[A-Z])(?=.*[a-z])|(?=.*\\d)(?=.*[A-Z])(?=.*[^A-Za-z0-9]))^.*'
     ConstraintDescription: 'Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ @ + % &'
-    Description: "Password for the master ('postgres') account. Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ @ + % &"
+    Description: "Database password used by Jira. Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ @ + % &"
     MinLength: 8
     MaxLength: 128
     NoEcho: true
