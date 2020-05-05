@@ -995,13 +995,13 @@ Resources:
                   - !Sub 'arn:${AWS::Partition}:route53:::hostedzone/*'
                   - !Sub 'arn:${AWS::Partition}:route53:::delegationset/*'
         - PolicyName: SSMParameterPutAccess
-            PolicyDocument:
-              Version: 2012-10-17
-              Statement:
-                - Action:
-                    - 'ssm:PutParameter'
-                  Effect: Allow
-                  Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/pinned-ansible-sha"
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'ssm:PutParameter'
+                Effect: Allow
+                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/pinned-ansible-sha"
   JiraClusterNodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
