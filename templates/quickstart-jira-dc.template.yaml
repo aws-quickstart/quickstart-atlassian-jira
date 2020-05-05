@@ -1039,6 +1039,7 @@ Resources:
     DependsOn:
       - EFSMountAz1
       - EFSMountAz2
+      - AnsibleRepoPinSHA
     Metadata:
       Comment: ''
       AWS::CloudFormation::Init:
