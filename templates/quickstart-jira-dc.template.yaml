@@ -994,6 +994,14 @@ Resources:
                   - !Sub 'arn:${AWS::Partition}:route53:::change/*'
                   - !Sub 'arn:${AWS::Partition}:route53:::hostedzone/*'
                   - !Sub 'arn:${AWS::Partition}:route53:::delegationset/*'
+        - PolicyName: SSMParameterPutAccess
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 'ssm:PutParameter'
+                Effect: Allow
+                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/pinned-ansible-sha"
   JiraClusterNodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
@@ -1031,6 +1039,7 @@ Resources:
     DependsOn:
       - EFSMountAz1
       - EFSMountAz2
+      - AnsibleRepoPinSHA
     Metadata:
       Comment: ''
       AWS::CloudFormation::Init:
@@ -1112,12 +1121,13 @@ Resources:
                 #!/bin/bash
                 key_location=/root/.ssh/deployment_repo_key
                 key_name="${DeploymentAutomationKeyName}"
+                ssm_pin=/${AWS::StackName}/pinned-ansible-sha
 
-                yum install -y git
+                yum install -y git awscli jq
+
                 if [[ ! -z "$key_name" ]]; then
                     # Ensure awscli is up to date
-                    yum install -y awscli jq
-                    key_val=$(aws --region=${AWS::Region} ssm get-parameters --names "$key_name" --with-decryption | jq --raw-output '.Parameters[0] .Value')
+                    key_val=$(aws --region=${AWS::Region} ssm get-parameters --names "$key_name" --with-decryption | jq --raw-output '.Parameters[0].Value')
                     echo -e "$key_val" > $key_location
                     chmod 600 $key_location
                     export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -i $key_location"
@@ -1125,7 +1135,21 @@ Resources:
                     export GIT_SSH_COMMAND="ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
                 fi
 
+                ### Ansible repo pinning ###
+                pinned_commit_id=$(aws --region=${AWS::Region} ssm get-parameters --names "$ssm_pin" | jq --raw-output '.Parameters[0].Value')
+
                 git clone "${DeploymentAutomationRepository}" -b "${DeploymentAutomationBranch}" /opt/atlassian/dc-deployments-automation/
+                cd /opt/atlassian/dc-deployments-automation/
+
+                if [[ "$pinned_commit_id" == "latest" || -z "$pinned_commit_id" ]]; then
+                  head_id=$(git rev-parse HEAD)
+                  echo "SSM param [$ssm_pin] has been set to 'latest' - Using the HEAD SHA [$head_id] to build cluster [${AWS::StackName}]"
+                  echo "Updating SSM param [$ssm_pin] with current HEAD SHA: [$head_id]"
+                  aws --region=${AWS::Region} ssm put-parameter --name "$ssm_pin" --value "$head_id" --overwrite --type String
+                else
+                  echo "Ansible repo has been pinned, checking out commit: [$pinned_commit_id]"
+                  git checkout -b "pinned-ansible-sha-$pinned_commit_id" "$pinned_commit_id"
+                fi
               mode: "000750"
               owner: root
               group: root
@@ -1463,6 +1487,14 @@ Resources:
     Properties:
       AliasName: !Sub "alias/${AWS::StackName}"
       TargetKeyId: !Ref EncryptionKey
+  AnsibleRepoPinSHA:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: "The dc-deployments-automation commit SHA that all nodes in the cluster will use"
+      Name: !Sub "/${AWS::StackName}/pinned-ansible-sha"
+      Type: String
+      AllowedPattern: '^(latest)|([0-9a-f]{5,40})$'
+      Value: "latest"
 
   # Optional: Cloudwatch dashboard to be created when CloudWatch is enabled
   CloudWatchDashboard:
