@@ -42,13 +42,13 @@ Metadata:
           default: Bastion host provisioning
         Parameters:
           - BastionHostRequired
+          - KeyPairName
       - Label:
           default: Networking
         Parameters:
           - AccessCIDR
           - AvailabilityZones
           - InternetFacingLoadBalancer
-          - KeyPairName
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
           - PublicSubnet1CIDR
@@ -556,7 +556,7 @@ Parameters:
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: The EC2 Key Pair to allow SSH access to the instances.
+    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
     Type: String
     Default: ''
   MailEnabled:
