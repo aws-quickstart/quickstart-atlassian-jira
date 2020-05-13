@@ -163,7 +163,7 @@ Metadata:
       JvmHeapOverride:
         default: JVM Heap Size Override
       BastionHostRequired:
-        default: Enable Bastion host usage
+        default: Use Bastion host
       KeyPairName:
         default: SSH Key Pair Name
       MailEnabled:
