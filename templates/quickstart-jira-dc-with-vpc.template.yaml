@@ -552,7 +552,7 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Description: Whether to provision a Bastion host instance. If 'true', then you need to provide an EC2 Key Pair (otherwise, you won't be able to use the Bastion host to access Crowd instances).
+    Description: Whether to provision a Bastion host instance. If 'true', then you need to provide an EC2 Key Pair (otherwise, you won't be able to use the Bastion host to access Jira instances).
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
