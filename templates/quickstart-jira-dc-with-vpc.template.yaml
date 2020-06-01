@@ -39,12 +39,16 @@ Metadata:
           - DBStorageEncrypted
           - DBStorageType
       - Label:
+          default: Bastion host provisioning
+        Parameters:
+          - BastionHostRequired
+          - KeyPairName
+      - Label:
           default: Networking
         Parameters:
           - AccessCIDR
           - AvailabilityZones
           - InternetFacingLoadBalancer
-          - KeyPairName
           - PrivateSubnet1CIDR
           - PrivateSubnet2CIDR
           - PublicSubnet1CIDR
@@ -170,6 +174,8 @@ Metadata:
         default: Version *
       JvmHeapOverride:
         default: JVM Heap Size Override
+      BastionHostRequired:
+          default: Deploy Bastion host
       KeyPairName:
         default: SSH Key Pair Name
       MailEnabled:
@@ -541,10 +547,17 @@ Parameters:
     ConstraintDescription: Must be 'true' or 'false'.
     Description: Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).
     Type: String
+  BastionHostRequired:
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether to provision a Bastion host instance. If 'true', then you need to provide an EC2 Key Pair (otherwise, you won't be able to use the Bastion host to access Jira instances).
+    Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: The EC2 Key Pair to allow SSH access to the instances.
-    Type: AWS::EC2::KeyPair::KeyName
+    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
+    Type: String
     Default: ''
   MailEnabled:
     AllowedValues:
@@ -660,6 +673,11 @@ Conditions:
     !Equals [!Ref DBStorageEncrypted, true]
   GovCloudCondition:
     !Equals [!Ref 'AWS::Region', 'us-gov-west-1']
+  KeyProvided:
+    !Not [!Equals [!Ref KeyPairName, '']]
+  ProvisionBastion: !And
+    - !Equals [!Ref BastionHostRequired, true]
+    - !Condition KeyProvided
 
 Resources:
   VPCStack:
@@ -683,6 +701,7 @@ Resources:
         PublicSubnet1CIDR: !Ref 'PublicSubnet1CIDR'
         PublicSubnet2CIDR: !Ref 'PublicSubnet2CIDR'
         VPCCIDR: !Ref 'VPCCIDR'
+        BastionHostRequired: !Ref 'BastionHostRequired'
 
   JiraDCStack:
     DependsOn: VPCStack
@@ -745,6 +764,7 @@ Resources:
         TomcatMinSpareThreads: !Ref 'TomcatMinSpareThreads'
         TomcatProtocol: !Ref 'TomcatProtocol'
         TomcatRedirectPort: !Ref 'TomcatRedirectPort'
+        BastionHostRequired: !Ref 'BastionHostRequired'
 
 Outputs:
   ServiceURL:
@@ -754,6 +774,7 @@ Outputs:
     Description: The Load Balancer URL
     Value: !GetAtt 'JiraDCStack.Outputs.LoadBalancerURL'
   BastionIP:
+    Condition: ProvisionBastion
     Description: Bastion node IP (use as a jumpbox to connect to the nodes)
     Value: !GetAtt 'VPCStack.Outputs.BastionPubIp'
   SGname:
