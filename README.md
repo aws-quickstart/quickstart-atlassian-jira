@@ -23,7 +23,7 @@ For details, see the [deployment guide](https://fwd.aws/Wz3Qb).
 
 Please note that issues are disabled for this repository, because it is a
 downstream repository that is not actively supported.
-We welcome pull requests, issues, and comments in the **[upstream repository](https://bitbucket.org/atlassian/atlassian-aws-deployment/src/master/quickstarts/)**.
+We welcome pull requests, issues, and comments in the **[upstream repository](https://github.com/aws-quickstart/quickstart-atlassian-jira/)**.
 
 If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/). 
 
