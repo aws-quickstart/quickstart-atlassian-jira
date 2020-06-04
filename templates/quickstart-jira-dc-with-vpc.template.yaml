@@ -30,8 +30,7 @@ Metadata:
           default: Database
         Parameters:
           - DBEngine
-          - DBPostgresEngineVersion
-          - DBAuroraPostgresEngineVersion
+          - DBEngineVersion
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -116,10 +115,8 @@ Metadata:
         default: Existing DNS name
       DBEngine:
         default: The database engine to deploy with
-      DBPostgresEngineVersion:
-        default: The PosgreSQL engine version to use
-      DBAuroraPostgresEngineVersion:
-        default: The Aurora PosgreSQL engine version to use
+      DBEngineVersion:
+        default: The database engine version to use
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -355,20 +352,13 @@ Parameters:
       - 'Amazon Aurora PostgreSQL'
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
-  DBPostgresEngineVersion:
+  DBEngineVersion:
     Default: 9.6
     AllowedValues:
       - 9.6
       - 10
       - 11
-    Description: "Select the PostgreSQL engine version to use"
-    Type: String
-  DBAuroraPostgresEngineVersion:
-    Default: 9.6.12
-    AllowedValues:
-      - 9.6.12
-      - 11.4
-    Description: "Select the Aurora PostgreSQL engine version to use"
+    Description: "Select the engine version to use"
     Type: String
   DBInstanceClass:
     Default: db.m5.large
@@ -699,6 +689,19 @@ Conditions:
   ProvisionBastion: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
+  DBEnginePostgres:
+    !Equals [!Ref DBEngine, "PostgreSQL"]
+      
+Mappings:
+  SemanticDBVersions:
+    PostgreSQL:
+      9.6: 9.6
+      10: 10
+      11: 11
+    AuroraPostgreSQL:
+      9.6: 9.6.12
+      10: 10.5
+      11: 11.4      
 
 Resources:
   VPCStack:
@@ -741,8 +744,10 @@ Resources:
         ClusterNodeVolumeSize: !Ref 'ClusterNodeVolumeSize'
         CustomDnsName: !Ref 'CustomDnsName'
         DBEngine: !Ref DBEngine
-        DBPostgresEngineVersion: !Ref DBPostgresEngineVersion
-        DBAuroraPostgresEngineVersion: !Ref DBAuroraPostgresEngineVersion
+        DBEngineVersion: !If
+          - DBEnginePostgres
+          - !FindInMap [SemanticDBVersions, PostgreSQL, !Ref DBEngineVersion]
+          - !FindInMap [SemanticDBVersions, AuroraPostgreSQL, !Ref DBEngineVersion]
         DBInstanceClass: !Ref 'DBInstanceClass'
         DBIops: !Ref 'DBIops'
         DBMasterUserPassword: !Ref 'DBMasterUserPassword'

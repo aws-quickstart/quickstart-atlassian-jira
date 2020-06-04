@@ -26,8 +26,7 @@ Metadata:
           default: Database
         Parameters:
           - DBEngine
-          - DBPostgresEngineVersion
-          - DBAuroraPostgresEngineVersion
+          - DBEngineVersion
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -104,10 +103,8 @@ Metadata:
         default: Existing DNS name
       DBEngine:
         default: The database engine to deploy with
-      DBPostgresEngineVersion:
-        default: The PosgreSQL engine version to use
-      DBAuroraPostgresEngineVersion:
-        default: The Aurora PosgreSQL engine version to use
+      DBEngineVersion:
+        default: The database engine version to use
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -337,20 +334,13 @@ Parameters:
       - 'Amazon Aurora PostgreSQL'
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
-  DBPostgresEngineVersion:
+  DBEngineVersion:
     Default: 9.6
     AllowedValues:
       - 9.6
       - 10
       - 11
-    Description: "Select the PostgreSQL engine version to use"
-    Type: String
-  DBAuroraPostgresEngineVersion:
-    Default: 9.6.12
-    AllowedValues:
-      - 9.6.12
-      - 11.4
-    Description: "Select the Aurora PostgreSQL engine version to use"
+    Description: "Select the engine version to use"
     Type: String
   DBInstanceClass:
     Default: db.m5.large
@@ -978,6 +968,16 @@ Mappings:
       HVM64: ami-e9a9d388
     us-gov-east-1:
       HVM64: ami-a2d938d3
+      
+  SemanticDBVersions:
+    PostgreSQL:
+      9.6: 9.6
+      10: 10
+      11: 11
+    AuroraPostgreSQL:
+      9.6: 9.6.12
+      10: 10.5
+      11: 11.4
 
   JIRAProduct2NameAndVersion:
     Core:
@@ -1295,8 +1295,10 @@ Resources:
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
         DatabaseImplementation: !Ref DBEngine
-        DBAuroraPostgresEngineVersion: !Ref DBAuroraPostgresEngineVersion
-        DBPostgresEngineVersion: !Ref DBPostgresEngineVersion
+        DBEngineVersion: !If
+          - DBEnginePostgres
+          - !FindInMap [SemanticDBVersions, PostgreSQL, !Ref DBEngineVersion]
+          - !FindInMap [SemanticDBVersions, AuroraPostgreSQL, !Ref DBEngineVersion]
         DBSecurityGroup: !Ref SecurityGroup
         DBAutoMinorVersionUpgrade: "true"
         DBBackupRetentionPeriod: "1"
