@@ -66,7 +66,6 @@ Metadata:
         Parameters:
             - TomcatContextPath
             - CatalinaOpts
-            - JvmHeapOverride
             - DBPoolMaxSize
             - DBPoolMinSize
             - DBMaxIdle
@@ -175,8 +174,6 @@ Metadata:
         default: Jira Product *
       JiraVersion:
         default: Version *
-      JvmHeapOverride:
-        default: JVM Heap Size Override
       BastionHostRequired:
           default: Deploy Bastion host
       KeyPairName:
@@ -353,9 +350,9 @@ Parameters:
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
   DBEngineVersion:
-    Default: 9.6
+    Default: 9
     AllowedValues:
-      - 9.6
+      - 9
       - 10
       - 11
     Description: "Select the engine version to use"
@@ -548,10 +545,6 @@ Parameters:
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
-  JvmHeapOverride:
-    Default: ''
-    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
-    Type: String
   InternetFacingLoadBalancer:
     Default: "true"
     AllowedValues: ["true", "false"]
@@ -689,19 +682,6 @@ Conditions:
   ProvisionBastion: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
-  DBEnginePostgres:
-    !Equals [!Ref DBEngine, "PostgreSQL"]
-      
-Mappings:
-  SemanticDBVersions:
-    PostgreSQL:
-      9.6: 9.6
-      10: 10
-      11: 11
-    AuroraPostgreSQL:
-      9.6: 9.6.12
-      10: 10.5
-      11: 11.4      
 
 Resources:
   VPCStack:
@@ -744,10 +724,7 @@ Resources:
         ClusterNodeVolumeSize: !Ref 'ClusterNodeVolumeSize'
         CustomDnsName: !Ref 'CustomDnsName'
         DBEngine: !Ref DBEngine
-        DBEngineVersion: !If
-          - DBEnginePostgres
-          - !FindInMap [SemanticDBVersions, PostgreSQL, !Ref DBEngineVersion]
-          - !FindInMap [SemanticDBVersions, AuroraPostgreSQL, !Ref DBEngineVersion]
+        DBEngineVersion: !Ref DBEngineVersion
         DBInstanceClass: !Ref 'DBInstanceClass'
         DBIops: !Ref 'DBIops'
         DBMasterUserPassword: !Ref 'DBMasterUserPassword'
@@ -777,7 +754,6 @@ Resources:
         InternetFacingLoadBalancer: !Ref 'InternetFacingLoadBalancer'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
-        JvmHeapOverride: !Ref 'JvmHeapOverride'
         KeyPairName: !Ref 'KeyPairName'
         MailEnabled: !Ref 'MailEnabled'
         QSS3BucketName: !Ref 'QSS3BucketName'

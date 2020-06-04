@@ -56,7 +56,6 @@ Metadata:
         Parameters:
           - TomcatContextPath
           - CatalinaOpts
-          - JvmHeapOverride
           - DBPoolMaxSize
           - DBPoolMinSize
           - DBMaxIdle
@@ -163,8 +162,6 @@ Metadata:
         default: Jira Product *
       JiraVersion:
         default: Version *
-      JvmHeapOverride:
-        default: JVM Heap Size Override
       BastionHostRequired:
         default: Use Bastion host
       KeyPairName:
@@ -335,9 +332,9 @@ Parameters:
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
   DBEngineVersion:
-    Default: 9.6
+    Default: 9
     AllowedValues:
-      - 9.6
+      - 9
       - 10
       - 11
     Description: "Select the engine version to use"
@@ -536,10 +533,6 @@ Parameters:
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
-  JvmHeapOverride:
-    Default: ''
-    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
-    Type: String
   BastionHostRequired:
     Default: "true"
     AllowedValues:
@@ -637,8 +630,6 @@ Conditions:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
-  OverrideHeap:
-    !Not [!Equals [!Ref JvmHeapOverride, '']]
   UseContextPath:
     !Not [!Equals [!Ref TomcatContextPath, '']]
   UseCustomDnsName:
@@ -968,16 +959,6 @@ Mappings:
       HVM64: ami-e9a9d388
     us-gov-east-1:
       HVM64: ami-a2d938d3
-      
-  SemanticDBVersions:
-    PostgreSQL:
-      9.6: 9.6
-      10: 10
-      11: 11
-    AuroraPostgreSQL:
-      9.6: 9.6.12
-      10: 10.5
-      11: 11.4
 
   JIRAProduct2NameAndVersion:
     Core:
@@ -1130,7 +1111,6 @@ Resources:
                     - !Sub ["ATL_JIRA_FULL_DISPLAY_NAME=${JiraFullDisplayName}", JiraFullDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "fulldisplayname"]]
                     - !Sub ["ATL_JIRA_NAME=${JiraProductName}", JiraProductName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]]
                     - !Sub ["ATL_JIRA_SHORT_DISPLAY_NAME=${JiraShortDisplayName}", JiraShortDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "shortdisplayname"]]
-                    - !Sub ["ATL_JVM_HEAP=${AtlJvmHeap}", AtlJvmHeap: !If [OverrideHeap, !Ref 'JvmHeapOverride', !FindInMap [AWSInstanceType2Arch, !Ref ClusterNodeInstanceType, Jvmheap]]]
                     - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !Ref CustomDnsName, !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
                     - !Sub ["ATL_TOMCAT_ACCEPTCOUNT=${TomcatAcceptCount}", TomcatAcceptCount: !Ref TomcatAcceptCount]
                     - !Sub ["ATL_TOMCAT_CONNECTIONTIMEOUT=${TomcatConnectionTimeout}", TomcatConnectionTimeout: !Ref TomcatConnectionTimeout]
@@ -1295,10 +1275,7 @@ Resources:
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
         DatabaseImplementation: !Ref DBEngine
-        DBEngineVersion: !If
-          - DBEnginePostgres
-          - !FindInMap [SemanticDBVersions, PostgreSQL, !Ref DBEngineVersion]
-          - !FindInMap [SemanticDBVersions, AuroraPostgreSQL, !Ref DBEngineVersion]
+        DBEngineVersion: !Ref DBEngineVersion
         DBSecurityGroup: !Ref SecurityGroup
         DBAutoMinorVersionUpgrade: "true"
         DBBackupRetentionPeriod: "1"
