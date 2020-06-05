@@ -56,6 +56,7 @@ Metadata:
         Parameters:
           - TomcatContextPath
           - CatalinaOpts
+          - JvmHeapOverride
           - DBPoolMaxSize
           - DBPoolMinSize
           - DBMaxIdle
@@ -162,6 +163,8 @@ Metadata:
         default: Jira Product *
       JiraVersion:
         default: Version *
+      JvmHeapOverride:
+        default: JVM Heap Size Override
       BastionHostRequired:
         default: Use Bastion host
       KeyPairName:
@@ -533,6 +536,10 @@ Parameters:
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
+  JvmHeapOverride:
+    Default: ''
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Type: String
   BastionHostRequired:
     Default: "true"
     AllowedValues:
@@ -630,6 +637,8 @@ Conditions:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
+  OverrideHeap:
+    !Not [!Equals [!Ref JvmHeapOverride, '']]
   UseContextPath:
     !Not [!Equals [!Ref TomcatContextPath, '']]
   UseCustomDnsName:
@@ -1111,6 +1120,7 @@ Resources:
                     - !Sub ["ATL_JIRA_FULL_DISPLAY_NAME=${JiraFullDisplayName}", JiraFullDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "fulldisplayname"]]
                     - !Sub ["ATL_JIRA_NAME=${JiraProductName}", JiraProductName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]]
                     - !Sub ["ATL_JIRA_SHORT_DISPLAY_NAME=${JiraShortDisplayName}", JiraShortDisplayName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "shortdisplayname"]]
+                    - !Sub ["ATL_JVM_HEAP=${AtlJvmHeap}", AtlJvmHeap: !If [OverrideHeap, !Ref 'JvmHeapOverride', !FindInMap [AWSInstanceType2Arch, !Ref ClusterNodeInstanceType, Jvmheap]]]
                     - !Sub ["ATL_PROXY_NAME=${AtlProxyName}", AtlProxyName: !If [UseCustomDnsName, !Ref CustomDnsName, !If [UseHostedZone, !Ref LoadBalancerCname, !GetAtt LoadBalancer.DNSName]]]
                     - !Sub ["ATL_TOMCAT_ACCEPTCOUNT=${TomcatAcceptCount}", TomcatAcceptCount: !Ref TomcatAcceptCount]
                     - !Sub ["ATL_TOMCAT_CONNECTIONTIMEOUT=${TomcatConnectionTimeout}", TomcatConnectionTimeout: !Ref TomcatConnectionTimeout]

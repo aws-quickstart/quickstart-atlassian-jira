@@ -66,6 +66,7 @@ Metadata:
         Parameters:
             - TomcatContextPath
             - CatalinaOpts
+            - JvmHeapOverride
             - DBPoolMaxSize
             - DBPoolMinSize
             - DBMaxIdle
@@ -79,7 +80,6 @@ Metadata:
             - DBTimeBetweenEvictionRunsMillis
             - MailEnabled
             - TomcatAcceptCount
-            - TomcatConnectionTimeout
             - TomcatDefaultConnectorPort
             - TomcatEnableLookups
             - TomcatMaxThreads
@@ -174,6 +174,8 @@ Metadata:
         default: Jira Product *
       JiraVersion:
         default: Version *
+      JvmHeapOverride:
+        default: JVM Heap Size Override
       BastionHostRequired:
           default: Deploy Bastion host
       KeyPairName:
@@ -192,8 +194,6 @@ Metadata:
         default: SSL Certificate ARN
       TomcatAcceptCount:
         default: Tomcat Accept Count
-      TomcatConnectionTimeout:
-        default: Tomcat Connection Timeout
       TomcatContextPath:
         default: Tomcat Context Path
       TomcatDefaultConnectorPort:
@@ -545,6 +545,10 @@ Parameters:
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
     Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
+  JvmHeapOverride:
+    Default: ''
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Type: String
   InternetFacingLoadBalancer:
     Default: "true"
     AllowedValues: ["true", "false"]
@@ -580,10 +584,6 @@ Parameters:
   TomcatAcceptCount:
     Default: 10
     Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
-    Type: Number
-  TomcatConnectionTimeout:
-    Default: 20000
-    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented
     Type: Number
   TomcatContextPath:
     Default: ''
@@ -754,13 +754,13 @@ Resources:
         InternetFacingLoadBalancer: !Ref 'InternetFacingLoadBalancer'
         JiraProduct: !Ref 'JiraProduct'
         JiraVersion: !Ref 'JiraVersion'
+        JvmHeapOverride: !Ref 'JvmHeapOverride'
         KeyPairName: !Ref 'KeyPairName'
         MailEnabled: !Ref 'MailEnabled'
         QSS3BucketName: !Ref 'QSS3BucketName'
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
         SSLCertificateARN: !Ref 'SSLCertificateARN'
         TomcatAcceptCount: !Ref 'TomcatAcceptCount'
-        TomcatConnectionTimeout: !Ref 'TomcatConnectionTimeout'
         TomcatContextPath: !Ref 'TomcatContextPath'
         TomcatDefaultConnectorPort: !Ref 'TomcatDefaultConnectorPort'
         TomcatEnableLookups: !Ref 'TomcatEnableLookups'
