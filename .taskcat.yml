@@ -2,6 +2,7 @@ project:
   name: quickstart-atlassian-jira
   owner: quickstart-eng@amazon.com
   package_lambda: false
+  s3_regional_buckets: true
   regions:
   - us-east-1
   s3_bucket: ''
