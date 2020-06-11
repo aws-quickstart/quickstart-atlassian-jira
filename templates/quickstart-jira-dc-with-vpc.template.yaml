@@ -30,6 +30,7 @@ Metadata:
           default: Database
         Parameters:
           - DBEngine
+          - DBEngineVersion
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -79,7 +80,6 @@ Metadata:
             - DBTimeBetweenEvictionRunsMillis
             - MailEnabled
             - TomcatAcceptCount
-            - TomcatConnectionTimeout
             - TomcatDefaultConnectorPort
             - TomcatEnableLookups
             - TomcatMaxThreads
@@ -114,6 +114,8 @@ Metadata:
         default: Existing DNS name
       DBEngine:
         default: The database engine to deploy with
+      DBEngineVersion:
+        default: The database engine version to use
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -192,8 +194,6 @@ Metadata:
         default: SSL Certificate ARN
       TomcatAcceptCount:
         default: Tomcat Accept Count
-      TomcatConnectionTimeout:
-        default: Tomcat Connection Timeout
       TomcatContextPath:
         default: Tomcat Context Path
       TomcatDefaultConnectorPort:
@@ -348,6 +348,14 @@ Parameters:
       - 'PostgreSQL'
       - 'Amazon Aurora PostgreSQL'
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
+    Type: String
+  DBEngineVersion:
+    Default: 9
+    AllowedValues:
+      - 9
+      - 10
+      - 11
+    Description: "The database engine version to use. We'll install a supported minor version that's suitable for your chosen engine"
     Type: String
   DBInstanceClass:
     Default: db.m5.large
@@ -577,10 +585,6 @@ Parameters:
     Default: 10
     Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
     Type: Number
-  TomcatConnectionTimeout:
-    Default: 20000
-    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented
-    Type: Number
   TomcatContextPath:
     Default: ''
     AllowedPattern: '^(\/[A-z_\-0-9\.]+)?$'
@@ -720,6 +724,7 @@ Resources:
         ClusterNodeVolumeSize: !Ref 'ClusterNodeVolumeSize'
         CustomDnsName: !Ref 'CustomDnsName'
         DBEngine: !Ref DBEngine
+        DBEngineVersion: !Ref DBEngineVersion
         DBInstanceClass: !Ref 'DBInstanceClass'
         DBIops: !Ref 'DBIops'
         DBMasterUserPassword: !Ref 'DBMasterUserPassword'
@@ -756,7 +761,6 @@ Resources:
         QSS3KeyPrefix: !Ref 'QSS3KeyPrefix'
         SSLCertificateARN: !Ref 'SSLCertificateARN'
         TomcatAcceptCount: !Ref 'TomcatAcceptCount'
-        TomcatConnectionTimeout: !Ref 'TomcatConnectionTimeout'
         TomcatContextPath: !Ref 'TomcatContextPath'
         TomcatDefaultConnectorPort: !Ref 'TomcatDefaultConnectorPort'
         TomcatEnableLookups: !Ref 'TomcatEnableLookups'
