@@ -26,6 +26,7 @@ Metadata:
           default: Database
         Parameters:
           - DBEngine
+          - DBEngineVersion
           - DBInstanceClass
           - DBIops
           - DBMasterUserPassword
@@ -102,6 +103,8 @@ Metadata:
         default: Existing DNS name
       DBEngine:
         default: The database engine to deploy with
+      DBEngineVersion:
+        default: The database engine version to use
       DBInstanceClass:
         default: Database instance class
       DBIops:
@@ -330,6 +333,14 @@ Parameters:
       - 'PostgreSQL'
       - 'Amazon Aurora PostgreSQL'
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
+    Type: String
+  DBEngineVersion:
+    Default: 9
+    AllowedValues:
+      - 9
+      - 10
+      - 11
+    Description: "The database engine version to use. We'll install a supported minor version that's suitable for your chosen engine"
     Type: String
   DBInstanceClass:
     Default: db.m5.large
@@ -1274,6 +1285,7 @@ Resources:
         - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
         DatabaseImplementation: !Ref DBEngine
+        DBEngineVersion: !Ref DBEngineVersion
         DBSecurityGroup: !Ref SecurityGroup
         DBAutoMinorVersionUpgrade: "true"
         DBBackupRetentionPeriod: "1"
