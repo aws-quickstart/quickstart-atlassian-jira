@@ -340,7 +340,7 @@ Parameters:
       - 9
       - 10
       - 11
-    Description: "Select the engine version to use"
+    Description: "The database engine version to use. We'll install a supported minor version that's suitable for your chosen engine"
     Type: String
   DBInstanceClass:
     Default: db.m5.large
