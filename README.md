@@ -19,14 +19,6 @@ You need to create the required AWS networking infrastructure
 (VPC, subnets) by using the [ASI Quick Start](https://fwd.aws/xYyYy), or by deploying Jira with a new ASI.
 For details, see the [deployment guide](https://fwd.aws/Wz3Qb).
 
-### Contributing & issues
-
-Please note that issues are disabled for this repository, because it is a
-downstream repository that is not actively supported.
-We welcome pull requests, issues, and comments in the **[upstream repository](https://github.com/aws-quickstart/quickstart-atlassian-jira/)**.
-
-If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/). 
-
 ## Development notes
 
 ### Pre-commit hook
@@ -40,3 +32,10 @@ commit. The simplest method of doing this is:
 Alternatively you can invoke
 `submodules/quickstart-atlassian-services/scripts/hooks/update-tags.py`
 manually.
+
+## Atlassian support
+
+This Quick Start's CloudFormation templates were developed by Atlassian, in collaboration with AWS. To report an issue or request a feature, you can [contact Atlassian directly](https://support.atlassian.com/contact/#/).
+
+For additional Atlassian documentation on how to manage Quick Start deployments, see [Getting started with Jira Data Center on AWS](https://confluence.atlassian.com/x/9qr1Nw).
+
