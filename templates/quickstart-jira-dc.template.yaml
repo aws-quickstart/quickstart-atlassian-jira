@@ -1029,8 +1029,8 @@ Resources:
                   - 'ssm:PutParameter'
                 Effect: Allow
                 Resource: !Sub
-                  - arn:${ArnIdentifier}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/pinned-ansible-sha
-                  - ArnIdentifier: !If ["GovCloudCondition", "aws-us-gov", "aws"]
+                  - arn:${ArnPartition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${AWS::StackName}/pinned-ansible-sha
+                  - ArnPartition: !If ["GovCloudCondition", "aws-us-gov", "aws"]
   JiraClusterNodeInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
