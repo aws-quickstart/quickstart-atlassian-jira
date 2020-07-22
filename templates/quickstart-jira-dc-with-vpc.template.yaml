@@ -687,8 +687,8 @@ Conditions:
 Mappings:
   Regions:
     Gov:
-      us-gov-west-1: s3-us-gov-west-1"
-      us-gov-east-1: s3-us-gov-east-1"
+      us-gov-west-1: s3-us-gov-west-1
+      us-gov-east-1: s3-us-gov-east-1
 
 Resources:
   VPCStack:
