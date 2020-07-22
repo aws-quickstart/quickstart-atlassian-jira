@@ -649,8 +649,9 @@ Conditions:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp:
     !Equals [!Ref InternetFacingLoadBalancer, 'true']
-  GovCloudCondition:
+  GovCloudCondition: !Or
     !Equals [!Ref 'AWS::Region', 'us-gov-west-1']
+    !Equals [!Ref 'AWS::Region', 'us-gov-east-1']
   DBEngineAurora:
     !Equals [!Ref DBEngine, "Amazon Aurora PostgreSQL"]
   DBEnginePostgres:
@@ -1284,7 +1285,10 @@ Resources:
     Properties:
       TemplateURL: !Sub
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-database-for-atlassian-services.yaml
-        - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
+        - QSS3Region: !If
+            - GovCloudCondition
+            - !FindInMap [Regions, Gov, !Ref 'AWS::Region']
+            - s3
       Parameters:
         DatabaseImplementation: !Ref DBEngine
         DBEngineVersion: !Ref DBEngineVersion
@@ -1538,7 +1542,10 @@ Resources:
     Properties:
       TemplateURL: !Sub
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-cloudwatch-dashboard.yaml
-        - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
+        - QSS3Region: !If
+            - GovCloudCondition
+            - !FindInMap [Regions, Gov, !Ref 'AWS::Region']
+            - s3
       Parameters:
         ProductStackName: !Sub "${AWS::StackName}"
         ProductFamilyName: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "name"]
