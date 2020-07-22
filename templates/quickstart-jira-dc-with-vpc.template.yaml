@@ -675,20 +675,13 @@ Parameters:
 Conditions:
   UseDatabaseEncryption:
     !Equals [!Ref DBStorageEncrypted, true]
-  GovCloudCondition: !Or
+  GovCloudCondition:
     !Equals [!Ref 'AWS::Region', 'us-gov-west-1']
-    !Equals [!Ref 'AWS::Region', 'us-gov-east-1']
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
   ProvisionBastion: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
-
-Mappings:
-  Regions:
-    Gov:
-      us-gov-west-1: s3-us-gov-west-1
-      us-gov-east-1: s3-us-gov-east-1
 
 Resources:
   VPCStack:
@@ -698,7 +691,7 @@ Resources:
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/templates/quickstart-vpc-for-atlassian-services.yaml
         - QSS3Region: !If
             - GovCloudCondition
-            - !FindInMap [Regions, Gov, !Ref 'AWS::Region']
+            - s3-us-gov-west-1
             - s3
       Parameters:
         AccessCIDR: !Ref 'AccessCIDR'
@@ -720,10 +713,7 @@ Resources:
     Properties:
       TemplateURL: !Sub
         - https://${QSS3BucketName}.${QSS3Region}.amazonaws.com/${QSS3KeyPrefix}templates/quickstart-jira-dc.template.yaml
-        - QSS3Region: !If
-            - GovCloudCondition
-            - !FindInMap [Regions, Gov, !Ref 'AWS::Region']
-            - s3
+        - QSS3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       Parameters:
         CatalinaOpts: !Ref 'CatalinaOpts'
         CidrBlock: !Ref 'AccessCIDR'
