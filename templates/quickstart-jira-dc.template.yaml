@@ -969,6 +969,11 @@ Mappings:
       HVM64: ami-e9a9d388
     us-gov-east-1:
       HVM64: ami-a2d938d3
+      
+  Regions:
+    Gov:
+      us-gov-west-1: s3-us-gov-west-1
+      us-gov-east-1: s3-us-gov-east-1
 
   JIRAProduct2NameAndVersion:
     Core:
