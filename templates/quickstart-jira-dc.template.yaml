@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-Description: Atlassian Jira Data Center QS(0035)
+Description: 'Atlassian Jira Data Center. (qs-1qup6ra3c)'
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
