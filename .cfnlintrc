@@ -1,2 +1,11 @@
 templates:
   - templates/*
+
+# Used by cfn-lint GitHub Action
+ignore_checks:
+  # W4002: As the resource "metadata" section contains reference to a "NoEcho" parameter DBMasterUserPassword, CloudFormation will display the parameter value in plaintext
+  - W4002
+  # E3012: Property Resources/EFSCname/Properties/TTL should be of type Long
+  - E3012
+  # E1001: Top level template section tests is not valid
+  - E1001
