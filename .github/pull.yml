@@ -2,4 +2,4 @@ version: "1"
 rules:
   - base: develop
     upstream: aws-quickstart:develop
-    mergeMethod: hardreset
+    mergeMethod: none
