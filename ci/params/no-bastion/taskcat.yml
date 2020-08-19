@@ -1,0 +1,13 @@
+---
+global:
+  marketplace-ami: false
+  owner: dc-deployments-syd@atlassian.com
+  qsname: quickstart-atlassian-jira
+  regions:
+    - us-east-1
+  reporting: true
+
+tests:
+  jira:
+    parameter_input: params/no-bastion/quickstart-jira-no-bastion-params.json
+    template_file: quickstart-jira-dc-with-vpc.template.yaml
