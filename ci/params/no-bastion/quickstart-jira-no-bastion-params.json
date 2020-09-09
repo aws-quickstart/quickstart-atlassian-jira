@@ -1,0 +1,46 @@
+[
+    {
+        "ParameterKey": "AvailabilityZones",
+        "ParameterValue": "$[taskcat_genaz_2]"
+    },
+    {
+        "ParameterKey": "DBMasterUserPassword",
+        "ParameterValue": "f925dO1ry_"
+    },
+    {
+        "ParameterKey": "DBMultiAZ",
+        "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "DBPassword",
+        "ParameterValue": "f925dO1ry_"
+    },
+    {
+        "ParameterKey": "DBStorage",
+        "ParameterValue": "100"
+    },
+    {
+        "ParameterKey": "DBStorageType",
+        "ParameterValue": "Provisioned IOPS"
+    },
+    {
+        "ParameterKey": "CustomDnsName",
+        "ParameterValue": "qsjiraci.awsqs.com"
+    },
+    {
+        "ParameterKey":"QSS3BucketName",
+        "ParameterValue":"$[taskcat_autobucket]"
+    },
+    {
+        "ParameterKey":"QSS3KeyPrefix",
+        "ParameterValue":"quickstart-atlassian-jira/"
+    },
+    {
+        "ParameterKey":"AccessCIDR",
+        "ParameterValue":"10.0.0.0/16"
+    },
+    {
+        "ParameterKey": "BastionHostRequired",
+        "ParameterValue": "false"
+    }
+]
