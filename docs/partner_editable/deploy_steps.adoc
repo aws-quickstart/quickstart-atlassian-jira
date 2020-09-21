@@ -1,0 +1,17 @@
+=== Launching from a cloned Quick Start (recommended for production)
+
+The fastest way to deploy {partner-product-name-short} with this Quick Start is directly through its AWS Quick Start interface. However, when you deploy {partner-product-name-short} this way, any updates that are made to the Quick Start templates propagate directly to your production deployment. These updates sometimes involve adding or removing parameters, which could introduce unexpected changes or break your deployment.
+
+As a best practice, instead of deploying directly through the AWS Quick Start interface, clone the {partner-product-name-short} Quick Start templates to a custom Amazon Simple Storage Service (Amazon S3) bucket. Then, launch the templates directly from the S3 bucket. This practice lets you control when to apply the latest changes to your environment.
+
+include::./_clone_quickstart.adoc[]
+
+After everything is uploaded, you can deploy your production stack from your S3 bucket.
+
+. Sign in to your AWS account on the https://console.aws.amazon.com/console/home[AWS Console].
+. Check the AWS Region displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where {product-partner-name-short} is built. The template is launched in the `us-east-2` Region by default.
+. Go to *CloudFormation* > *Create Stack*. When specifying a template, paste in the Object URL of the Quick Start template that you are using for the deployment. Choose *Next* to start configuring your deployment.
+. On the *Specify stack* details page, change the stack name, if needed. Review the parameters for the template, and provide values for parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details about each setting, refer to the section matching your deployment type:
+
+- <<launch-into-a-new-vpc>> (if you're deploying an ASI with {partner-product-name-short})
+- <<launch-into-an-existing-vpc>> (if you're deploying {partner-product-name-short} into a new ASI)
