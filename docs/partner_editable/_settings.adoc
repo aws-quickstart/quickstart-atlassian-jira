@@ -5,7 +5,7 @@
 :vpc-name: Atlassian Standard Infrastructure
 :doc-month: October
 :doc-year: 2020
-:partner-contributors: Chris Szmajda, Don Domingo, Felix Haehnel
+:partner-contributors: Adam Brokes, Ben Partridge, Carlos Corredor, Chris Szmajda, Don Domingo, Dylan Rathbone, Felix Haehnel, Steve Smith, Varun Arbatti
 :quickstart-contributors: Tony Vattathil - Principal Solutions Architect, AWS
 :deployment_time: 30-60 minutes
 :default_deployment_region: us-east-2
