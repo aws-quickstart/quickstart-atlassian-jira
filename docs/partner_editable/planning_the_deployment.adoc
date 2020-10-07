@@ -1,0 +1,12 @@
+=== Prerequisites
+_Prerequisites, such as Marketplace AMI subscription go here_
+
+=== Specialized Knowledge
+WARNING: This Quick Start assumes familiarity with <knowledge expectations>.
+This deployment guide also requires a moderate level of familiarity with
+AWS services. If you’re new to AWS, visit the
+https://aws.amazon.com/getting-started/[Getting Started Resource Center]
+and the https://aws.amazon.com/training/[AWS Training and Certification
+website]. These sites provide materials for learning how to design,
+deploy, and operate your infrastructure and applications on the AWS
+Cloud.

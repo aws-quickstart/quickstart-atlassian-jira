@@ -1,0 +1,24 @@
+// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren’t used.
+
+|===
+|Resource |This deployment uses
+|VPC (https://aws.amazon.com/quickstart/architecture/atlassian-standard-infrastructure/[ASI]) | 1
+|Auto Scaling groups | 1 (2 if a Bastion Host is provisioned)
+|Application Load Balancers | 1
+|Elastic IP addresses | _variable based on user configuration_
+|AWS Identity and Access Management (IAM) security groups | _variable based on user configuration_
+|IAM roles | _variable based on user configuration_
+|EC2 instances | _variable based on user configuration_
+|===
+
+// |===
+// |Resource |This deployment uses
+// |https://aws.amazon.com/quickstart/architecture/atlassian-standard-infrastructure/[ASI] | 1
+// |Elastic IP addresses | ???
+// |AWS Identity and Access Management (IAM) security groups | ???
+// |IAM roles | ???
+// |Auto Scaling groups | 1
+// |Application Load Balancers | 1
+// |Network Load Balancers | ???
+// |EC2 instances | _variable_
+// |===
