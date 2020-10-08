@@ -1,0 +1,11 @@
+// There are generally two deployment options. If additional are required, add them here
+
+This Quick Start includes two AWS CloudFormation templates. The first template builds the {vpc-name} (ASI), which is a virtual private cloud (VPC) that contains the components required by all {partner-company-name} applications, and then provisions {partner-product-name-short} into this ASI. The second template provisions {partner-product-name-short} in an existing ASI.
+
+Using these templates, the Quick Start provides two deployment options:
+
+* *Deploy {partner-product-name} into a new ASI (end-to-end deployment)*. Choose this option if you’re a new user. This option builds the https://aws.amazon.com/quickstart/architecture/atlassian-standard-infrastructure/[Atlassian Standard Infrastructure (ASI)], which is a VPC that consists of the subnets, NAT gateways, security groups, and other infrastructure components required by all Atlassian applications. It then deploys {partner-product-name-short} into this new VPC.
+
+* *Deploy {partner-product-name} into an existing ASI*. This option provisions {partner-product-name-short} in an existing ASI, and also offers more customizable parameters. Choose this option if you’ve already deployed the ASI separately by using the https://fwd.aws/xYyYy[ASI Quick Start], or by deploying another Atlassian product from a Quick Start (https://fwd.aws/Wz3Qb[Jira Software/Service Desk Data Center], https://aws.amazon.com/quickstart/architecture/confluence/[Confluence Data Center], https://fwd.aws/BBeJW[Bitbucket Data Center], or https://fwd.aws/QXEDE[Crowd Data Center]).
+
+The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and {partner-product-name-short} settings, as discussed later in this guide.

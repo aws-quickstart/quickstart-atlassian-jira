@@ -1,0 +1,5 @@
+[cols=",]
+|===
+|https://fwd.aws/WNMAy[Deploy {partner-product-name-short} into a new ASI (end-to-end deployment)^]
+|https://fwd.aws/8gBER[Deploy {partner-product-name-short} into an existing ASI^]
+|===

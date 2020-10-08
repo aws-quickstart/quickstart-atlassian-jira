@@ -1,0 +1,31 @@
+// https://confluence.atlassian.com/display/ENTERPRISE/_supported_aws_regions
+// - _us-east-1 (N. Virginia)_ (EXAMPLE)
+// - _us-east-2 (Ohio)_ (EXAMPLE)
+
+* Americas
+** _us-east-1	(Northern Virginia)_
+** _us-east-2 (Ohio)_
+** _us-west-1 (Northern California)_
+** _us-west-2 (Oregon)_
+** _ca-central-1 (Montreal)_
+* Europe/Middle East/Africa
+** _eu-west-1	(Ireland)_
+** _eu-central-1 (Frankfurt)_
+** _eu-west-2 (London)_
+** _eu-west-3 (Paris)_
+* Asia Pacific
+** _ap-southeast-1 (Singapore)_
+** _ap-northeast-1 (Tokyo)_
+** _ap-southeast-2 (Sydney)_
+** _ap-northeast-2 (Seoul)_
+** _ap-south-1 (Mumbai)_
+
+This list was last updated on June 20, 2019.
+
+The services offered in each region change from time to time. If your preferred region isn't on this list, check the https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[Regional Product Services] table to see if it already supports EFS.
+
+[WARNING]
+.AWS GovCloud is not for production
+====
+Our Quick Starts are also available on https://aws.amazon.com/govcloud-us/[AWS GovCloud] regions, but only for testing purposes. We do not support any deployments on GovCloud regions resulting from this Quick Start.
+====
