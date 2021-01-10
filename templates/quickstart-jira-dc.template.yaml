@@ -39,12 +39,18 @@ Metadata:
           default: Bastion host utilization
         Parameters:
           - BastionHostRequired
+          - BastionPrivIp
           - KeyPairName
       - Label:
           default: Networking
         Parameters:
           - InternetFacingLoadBalancer
+          - VpcId
           - CidrBlock
+          - PubNets
+          - PriNets
+          - Nat1Eip
+          - Nat2Eip
           - SSLCertificateARN
       - Label:
           default: DNS (Optional)
@@ -85,6 +91,10 @@ Metadata:
           - ExportPrefix
 
     ParameterLabels:
+      BastionHostRequired:
+        default: Use Bastion host
+      BastionPrivIp:
+        default: IP of Bastion Host
       CatalinaOpts:
         default: Catalina options
       CidrBlock:
@@ -165,12 +175,18 @@ Metadata:
         default: Version *
       JvmHeapOverride:
         default: JVM Heap Size Override
-      BastionHostRequired:
-        default: Use Bastion host
       KeyPairName:
         default: SSH Key Pair Name
       MailEnabled:
         default: Enable App to Process Email
+      Nat1Eip:
+        default: Elastic IP of Private Subnet 1
+      Nat2Eip:
+        default: Elastic IP of Private Subnet 2
+      PubNets:
+        default: Public Subnet IDs
+      PriNets:
+        default: Private Subnet IDs
       SSLCertificateARN:
         default: SSL Certificate ARN
       TomcatAcceptCount:
@@ -191,12 +207,28 @@ Metadata:
         default: Tomcat Protocol
       TomcatRedirectPort:
         default: Tomcat Redirect Port
+      VpcID:
+        default: ID of VPC for deployment
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
       QSS3KeyPrefix:
         default: Quick Start S3 Key Prefix
 
 Parameters:
+  BastionHostRequired:
+    Default: ''
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether to grant access to Jira EC2 instances through the ASI's Bastion host (if it exists). If 'true', remember to provide an EC2 Key Pair. If your ASI does not have a Bastion host, set this to 'false'.
+    Type: String
+  BastionPrivIp:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x.
+    Description: IP address of ASI Bastion host (if it exists). If set, remember to set "Bastion Host Required". If your ASI does not have a Bastion host, leave this blank.
+    Type: String
+    MinLength: 9
+    MaxLength: 18
   CatalinaOpts:
     Default: ''
     Description: Pass in any additional jvm options to tune Catalina
@@ -540,13 +572,6 @@ Parameters:
     Default: ''
     Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
     Type: String
-  BastionHostRequired:
-    Default: "true"
-    AllowedValues:
-      - "true"
-      - "false"
-    Description: Whether to grant access to Jira EC2 instances through the ASI's Bastion host (if it exists). If 'true', remember to provide an EC2 Key Pair. If your ASI does not have a Bastion host, set this to 'false'.
-    Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
     Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
@@ -560,6 +585,22 @@ Parameters:
     Default: "true"
     Description: Enable mail processing and sending
     Type: String
+  Nat1Eip:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x.
+    Description: IP address of NAT Gateway for subnet 1.
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+  Nat2Eip:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})'
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x.
+    Description: IP address of NAT Gateway for subnet 2.
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+  PubNets:
+  PriNets:
   SSLCertificateARN:
     Default: ''
     Description: "Amazon Resource Name (ARN) of your SSL certificate. Supplying this will automatically enable HTTPS on the product and load balancer, configured to use the corresponding certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created."
@@ -606,6 +647,10 @@ Parameters:
     Default: 8443
     Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
     Type: Number
+  VpcId:
+    Default: 'vpc-'
+    Description: ID of the VPC to deploy JIRA into.
+    Type: String
   QSS3BucketName:
     Default: 'aws-quickstart'
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
@@ -1045,7 +1090,7 @@ Resources:
       TargetGroupARNs: [!Ref MainTargetGroup]
       VPCZoneIdentifier: !Split
         - ","
-        - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
+        - Fn::ImportValue: !Sub PriNets
       Tags:
         - Key: Name
           Value: !Sub ["${StackName} Jira Node", {StackName: !Ref 'AWS::StackName'}]
@@ -1055,10 +1100,10 @@ Resources:
           PropagateAtLaunch: true
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
           PropagateAtLaunch: true
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
           PropagateAtLaunch: true
 
   ClusterNodeLaunchConfig:
@@ -1242,9 +1287,9 @@ Resources:
           Value: !Ref AWS::StackId
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
   EFSMountAz1:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1254,7 +1299,7 @@ Resources:
       - 0
       - !Split
            - ","
-           - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
+           - Fn::ImportValue: !Sub PriNets
   EFSMountAz2:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1264,7 +1309,7 @@ Resources:
         - 1
         - !Split
           - ","
-          - Fn::ImportValue: !Sub "${ExportPrefix}PriNets"
+          - Fn::ImportValue: !Sub PriNets
   EFSCname:
     Type: AWS::Route53::RecordSet
     Condition: UseHostedZone
@@ -1296,6 +1341,7 @@ Resources:
         DBAllocatedStorage: !Ref DBStorage
         DBStorageEncrypted: !Ref DBStorageEncrypted
         DBStorageType: !Ref DBStorageType
+        PriNets: !Ref PriNets
         ExportPrefix: !Ref ExportPrefix
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
@@ -1322,7 +1368,7 @@ Resources:
       SecurityGroups: [!Ref SecurityGroup]
       Subnets: !Split
         - ","
-        - Fn::ImportValue: !Sub "${ExportPrefix}PubNets"
+        - Fn::ImportValue: !Sub PubNets
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
@@ -1330,9 +1376,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
 
   LoadBalancerHTTPListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -1371,7 +1417,7 @@ Resources:
       Port: !Ref TomcatDefaultConnectorPort
       Protocol: HTTP
       VpcId:
-        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
+        Fn::ImportValue: !Sub VPCID
       HealthCheckIntervalSeconds: 20
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
@@ -1394,9 +1440,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
     DependsOn:
       - LoadBalancer
   LoadBalancerCname:
@@ -1428,7 +1474,7 @@ Resources:
               !Sub
                 - "${BastionIp}/32"
                 - BastionIp:
-                    Fn::ImportValue: !Sub '${ExportPrefix}BastionPrivIp'
+                    Fn::ImportValue: !Sub BastionPrivIp
           - Ref: AWS::NoValue
         - IpProtocol: tcp
           FromPort: 80
@@ -1445,7 +1491,7 @@ Resources:
             !Sub
               - "${NAT1IP}/32"
               - NAT1IP:
-                  Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+                  Fn::ImportValue: !Sub NAT1EIP
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -1453,7 +1499,7 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
+                Fn::ImportValue: !Sub NAT2EIP
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1461,7 +1507,7 @@ Resources:
             !Sub
             - "${NAT1IP}/32"
             - NAT1IP:
-                Fn::ImportValue: !Sub '${ExportPrefix}NAT1EIP'
+                Fn::ImportValue: !Sub NAT1EIP
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1469,17 +1515,17 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub '${ExportPrefix}NAT2EIP'
+                Fn::ImportValue: !Sub NAT2EIP
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
       VpcId:
-        Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
+        Fn::ImportValue: !Sub VPCID
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -1509,9 +1555,9 @@ Resources:
           Value: !Sub ["${StackName} Encryption Key", {StackName: !Ref 'AWS::StackName'}]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: 967bce1c42a0ed818fae85170cc73cd53740220f"
+          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2020-08-18T11:21:04Z"
+          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
   EncryptionKeyAlias:
     Condition: UseDatabaseEncryption
     Type: AWS::KMS::Alias
