@@ -45,7 +45,7 @@ Metadata:
           default: Networking
         Parameters:
           - InternetFacingLoadBalancer
-          - VpcId
+          - VpcID
           - CidrBlock
           - PubNets
           - PriNets
@@ -647,7 +647,7 @@ Parameters:
     Default: 8443
     Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
     Type: Number
-  VpcId:
+  VpcID:
     Default: 'vpc-'
     Description: ID of the VPC to deploy JIRA into.
     Type: String
@@ -1100,10 +1100,10 @@ Resources:
           PropagateAtLaunch: true
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
           PropagateAtLaunch: true
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
           PropagateAtLaunch: true
 
   ClusterNodeLaunchConfig:
@@ -1287,9 +1287,9 @@ Resources:
           Value: !Ref AWS::StackId
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
   EFSMountAz1:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1342,6 +1342,7 @@ Resources:
         DBStorageEncrypted: !Ref DBStorageEncrypted
         DBStorageType: !Ref DBStorageType
         PriNets: !Ref PriNets
+        VpcID: !Ref VpcID
         ExportPrefix: !Ref ExportPrefix
         QSS3BucketName: !Ref QSS3BucketName
         QSS3KeyPrefix: !Ref QSS3KeyPrefix
@@ -1376,9 +1377,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
 
   LoadBalancerHTTPListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -1417,7 +1418,7 @@ Resources:
       Port: !Ref TomcatDefaultConnectorPort
       Protocol: HTTP
       VpcId:
-        Fn::ImportValue: !Sub VPCID
+        Fn::ImportValue: !Sub VpcID
       HealthCheckIntervalSeconds: 20
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
@@ -1440,9 +1441,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
     DependsOn:
       - LoadBalancer
   LoadBalancerCname:
@@ -1491,7 +1492,7 @@ Resources:
             !Sub
               - "${NAT1IP}/32"
               - NAT1IP:
-                  Fn::ImportValue: !Sub NAT1EIP
+                  Fn::ImportValue: !Sub Nat1Eip
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -1499,7 +1500,7 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub NAT2EIP
+                Fn::ImportValue: !Sub Nat2Eip
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1507,7 +1508,7 @@ Resources:
             !Sub
             - "${NAT1IP}/32"
             - NAT1IP:
-                Fn::ImportValue: !Sub NAT1EIP
+                Fn::ImportValue: !Sub Nat1Eip
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1515,17 +1516,17 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub NAT2EIP
+                Fn::ImportValue: !Sub Nat2Eip
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
       VpcId:
-        Fn::ImportValue: !Sub VPCID
+        Fn::ImportValue: !Sub VpcID
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -1555,9 +1556,9 @@ Resources:
           Value: !Sub ["${StackName} Encryption Key", {StackName: !Ref 'AWS::StackName'}]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: f1caddff8cd30f75b205eddbd8af81e629f11a09"
+          Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-01-10T22:21:02Z"
+          Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
   EncryptionKeyAlias:
     Condition: UseDatabaseEncryption
     Type: AWS::KMS::Alias
