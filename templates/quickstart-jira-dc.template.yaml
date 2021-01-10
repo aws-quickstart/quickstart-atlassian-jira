@@ -1100,7 +1100,7 @@ Resources:
       TargetGroupARNs: [!Ref MainTargetGroup]
       VPCZoneIdentifier: !Split
         - ","
-        - Fn::ImportValue: !Sub PriNets
+        - !Ref PriNets
       Tags:
         - Key: Name
           Value: !Sub ["${StackName} Jira Node", {StackName: !Ref 'AWS::StackName'}]
@@ -1309,7 +1309,7 @@ Resources:
       - 0
       - !Split
            - ","
-           - Fn::ImportValue: !Sub PriNets
+           - !Ref PriNets
   EFSMountAz2:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1319,7 +1319,7 @@ Resources:
         - 1
         - !Split
           - ","
-          - Fn::ImportValue: !Sub PriNets
+          - !Ref PriNets
   EFSCname:
     Type: AWS::Route53::RecordSet
     Condition: UseHostedZone
@@ -1379,7 +1379,7 @@ Resources:
       SecurityGroups: [!Ref SecurityGroup]
       Subnets: !Split
         - ","
-        - Fn::ImportValue: !Sub PubNets
+        - !Ref PubNets
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
@@ -1484,7 +1484,7 @@ Resources:
               !Sub
                 - "${BastionIp}/32"
                 - BastionIp:
-                    Fn::ImportValue: !Sub BastionPrivIp
+                    !Ref BastionPrivIp
           - Ref: AWS::NoValue
         - IpProtocol: tcp
           FromPort: 80
@@ -1501,7 +1501,7 @@ Resources:
             !Sub
               - "${NAT1IP}/32"
               - NAT1IP:
-                  Fn::ImportValue: !Sub Nat1Eip
+                  !Ref Nat1Eip
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
@@ -1509,7 +1509,7 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub Nat2Eip
+                !Ref Nat2Eip
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1517,7 +1517,7 @@ Resources:
             !Sub
             - "${NAT1IP}/32"
             - NAT1IP:
-                Fn::ImportValue: !Sub Nat1Eip
+                !Ref Nat1Eip
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
@@ -1525,7 +1525,7 @@ Resources:
             !Sub
             - "${NAT2IP}/32"
             - NAT2IP:
-                Fn::ImportValue: !Sub Nat2Eip
+                !Ref Nat2Eip
       Tags:
         - Key: Name
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
