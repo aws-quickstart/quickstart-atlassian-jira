@@ -216,7 +216,7 @@ Metadata:
 
 Parameters:
   BastionHostRequired:
-    Default: ''
+    Default: 'true'
     AllowedValues:
       - "true"
       - "false"
