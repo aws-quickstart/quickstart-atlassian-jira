@@ -1427,8 +1427,7 @@ Resources:
     Properties:
       Port: !Ref TomcatDefaultConnectorPort
       Protocol: HTTP
-      VpcId:
-        Fn::ImportValue: !Sub VpcID
+      VpcId:  !Ref VpcID
       HealthCheckIntervalSeconds: 20
       HealthCheckTimeoutSeconds: 10
       HealthyThresholdCount: 2
@@ -1535,8 +1534,7 @@ Resources:
           Value: "COMMIT: f3da72aaae7f6b6f5a8cf3f378d80dc85c4cf59d"
         - Key: "atl:quickstart:timestamp"
           Value: "TIMESTAMP: 2021-01-10T22:39:41Z"
-      VpcId:
-        Fn::ImportValue: !Sub VpcID
+      VpcId: !Ref VpcID
   SecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
