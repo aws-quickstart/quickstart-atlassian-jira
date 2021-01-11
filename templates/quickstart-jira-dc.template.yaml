@@ -1106,7 +1106,7 @@ Resources:
                     - ""
                     - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "editionToInstall"]]
                     - !Sub ["ATL_PRODUCT_VERSION=${ProductVersion}", ProductVersion: !Ref JiraVersion]
-                    - !If [InstallJSDAsOBR, "ATL_JSD_AS_OBR=true", !Ref "AWS::NoValue"]
+                    - !If [InstallJSDAsOBR, "ATL_JSD_ASOBR=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !If [DoSSL, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
