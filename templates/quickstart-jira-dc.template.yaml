@@ -523,18 +523,19 @@ Parameters:
     Type: String
   JiraProduct:
     Default: Software
-    Description: The Jira product to install.
+    Description: The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk"'
+    ConstraintDescription: 'Must be "Core", "Software", "ServiceManagement", or "All"'
     AllowedValues:
       - Core
       - Software
-      - ServiceDesk
+      - ServiceManagement
+      - All
   JiraVersion:
     Default: "8.5.6"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
-    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
-    Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for Jira Service Management.
+    Description: The version of Jira Software or Jira Service Desk to install. If choosing Jira All, pick the version of Jira Software. TODO CHECK IF THIS IS CORRECT Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
     Default: ''
@@ -658,6 +659,8 @@ Conditions:
   UseBastionHost: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
+  InstallJSDAsOBR:
+    !Equals [!Ref JiraProduct, "All"]
 Mappings:
   AWSInstanceType2Arch:
     c4.large:
@@ -972,16 +975,24 @@ Mappings:
   JIRAProduct2NameAndVersion:
     Core:
       name: jira-core
+      editionToInstall: core
       shortdisplayname: '"Jira Core"'
       fulldisplayname: '"Atlassian Jira Core"'
-    ServiceDesk:
+    ServiceManagement:
       name: servicedesk
+      editionToInstall: servicedesk
       shortdisplayname: '"Jira SD"'
-      fulldisplayname: '"Atlassian Jira Service Desk"'
+      fulldisplayname: '"Atlassian Jira Service Management"'
     Software:
       name: jira-software
+      editionToInstall: software
       shortdisplayname: '"Jira SW"'
       fulldisplayname: '"Atlassian Jira Software"'
+    All:
+      name: jira-all
+      editionToInstall: software
+      shortdisplayname: '"Jira"'
+      fulldisplayname: '"Atlassian Jira"'
 Resources:
   JiraClusterNodeRole:
     Type: AWS::IAM::Role
@@ -1093,8 +1104,9 @@ Resources:
                     - "ATL_RELEASE_S3_PATH=releases"
                     - "ATL_SSL_SELF_CERT_ENABLED=false"
                     - ""
-                    - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !Ref "JiraProduct"]
+                    - !Sub ["ATL_PRODUCT_EDITION=${Edition}", Edition: !FindInMap [ "JIRAProduct2NameAndVersion", !Ref JiraProduct, "editionToInstall"]]
                     - !Sub ["ATL_PRODUCT_VERSION=${ProductVersion}", ProductVersion: !Ref JiraVersion]
+                    - !If [InstallJSDAsOBR, "ATL_JSD_AS_OBR=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_EFS_ID=${ElasticFileSystem}", ElasticFileSystem: !Ref "ElasticFileSystem"]
                     - !If [DoSSL, "ATL_SSL_PROXY=true", !Ref "AWS::NoValue"]
                     - !Sub ["ATL_AWS_STACK_NAME=${StackName}", StackName: !Ref "AWS::StackName"]
