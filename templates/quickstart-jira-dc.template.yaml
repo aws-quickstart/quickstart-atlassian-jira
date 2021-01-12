@@ -523,7 +523,7 @@ Parameters:
     Type: String
   JiraProduct:
     Default: Software
-    Description: The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed but you will need to paste in a Jira Service Management license after configuring Jira Software.
+    Description: The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed. A Jira Service Management license is required in "Applications" admin menu after configuring Jira Software.
     Type: String
     ConstraintDescription: 'Must be "Core", "Software", "ServiceManagement", or "All".'
     AllowedValues:
@@ -535,7 +535,7 @@ Parameters:
     Default: "8.13.2"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for Jira Service Management.
-    Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and we will automatically select the latest compatible version of Jira Service Management. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
+    Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
     Type: String
   JvmHeapOverride:
     Default: ''
