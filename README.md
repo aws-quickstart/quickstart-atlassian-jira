@@ -1,10 +1,10 @@
 # quickstart-atlassian-jira
-## Jira Software and Jira Service Desk Data Center on the AWS Cloud
+## Jira Software and Jira Service Management Data Center on the AWS Cloud
 
 Use this Quick Start to deploy one of the following Jira products from Atlassian on the AWS Cloud:
 
 * Jira Software Data Center
-* Jira Service Desk Data Center
+* Jira Service Management Data Center
 
 This Quick Start uses the [Atlassian Standard Infrastructure (ASI)](https://fwd.aws/xYyYy) as a foundation. You can choose to build a new ASI for your deployment or deploy Jira into your existing ASI. You can also deploy Bitbucket Data Center and Confluence Data Center within the same ASI.
 

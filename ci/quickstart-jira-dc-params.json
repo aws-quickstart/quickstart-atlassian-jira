@@ -42,5 +42,9 @@
     {
         "ParameterKey": "KeyPairName",
         "ParameterValue": "replaced-by-taskcat-override-file"
+    },
+    {
+        "ParameterKey": "BastionHostRequired",
+        "ParameterValue": "false"
     }
 ]

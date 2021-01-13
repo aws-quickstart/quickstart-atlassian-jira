@@ -54,5 +54,9 @@
     {
         "ParameterKey": "QSS3KeyPrefix",
         "ParameterValue": "quickstart-atlassian-jira/"
+    },
+    {
+        "ParameterKey": "BastionHostRequired",
+        "ParameterValue": "false"
     }
 ]
