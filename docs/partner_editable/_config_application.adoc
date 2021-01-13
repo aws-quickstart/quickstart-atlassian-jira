@@ -5,7 +5,7 @@ IMPORTANT: If you get an https://confluence.atlassian.com/kb/network-and-connect
 +
 .Setting up properties
 image::../images/qs-jira-step2-setup-app-properties.png[width=640]
-. On the *Specify your license key* page, enter a valid Jira Software or Service Desk Data Center license key. If you don’t have a valid license for the Jira application you’ve selected to deploy, choose *generate a Jira trial license* and sign up for an evaluation Data Center license.
+. On the *Specify your license key* page, enter a valid Jira Software or Service Management Data Center license key. If you don’t have a valid license for the Jira application you’ve selected to deploy, choose *generate a Jira trial license* and sign up for an evaluation Data Center license.
 +
 .Jira licensing
 image::../images/qs-jira-step3-licensing.png[width=640]
