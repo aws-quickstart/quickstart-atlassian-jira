@@ -2,6 +2,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: 'Atlassian Jira Data Center. (qs-1qup6ra3c)'
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into an existing VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
