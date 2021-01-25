@@ -1,1 +1,26 @@
-// placeholder
+
+:template_autoscaling:
+:template_aws_autoscaling_autoscalinggroup:
+:template_aws_autoscaling_launchconfiguration:
+:template_aws_cloudformation_stack:
+:template_aws_ec2_securitygroup:
+:template_aws_ec2_securitygroupingress:
+:template_aws_efs_filesystem:
+:template_aws_efs_mounttarget:
+:template_aws_elasticloadbalancingv2_listener:
+:template_aws_elasticloadbalancingv2_loadbalancer:
+:template_aws_elasticloadbalancingv2_targetgroup:
+:template_aws_iam_instanceprofile:
+:template_aws_iam_role:
+:template_aws_kms_alias:
+:template_aws_kms_key:
+:template_aws_route53_recordset:
+:template_aws_ssm_parameter:
+:template_cloudformation:
+:template_ec2:
+:template_efs:
+:template_elasticloadbalancingv2:
+:template_iam:
+:template_kms:
+:template_route53:
+:template_ssm:
