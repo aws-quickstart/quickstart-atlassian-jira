@@ -17,6 +17,7 @@
 :template_aws_route53_recordset:
 :template_aws_ssm_parameter:
 :template_cloudformation:
+:template_deterministic_ec2_instances:
 :template_ec2:
 :template_efs:
 :template_elasticloadbalancingv2:
