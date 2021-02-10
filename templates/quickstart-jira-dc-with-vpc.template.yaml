@@ -352,11 +352,11 @@ Parameters:
     ConstraintDescription: Must be 'Amazon Aurora PostgreSQL' or 'PostgreSQL'.
     Type: String
   DBEngineVersion:
-    Default: 9
+    Default: 11
     AllowedValues:
-      - 9
-      - 10
       - 11
+      - 10
+      - 9
     Description: "The database engine version to use; we'll install a suitable minor version for your chosen engine. Make sure that the Jira version you're installing supports the database engine selected. Check https://confluence.atlassian.com/x/bqr1Nw to verify this."
     Type: String
   DBInstanceClass:
@@ -543,7 +543,7 @@ Parameters:
       - ServiceManagement
       - All
   JiraVersion:
-    Default: "8.13.2"
+    Default: "8.13.3"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.14.0 for Jira Software, or 4.14.0 for Jira Service Management.
     Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).

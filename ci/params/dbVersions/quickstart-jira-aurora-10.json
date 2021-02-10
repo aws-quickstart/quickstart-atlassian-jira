@@ -1,0 +1,50 @@
+[
+  {
+    "ParameterKey": "DBMultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DBMasterUserPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "0.0.0.0/0"
+  },
+  {
+    "ParameterKey": "DBEngineVersion",
+    "ParameterValue": "10"
+  },
+  {
+    "ParameterKey": "DBEngine",
+    "ParameterValue": "Amazon Aurora PostgreSQL"
+  },
+  {
+    "ParameterKey": "DBIops",
+    "ParameterValue": "1000"
+  },
+  {
+    "ParameterKey": "DBPassword",
+    "ParameterValue": "$[taskcat_genpass_8S]"
+  },
+  {
+    "ParameterKey": "ClusterNodeInstanceType",
+    "ParameterValue": "t3.medium"
+  },
+  {
+    "ParameterKey": "DBInstanceClass",
+    "ParameterValue": "db.t3.medium"
+  },
+  {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "$[taskcat_autobucket]"
+  },
+  {
+    "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": "quickstart-atlassian-jira/"
+  },
+  {
+    "ParameterKey": "BastionHostRequired",
+    "ParameterValue": "false"
+  }
+]
