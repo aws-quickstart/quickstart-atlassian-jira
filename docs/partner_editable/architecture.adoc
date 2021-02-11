@@ -38,4 +38,4 @@ The Aurora configuration with a single database writer and two readers is design
 .Amazon Aurora reader/writer configuration
 image::../images/aurora-diagram.png[Amazon Aurora,width=640]
 
-Amazon Aurora is supported on Jira Software Data Center 8.4, Jira Service Desk 4.4, and all later versions of both.
+Amazon Aurora is supported on Jira Software Data Center 8.4, Jira Service Management 4.4, and all later versions of both.

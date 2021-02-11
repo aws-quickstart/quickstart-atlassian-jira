@@ -6,6 +6,8 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: 'Atlassian Jira Data Center with VPC. (qs-1qup6ra30)'
 
 Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Launch into a new VPC"
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
@@ -532,18 +534,19 @@ Parameters:
     Type: String
   JiraProduct:
     Default: Software
-    Description: The Jira product to install.
+    Description: The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed. A Jira Service Management license is required in "Applications" admin menu after configuring Jira Software.
     Type: String
-    ConstraintDescription: 'Must be "Core", "Software", or "ServiceDesk".'
+    ConstraintDescription: 'Must be "Core", "Software", "ServiceManagement", or "All".'
     AllowedValues:
       - Core
       - Software
-      - ServiceDesk
+      - ServiceManagement
+      - All
   JiraVersion:
-    Default: "8.5.6"
+    Default: "8.13.2"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
-    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.1.0 for Jira Software, or 4.1.0 for ServiceDesk.
-    Description: The version of Jira Software or Jira Service Desk to install. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Desk), or https://confluence.atlassian.com/x/XM2EO (Atlassian Enterprise Releases).
+    ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.14.0 for Jira Software, or 4.14.0 for Jira Service Management.
+    Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
     Type: String
   JvmHeapOverride:
     Default: ''

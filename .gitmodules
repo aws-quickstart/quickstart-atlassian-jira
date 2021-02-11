@@ -5,3 +5,4 @@
 [submodule "docs/boilerplate"]
 	path = docs/boilerplate
 	url = git@github.com:tthoma24/quickstart-documentation-base-common.git
+	branch = main
