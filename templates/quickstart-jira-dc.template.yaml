@@ -1518,7 +1518,7 @@ Resources:
               !Sub
                 - "${BastionIp}/32"
                 - BastionIp:
-                    !Ref BastionPrivyIp
+                    !Ref BastionPrivIp
           - Ref: AWS::NoValue
         - IpProtocol: tcp
           FromPort: 80
