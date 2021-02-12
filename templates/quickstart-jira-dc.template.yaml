@@ -721,7 +721,7 @@ Conditions:
     !Equals [!Ref EFSStorageEncrypted, true]
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
-  UsePublicIp:
+  UsePublicIp: !And
     - !Equals [!Ref InternetFacingLoadBalancer, true]
     - !Condition PubNetsProvided
   GovCloudCondition:
