@@ -1413,8 +1413,7 @@ Resources:
           Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
-      Subnets:
-        !If [UsePublicIp, [!Split, ",", !Ref 'PubNets'], [!Split, ",", !Ref 'PriNets']]
+      Subnets: !If [UsePublicIp, !Join [",", [!Select [0, !Ref PubNets], !Select [1, !Ref PubNets]]], !Join [",", [!Select [0, !Ref PriNets], !Select [1, !Ref PriNets]]]]
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
