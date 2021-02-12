@@ -695,8 +695,6 @@ Parameters:
     Type: String
 
 Conditions:
-  BastionIpProvided:
-    !Not [!Equals [!Ref BastionPrivIp, '']]
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
   EnableCloudWatch:
@@ -705,8 +703,8 @@ Conditions:
     !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
-  BastionIPProvided:
-    !Not [!Equals [!Ref BastionPrivIp '']]
+  BastionIpProvided:
+    !Not [!Equals [!Ref BastionPrivIp, '']]
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
   OverrideHeap:
@@ -724,7 +722,7 @@ Conditions:
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp:
-    - !Equals [!Ref InternetFacingLoadBalancer, 'true']
+    - !Equals [!Ref InternetFacingLoadBalancer, true]
     - !Condition PubNetsProvided
   GovCloudCondition:
     !Equals [!Ref 'AWS::Region', 'us-gov-west-1']
