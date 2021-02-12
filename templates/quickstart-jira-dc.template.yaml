@@ -693,6 +693,8 @@ Conditions:
     !Equals [!Ref CloudWatchIntegration, 'Metrics and Logs']
   DoSSL:
     !Not [!Equals [!Ref SSLCertificateARN, '']]
+  BastionIPProvided:
+    !Not [!Equals [!Ref BastionPrivIp '']]
   KeyProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
   OverrideHeap:
@@ -716,6 +718,7 @@ Conditions:
   UseBastionHost: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
+    - !Condition BastionIPProvided
   InstallJSDAsOBR:
     !Equals [!Ref JiraProduct, "All"]
 Mappings:
@@ -1498,7 +1501,7 @@ Resources:
               !Sub
                 - "${BastionIp}/32"
                 - BastionIp:
-                    !Ref BastionPrivIp
+                    !Ref BastionPrivyIp
           - Ref: AWS::NoValue
         - IpProtocol: tcp
           FromPort: 80
