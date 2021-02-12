@@ -25,6 +25,7 @@ Metadata:
           - DeploymentAutomationCustomParams
           - DeploymentAutomationKeyName
           - EFSStorageEncrypted
+          - KeyPairName
       - Label:
           default: Database
         Parameters:
@@ -43,7 +44,6 @@ Metadata:
         Parameters:
           - BastionHostRequired
           - BastionPrivIp
-          - KeyPairName
       - Label:
           default: Networking
         Parameters:
@@ -587,7 +587,7 @@ Parameters:
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
+    Description: Public EC2 Key Pairs to allow you to securely access the JIRA cluster nodes and, if configured, the Bastion hosts
     Type: String
     Default: ''
   MailEnabled:
@@ -719,6 +719,9 @@ Conditions:
     !Equals [!Ref DBStorageEncrypted, true]
   UseEFSEncryption:
     !Equals [!Ref EFSStorageEncrypted, true]
+  UseEncryption: !Or
+    - !Equals [UseDatabaseEncryption, true]
+    - !Equals [UseEFSEncryption, true]
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp: !And
@@ -1576,7 +1579,7 @@ Resources:
       ToPort: -1
       SourceSecurityGroupId: !Ref SecurityGroup
   EncryptionKey:
-    Condition: UseDatabaseEncryption
+    Condition: UseEncryption
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Type: AWS::KMS::Key
@@ -1600,7 +1603,7 @@ Resources:
         - Key: "atl:quickstart:timestamp"
           Value: "TIMESTAMP: 2021-02-11T03:34:54Z"
   EncryptionKeyAlias:
-    Condition: UseDatabaseEncryption
+    Condition: UseEncryption
     Type: AWS::KMS::Alias
     Properties:
       AliasName: !Sub "alias/${AWS::StackName}"
@@ -1670,6 +1673,10 @@ Outputs:
     Condition: UseDatabaseEncryption
     Description: The alias of the encryption key created for RDS
     Value: !Ref EncryptionKeyAlias
+  EFSEncryptionKey:                                                                                                  
+    Condition: UseEFSEncryption
+    Description: The alias of the encryption key created for EFS
+    Value: !Ref EncryptionKeyAlias  
   EFSCname:
     Description: The cname of the EFS
     Value: !If
