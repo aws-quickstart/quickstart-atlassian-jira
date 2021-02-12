@@ -24,6 +24,7 @@ Metadata:
           - DeploymentAutomationPlaybook
           - DeploymentAutomationCustomParams
           - DeploymentAutomationKeyName
+	  - EFSStorageEncrypted
       - Label:
           default: Database
         Parameters:
@@ -165,6 +166,8 @@ Metadata:
         default: SSH keyname to use with the repository
       DeploymentAutomationCustomParams:
         default: Custom command-line parameters for Ansible
+      EFSStorageEncrypted:
+        default: EFS file system encryption
       ExportPrefix:
         default: ASI identifier
       HostedZone:
@@ -544,6 +547,13 @@ Parameters:
     Description:
       Each Atlassian Standard Infrastructure (ASI) uses a unique identifier. If you have multiple ASIs within the same AWS region, use this field to specify where to deploy Jira.
     Type: String
+  EFSStorageEncrypted:
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether or not to encrypt the Elastic File System for shared files
+    Type: String
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
@@ -709,6 +719,8 @@ Conditions:
     !Not [!Equals [!Ref CustomDnsName, '']]
   UseDatabaseEncryption:
     !Equals [!Ref DBStorageEncrypted, true]
+  UseEFSEncryption:
+    !Equals [!Ref EFSStorageEncrypted, true]
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp:
@@ -1322,6 +1334,8 @@ Resources:
           Value: "COMMIT: 09182dbd6503aa348ebafd1f6933ec25d27bcea5"
         - Key: "atl:quickstart:timestamp"
           Value: "TIMESTAMP: 2021-02-11T03:34:54Z"
+      Encrypted: !If [UseEFSEncryption, !Ref EFSStorageEncrypted, !Ref 'AWS::NoValue']
+      KmsKeyId: !If [UseEFSEncryption, !GetAtt EncryptionKey.Arn, !Ref 'AWS::NoValue']
   EFSMountAz1:
     Type: AWS::EFS::MountTarget
     Properties:
