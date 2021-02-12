@@ -685,6 +685,8 @@ Parameters:
     Type: String
 
 Conditions:
+  BastionIpProvided:
+    !Not [!Equals [!Ref BastionPrivIp, '']]
   DisableMail:
     !Not [!Equals [!Ref MailEnabled, true]]
   EnableCloudWatch:
@@ -697,6 +699,8 @@ Conditions:
     !Not [!Equals [!Ref KeyPairName, '']]
   OverrideHeap:
     !Not [!Equals [!Ref JvmHeapOverride, '']]
+  PubNetsProvided:
+    !Not [!Equals [!Ref PubNets, '']]
   UseContextPath:
     !Not [!Equals [!Ref TomcatContextPath, '']]
   UseCustomDnsName:
@@ -706,7 +710,8 @@ Conditions:
   UseHostedZone:
     !Not [!Equals [!Ref HostedZone, '']]
   UsePublicIp:
-    !Equals [!Ref InternetFacingLoadBalancer, 'true']
+    - !Equals [!Ref InternetFacingLoadBalancer, 'true']
+    - !Condition PubNetsProvided
   GovCloudCondition:
     !Equals [!Ref 'AWS::Region', 'us-gov-west-1']
   DBEngineAurora:
@@ -716,6 +721,7 @@ Conditions:
   UseBastionHost: !And
     - !Equals [!Ref BastionHostRequired, true]
     - !Condition KeyProvided
+    - !Condition BastionIpProvided
   InstallJSDAsOBR:
     !Equals [!Ref JiraProduct, "All"]
 Mappings:
@@ -1391,9 +1397,13 @@ Resources:
           Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
-      Subnets: !Split
-        - ","
-        - !Ref PubNets
+      Subnets: [{
+        "Fn::If" : [
+          "UsePublicIp",
+          {"Ref" : {!Split, ",", !Ref PubNets}},
+          {"Ref" : {!Split, ",", !Ref PriNets}}
+        ]
+      }]
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
