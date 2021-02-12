@@ -229,7 +229,7 @@ Parameters:
     ConstraintDescription: Must be a valid IP of the form x.x.x.x.
     Description: IP address of ASI Bastion host (if it exists). If set, remember to set "Bastion Host Required". If your ASI does not have a Bastion host, leave this blank.
     Type: String
-    MinLength: 9
+    MinLength: 7
     MaxLength: 18
   CatalinaOpts:
     Default: ''
