@@ -1336,7 +1336,6 @@ Resources:
         - Key: "atl:quickstart:timestamp"
           Value: "TIMESTAMP: 2021-02-11T03:34:54Z"
       Encrypted: !If [UseEFSEncryption, !Ref EFSStorageEncrypted, !Ref 'AWS::NoValue']
-      KmsKeyId: !If [UseEFSEncryption, !GetAtt EncryptionKey.Arn, !Ref 'AWS::NoValue']
   EFSMountAz1:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1414,7 +1413,10 @@ Resources:
           Value: '3600'
       Scheme: !If [UsePublicIp, 'internet-facing', 'internal']
       SecurityGroups: [!Ref SecurityGroup]
-      Subnets: !If [UsePublicIp, !Join [",", [!Select [0, !Ref PubNets], !Select [1, !Ref PubNets]]], !Join [",", [!Select [0, !Ref PriNets], !Select [1, !Ref PriNets]]]]
+      Subnets: !If 
+        - UsePublicIp
+        - Fn::Split: [',', !Ref PubNets]
+        - Fn::Split: [",", !Ref PriNets]
       Tags:
         - Key: Name
           Value: !Sub ["${StackName}-LoadBalancer", StackName: !Ref 'AWS::StackName']
@@ -1672,11 +1674,7 @@ Outputs:
   DBEncryptionKey:
     Condition: UseDatabaseEncryption
     Description: The alias of the encryption key created for RDS
-    Value: !Ref EncryptionKeyAlias
-  EFSEncryptionKey:                                                                                                  
-    Condition: UseEFSEncryption
-    Description: The alias of the encryption key created for EFS
-    Value: !Ref EncryptionKeyAlias  
+    Value: !Sub "alias/${AWS::StackName}"
   EFSCname:
     Description: The cname of the EFS
     Value: !If
