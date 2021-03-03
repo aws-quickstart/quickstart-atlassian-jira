@@ -1,0 +1,57 @@
+---
+global:
+  qsname: quickstart-atlassian-jira
+  owner: quickstart-eng@amazon.com
+  marketplace-ami: false
+  reporting: true
+  regions:
+    - ap-northeast-1
+    - ap-northeast-2
+    - ap-south-1
+    - ap-southeast-1
+    - ap-southeast-2
+    - eu-central-1
+    - eu-west-1
+    - sa-east-1
+    - us-east-1
+    - us-east-2
+    - us-west-1
+    - us-west-2
+
+tests:
+  JIRA-aurora-9:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-aurora-9.json
+    regions:
+     - us-east-1
+     
+  JIRA-aurora-10:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-aurora-10.json
+    regions:
+     - us-east-1
+
+  JIRA-aurora-11:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-aurora-11.json
+    regions:
+     - us-east-1
+
+  JIRA-postgres-9:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-postgres-9.json
+    regions:
+     - us-east-1
+    
+  JIRA-postgres-10:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-postgres-10.json
+    regions:
+     - us-east-1
+
+  JIRA-postgres-11:
+    template_file: quickstart-jira-dc.template.yaml
+    parameter_input: params/dbVersions/quickstart-jira-postgres-11.json
+    regions:
+     - us-east-1
+
