@@ -4,7 +4,7 @@
 |===
 |Parameter label (name) |Default value|Description|Jira Product *
 (`JiraProduct`)|`Software`|The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed. A Jira Service Management license is required in "Applications" admin menu after configuring Jira Software.|Version *
-(`JiraVersion`)|`8.13.2`|The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
+(`JiraVersion`)|`8.13.3`|The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
 |===
 .Cluster nodes
 [width="100%",cols="16%,11%,73%",options="header",]
@@ -26,7 +26,7 @@
 |===
 |Parameter label (name) |Default value|Description|The database engine to deploy with
 (`DBEngine`)|`PostgreSQL`|Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL|The database engine version to use
-(`DBEngineVersion`)|`9`|The database engine version to use; we'll install a suitable minor version for your chosen engine. Make sure that the Jira version you're installing supports the database engine selected. Check https://confluence.atlassian.com/x/bqr1Nw to verify this.|Database instance class
+(`DBEngineVersion`)|`11`|The database engine version to use; we'll install a suitable minor version for your chosen engine. Make sure that the Jira version you're installing supports the database engine selected. Check https://confluence.atlassian.com/x/bqr1Nw to verify this.|Database instance class
 (`DBInstanceClass`)|`db.m5.large`|RDS instance type (must be r family if using Aurora).|RDS Provisioned IOPS
 (`DBIops`)|`1000`|Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00 (not used for Aurora).|Master (admin) password *
 (`DBMasterUserPassword`)|`**__Requires input__**`|Password for the master ('postgres') account. Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ + % &|Enable RDS Multi-AZ deployment
