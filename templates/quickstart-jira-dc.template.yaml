@@ -19,6 +19,7 @@ Metadata:
           - ClusterNodeMax
           - ClusterNodeMin
           - ClusterNodeVolumeSize
+          - ClusterNodeVolumeEncrypted
           - DeploymentAutomationRepository
           - DeploymentAutomationBranch
           - DeploymentAutomationPlaybook
@@ -112,6 +113,8 @@ Metadata:
         default: Cluster node instance type
       ClusterNodeVolumeSize:
         default: Cluster node instance volume size
+      ClusterNodeVolumeEncrypted:
+        default: Cluster node instance volume encryption
       CustomDnsName:
         default: Existing DNS name
       DBEngine:
@@ -359,6 +362,13 @@ Parameters:
     Default: 50
     Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)
     Type: Number
+  ClusterNodeVolumeEncrypted:
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether or not to encrypt the cluster node root EBS volume.
+    Type: String
   CustomDnsName:
     Default: ""
     Description: 'Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.'
@@ -715,6 +725,8 @@ Conditions:
     !Not [!Equals [!Ref TomcatContextPath, '']]
   UseCustomDnsName:
     !Not [!Equals [!Ref CustomDnsName, '']]
+  UseEBSEncryption:
+    !Equals [!Ref ClusterNodeVolumeEncrypted, true]
   UseDatabaseEncryption:
     !Equals [!Ref DBStorageEncrypted, true]
   UseEFSEncryption:
@@ -1294,6 +1306,7 @@ Resources:
         - DeviceName: /dev/xvda
           Ebs:
             VolumeSize: !Ref ClusterNodeVolumeSize
+            Encrypted: !If [UseEBSEncryption, !Ref ClusterNodeVolumeEncrypted, !Ref 'AWS::NoValue']
         - DeviceName: /dev/xvdf
           NoDevice: true
       KeyName: !If
