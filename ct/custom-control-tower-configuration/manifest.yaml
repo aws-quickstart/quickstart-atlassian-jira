@@ -1,0 +1,37 @@
+---
+region: us-east-1
+version: 2021-03-15
+resources:
+  - name: qs-jira-1
+    resource_file: s3://aws-quickstart/quickstart-atlassian-jira/templates/quickstart-jira-dc-with-vpc.template.yaml
+    parameters:
+    - parameter_key: AvailabilityZones
+      parameter_value: us-east-1a, us-east-1b
+    - parameter_key: DBMasterUserPassword
+      parameter_value: _get_ssm_secure_string_/qs/genericpw/8ANS
+    - parameter_key: DBMultiAZ
+      parameter_value: "false"
+    - parameter_key: DBPassword
+      parameter_value: _get_ssm_secure_string_/qs/genericpw/8ANS
+    - parameter_key: DBStorage
+      parameter_value: "100"
+    - parameter_key: DBStorageType
+      parameter_value: Provisioned IOPS
+    - parameter_key: CustomDnsName
+      parameter_value: qsjiraci.awsqs.com
+    - parameter_key: QSS3BucketName
+      parameter_value: aws-quickstart
+    - parameter_key: QSS3KeyPrefix
+      parameter_value: quickstart-atlassian-jira/
+    - parameter_key: AccessCIDR
+      parameter_value: 10.0.0.0/16
+    - parameter_key: KeyPairName
+      parameter_value: aws-qs-tc-all
+    - parameter_key: BastionHostRequired
+      parameter_value: "false"
+    deploy_method: stack_set
+    deployment_targets:
+      organizational_units:
+        - Workloads
+    regions:
+      - us-east-1
