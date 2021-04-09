@@ -8,11 +8,11 @@ resources:
     - parameter_key: AvailabilityZones
       parameter_value: us-east-1a, us-east-1b
     - parameter_key: DBMasterUserPassword
-      parameter_value: f925dO1ry_
+      parameter_value: _get_ssm_secure_string_/qs/genericpw/8ANS
     - parameter_key: DBMultiAZ
       parameter_value: "false"
     - parameter_key: DBPassword
-      parameter_value: f925dO1ry_
+      parameter_value: _get_ssm_secure_string_/qs/genericpw/8ANS
     - parameter_key: DBStorage
       parameter_value: "100"
     - parameter_key: DBStorageType
