@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.12">
+<meta name="generator" content="Asciidoctor 2.0.15">
 <title>Jira Data Center on the AWS Cloud</title>
 <style>
 
@@ -182,7 +182,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
   padding-top:0;
   overflow:hidden;
   background:#283e5b;
-  border-bottom: 4px solid #435c7c;
+  /* border-bottom: 4px solid #435c7c; */
   width:320px;
   height:154px;
   top:0;
@@ -411,7 +411,7 @@ span.icon>.fa{cursor:default}
 a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
-.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";color: rgb(3, 87, 21);}
 .admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
 .admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
 .admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
@@ -747,8 +747,43 @@ p {
   font-weight  : 300 !important;
 }
 
-#toc.toc2 #toctitle{
-  background-image: url('images/AWS-Logo.svg');
+/* image layout */
+#toc.toc2 #toctitle {
+  background-image: url("images/AWS-Logo.svg");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  width: auto;
+  height: 15%;
+}
+
+/* Left Navbar size */
+#toc.toc2 {
+  width: 17%;
+  min-width: 15em;
+}
+
+/* auto width for main page */
+body.toc2 {
+  padding-left: 22%;
+  padding-right: 2%;
+}
+
+/* hide left nav bar if page size is smaller than 767px */
+@media screen and (max-width: 767px) {
+  #toc {
+      display: none !important;
+  }
+  body.toc2 {
+    padding-left: 1%;
+    padding-right: 1%;
+    position: relative;
+  }
+
+  #content {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 }
 
 /* QS Tables */
@@ -809,6 +844,7 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_deployment_steps">Deployment steps</a>
 <ul class="sectlevel2">
 <li><a href="#_launching_from_a_cloned_quick_start_recommended_for_production">Launching from a cloned Quick Start (recommended for production)</a></li>
+<li><a href="#_launch_into_an_existing_vpc">Launch into an existing VPC</a></li>
 <li><a href="#_launch_into_a_new_vpc">Launch into a new VPC</a></li>
 </ul>
 </li>
@@ -931,7 +967,7 @@ see the pricing pages for each AWS service you use. Prices are subject to change
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">create AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-costusage.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
+After you deploy the Quick Start, create <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
 </td>
 </tr>
 </table>
@@ -1070,7 +1106,7 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <div class="sect3">
 <h4 id="_resource_quotas">Resource quotas</h4>
 <div class="paragraph">
-<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might request quota increases to avoid exceeding the default limits for any resources that are shared across multiple deployments. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
+<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might need to request increases if your existing deployment currently uses these resources and if this Quick Start deployment could result in exceeding the default quotas. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1367,37 +1403,37 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>=== Launch into an existing VPC
-.Jira setup</p>
-</div>
 </li>
 </ul>
 </div>
 </li>
 </ol>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_launch_into_an_existing_vpc">Launch into an existing VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Jira setup</caption>
 <colgroup>
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1111%;">
-<col style="width: 11.1112%;">
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
 </colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter label (name)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default value</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Jira Product *
 (<code>JiraProduct</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Software</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed. A Jira Service Management license is required in "Applications" admin menu after configuring Jira Software.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Version *
 (<code>JiraVersion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>8.13.3</code></p></td>
@@ -1406,7 +1442,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Cluster nodes</caption>
+<caption class="title">Table 2. Cluster nodes</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1483,7 +1519,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Database</caption>
+<caption class="title">Table 3. Database</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1560,7 +1596,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Bastion host utilization</caption>
+<caption class="title">Table 4. Bastion host utilization</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1589,7 +1625,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Networking</caption>
+<caption class="title">Table 5. Networking</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1624,7 +1660,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. DNS (Optional)</caption>
+<caption class="title">Table 6. DNS (Optional)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1653,7 +1689,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Application Tuning (Optional)</caption>
+<caption class="title">Table 7. Application Tuning (Optional)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1808,7 +1844,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. AWS Quick Start Configuration</caption>
+<caption class="title">Table 8. AWS Quick Start Configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1846,7 +1882,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <div class="sect2">
 <h3 id="_launch_into_a_new_vpc">Launch into a new VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. Jira setup</caption>
+<caption class="title">Table 9. Jira setup</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1875,7 +1911,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Cluster nodes</caption>
+<caption class="title">Table 10. Cluster nodes</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -1952,7 +1988,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Database</caption>
+<caption class="title">Table 11. Database</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2029,7 +2065,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Bastion host provisioning</caption>
+<caption class="title">Table 12. Bastion host provisioning</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2058,7 +2094,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. Networking</caption>
+<caption class="title">Table 13. Networking</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2129,7 +2165,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. DNS (Optional)</caption>
+<caption class="title">Table 14. DNS (Optional)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2158,7 +2194,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. Application Tuning (Optional)</caption>
+<caption class="title">Table 15. Application Tuning (Optional)</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2307,7 +2343,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. AWS Quick Start Configuration</caption>
+<caption class="title">Table 16. AWS Quick Start Configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2347,13 +2383,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 . On the <strong>Review</strong> page, review and confirm the template settings. Under <strong>Capabilities</strong>, select the two check boxes to acknowledge that the template creates IAM resources and might require the ability to automatically expand macros.
 . Choose <strong>Create stack</strong> to deploy the stack.
 . Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the Jira Data Center deployment is ready.
-. Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in <a href="#cfn_outputs">Figure 3</a>, to view the created resources.</p>
-</div>
-<div id="cfn_outputs" class="imageblock">
-<div class="content">
-<a class="image" href="images/cfn_outputs.png"><img src="images/cfn_outputs.png" alt="cfn_outputs" width="100%" height="100%"></a>
-</div>
-<div class="title">Figure 3. Jira Data Center outputs after successful deployment</div>
+. To view the created resources, see the values displayed in the <strong>Outputs</strong> tab for the stack.</p>
 </div>
 </div>
 </div>
@@ -2387,7 +2417,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step2-setup-app-properties.png" alt="qs jira step2 setup app properties" width="640">
 </div>
-<div class="title">Figure 4. Setting up properties</div>
+<div class="title">Figure 3. Setting up properties</div>
 </div>
 </li>
 <li>
@@ -2396,7 +2426,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step3-licensing.png" alt="qs jira step3 licensing" width="640">
 </div>
-<div class="title">Figure 5. Jira licensing</div>
+<div class="title">Figure 4. Jira licensing</div>
 </div>
 </li>
 <li>
@@ -2405,7 +2435,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step4-setup-admin-account.png" alt="qs jira step4 setup admin account" width="640">
 </div>
-<div class="title">Figure 6. Setting up properties</div>
+<div class="title">Figure 5. Setting up properties</div>
 </div>
 </li>
 <li>
@@ -2414,7 +2444,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step5-setup-email-notifications.png" alt="qs jira step5 setup email notifications" width="640">
 </div>
-<div class="title">Figure 7. Email notifications page</div>
+<div class="title">Figure 6. Email notifications page</div>
 </div>
 </li>
 <li>
@@ -2423,7 +2453,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step6-choose-language.png" alt="qs jira step6 choose language" width="640">
 </div>
-<div class="title">Figure 8. Choosing a language</div>
+<div class="title">Figure 7. Choosing a language</div>
 </div>
 </li>
 <li>
@@ -2432,7 +2462,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step7-choose-avatar.png" alt="qs jira step7 choose avatar" width="640">
 </div>
-<div class="title">Figure 9. Choosing an avatar</div>
+<div class="title">Figure 8. Choosing an avatar</div>
 </div>
 </li>
 <li>
@@ -2444,7 +2474,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step9-view-system-info.png" alt="qs jira step9 view system info" width="640">
 </div>
-<div class="title">Figure 10. Viewing systemm info</div>
+<div class="title">Figure 9. Viewing systemm info</div>
 </div>
 </li>
 <li>
@@ -2453,7 +2483,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step10-view-cluster-nodes.png" alt="qs jira step10 view cluster nodes" width="640">
 </div>
-<div class="title">Figure 11. Viewing cluster nodes</div>
+<div class="title">Figure 10. Viewing cluster nodes</div>
 </div>
 </li>
 </ol>
@@ -2483,7 +2513,7 @@ If you get an <a href="https://confluence.atlassian.com/kb/network-and-connectiv
 <div class="content">
 <img src="images/qs-jira-step11-two-nodes-clustered.png" alt="qs jira step11 two nodes clustered">
 </div>
-<div class="title">Figure 12. Clustering (multiple nodes)</div>
+<div class="title">Figure 11. Clustering (multiple nodes)</div>
 </div>
 </li>
 </ol>
@@ -2657,16 +2687,16 @@ and to share your customizations with others.</p>
 </div>
 <p class="footer-text">
 <!-- We can use document attributes: -->
-<!-- Generated with Asciidoctor v2.0.12. -->
+<!-- Generated with Asciidoctor v2.0.15. -->
 <a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates and Atlassian. All rights reserved.
 </p>
 </body>
 </html>
 <!--
 repo commit:
-160a9c1ad083fa96b4c2f79a8c89f0731ae6df7b
+921b21e2553569801fdba05bb88ed559bd31e6bb
 
 submodule config:
-+59b9927c61cd1831141cf0350520c89abb2246da docs/boilerplate (heads/main)
+ 4b31f09b105a1aa1ea6e421e0e33b647196f4c69 docs/boilerplate (heads/main)
  2fa94c8fdbca93c1b8f6d769d6f8fdaeba525b50 submodules/quickstart-atlassian-services (v2.0-41-g2fa94c8)
 -->
