@@ -8,6 +8,6 @@ This Quick Start deploys two Jira solutions from Atlassian:
 
 * Jira Service Management Data Center provides IT service management software with high availability and performance at scale on AWS. Jira Service Management is easy to use, simple to set up, and has everything you need for IT support and customer service. Teams can link Jira Service Management tickets to Jira Software issues and keep development and IT connected for fast issue resolution. Jira Service Management Data Center is a self-hosted solution that provides high availability and disaster recovery, so no service request goes unresolved. For more information, see the https://confluence.atlassian.com/servicedeskserver/getting-started-with-jira-service-desk-939926015.html[Jira Service Desk documentation] on the Atlassian website.
 
-Throughout this guide, we refer to either solution as {partner-product-name-short} or {partner-product-name-short}.
+Throughout this guide, we refer to either solution as {partner-product-short-name} or {partner-product-short-name}.
 
 Please know that we may share who uses AWS Quick Starts with the AWS partner that collaborated with AWS on the content of the Quick Start.

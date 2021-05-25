@@ -1,6 +1,6 @@
-. Choose the URL that is displayed in the *Outputs* tab of the AWS CloudFormation stack to go to the {partner-product-name-short} configuration page.
+. Choose the URL that is displayed in the *Outputs* tab of the AWS CloudFormation stack to go to the {partner-product-short-name} configuration page.
 +
-IMPORTANT: If you get an https://confluence.atlassian.com/kb/network-and-connectivity-troubleshooting-guide-720405335.html[HTTP Error 503] response when you access the URL, it means that {partner-product-name-short} is still loading. This is expected, and you should wait a couple of minutes before trying again.
+IMPORTANT: If you get an https://confluence.atlassian.com/kb/network-and-connectivity-troubleshooting-guide-720405335.html[HTTP Error 503] response when you access the URL, it means that {partner-product-short-name} is still loading. This is expected, and you should wait a couple of minutes before trying again.
 . On the *Setup application properties* page, enter a title for your Jira application deployment, choose the *Mode* you want, leave the base URL unchanged, and then choose *Next*.
 +
 .Setting up properties

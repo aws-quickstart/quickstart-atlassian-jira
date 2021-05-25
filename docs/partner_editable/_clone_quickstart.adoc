@@ -22,9 +22,9 @@ quickstart-atlassian-jira
 aws s3 mb s3://<BUCKET_NAME> --region <AWS_REGION>
 ----
 . Choose which Quick Start template to use:
-** quickstart-jira-dc-with-vpc.template.yaml: Use this template for deploying {partner-product-name-short} into a new ASI (end-to-end deployment).
+** quickstart-jira-dc-with-vpc.template.yaml: Use this template for deploying {partner-product-short-name} into a new ASI (end-to-end deployment).
 +
-** quickstart-jira-dc.template.yaml: Use this template for deploying {partner-product-name-short} into an existing ASI.
+** quickstart-jira-dc.template.yaml: Use this template for deploying {partner-product-short-name} into an existing ASI.
 . In both templates, the `QSS3BucketName` default value is set to `aws-quickstart`. Replace this value with the name of the bucket you created earlier (`<BUCKET_NAME>`).
 . Return to the parent directory of your local clone of the Quick Start templates. From there, upload all the files in your local clone to your S3 bucket:
 +

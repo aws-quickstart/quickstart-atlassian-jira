@@ -1,0 +1,101 @@
+
+.Jira setup
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Jira Product *
+(`JiraProduct`)|`Software`|The Jira product to install. If "All" is selected, Jira Software and Jira Service Management will be installed. A Jira Service Management license is required in "Applications" admin menu after configuring Jira Software.|Version *
+(`JiraVersion`)|`8.13.3`|The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
+|===
+.Cluster nodes
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Enable CloudWatch integration
+(`CloudWatchIntegration`)|`Metrics and Logs`|Enables CloudWatch metrics with or without log gathering. If cost is an issue, you can disable this altogether.|Cluster node instance type
+(`ClusterNodeInstanceType`)|`c5.xlarge`|Instance type for the cluster application nodes.|Maximum number of cluster nodes
+(`ClusterNodeMax`)|`1`|Maximum number of nodes in the cluster.|Minimum number of cluster nodes
+(`ClusterNodeMin`)|`1`|Set to 1 for new deployment. Can be updated post launch.|Cluster node instance volume size
+(`ClusterNodeVolumeSize`)|`50`|Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)|Deployment Automation Git Repository URL
+(`DeploymentAutomationRepository`)|`https://bitbucket.org/atlassian/dc-deployments-automation.git`|The deployment automation repository to use for per-node initialization. Leave this as default unless you have customizations.|Deployment Automation Branch
+(`DeploymentAutomationBranch`)|`master`|The deployment automation repository branch to pull from.|The Ansible playbook to invoke to initialize the instance
+(`DeploymentAutomationPlaybook`)|`aws_jira_dc_node.yml`|The Ansible playbook to invoke to initialise the Jira node on first start.|SSH keyname to use with the repository
+(`DeploymentAutomationKeyName`)|`**__Blank string__**`|Named Key Pair name to use with this repository. The key should be imported into the SSM parameter store. (Optional)|Custom command-line parameters for Ansible
+(`DeploymentAutomationCustomParams`)|`**__Blank string__**`|Additional command-line options for the `ansible-playbook` command. See https://bitbucket.org/atlassian/dc-deployments-automation/src/master/README.md for more information about overriding parameters. (Optional)
+|===
+.Database
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|The database engine to deploy with
+(`DBEngine`)|`PostgreSQL`|Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL|The database engine version to use
+(`DBEngineVersion`)|`11`|The database engine version to use; we'll install a suitable minor version for your chosen engine. Make sure that the Jira version you're installing supports the database engine selected. Check https://confluence.atlassian.com/x/bqr1Nw to verify this.|Database instance class
+(`DBInstanceClass`)|`db.m5.large`|RDS instance type (must be r family if using Aurora).|RDS Provisioned IOPS
+(`DBIops`)|`1000`|Must be in the range of 1000 - 30000 and a multiple of 1000. This value is only used with Provisioned IOPS. Note: The ratio of IOPS per allocated-storage must be between 3.00 and 10.00 (not used for Aurora).|Master (admin) password *
+(`DBMasterUserPassword`)|`**__Requires input__**`|Password for the master ('postgres') account. Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ + % &|Enable RDS Multi-AZ deployment
+(`DBMultiAZ`)|`true`|Whether to provision a multi-AZ RDS instance.|Application user database password *
+(`DBPassword`)|`**__Requires input__**`|Database password used by Jira. Must be at least 8 characters and include 1 uppercase, 1 lowercase, 1 number, and 1 of the following symbols: ! # $ { * : [ = , ] - _ @ + % &|Database storage
+(`DBStorage`)|`200`|Database allocated storage size, in gigabytes (GB). If you choose Provisioned IOPS, storage should be between 100 and 6144 (not used for Aurora).|Database encryption
+(`DBStorageEncrypted`)|`false`|Whether or not to encrypt the database|Database storage type
+(`DBStorageType`)|`General Purpose (SSD)`|Database storage type (not used for Aurora).
+|===
+.Bastion host provisioning
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Deploy Bastion host
+(`BastionHostRequired`)|`true`|Whether to provision a Bastion host instance. If 'true', then you need to provide an EC2 Key Pair (otherwise, you won't be able to use the Bastion host to access Jira instances).|SSH Key Pair Name
+(`KeyPairName`)|`**__Blank string__**`|Public/private EC2 Key Pairs to allow you to securely access the Bastion host
+|===
+.Networking
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Trusted IP range
+(`AccessCIDR`)|`**__Requires input__**`|CIDR Block allowed to access the Atlassian product. This should be set to a trusted IP range; if you want to give public access use '0.0.0.0/0'.|Availability Zones
+(`AvailabilityZones`)|`**__Requires input__**`|List of Availability Zones to use for the subnets in the VPC. Note: You must specify 2 AZs here; if more are specified only the first 2 will be used.|Make instance internet facing
+(`InternetFacingLoadBalancer`)|`true`|Controls whether the load balancer should be visible to the internet (true) or only within the VPC (false).|AZ1 private IP address block
+(`PrivateSubnet1CIDR`)|`10.0.0.0/19`|CIDR block for private subnet 1 located in Availability Zone 1.|AZ2 private IP address block
+(`PrivateSubnet2CIDR`)|`10.0.32.0/19`|CIDR block for private subnet 2 located in Availability Zone 2.|AZ1 public IP address block
+(`PublicSubnet1CIDR`)|`10.0.128.0/20`|CIDR Block for the public DMZ subnet 1 located in Availability Zone 1|AZ2 public IP address block
+(`PublicSubnet2CIDR`)|`10.0.144.0/20`|CIDR Block for the public DMZ subnet 2 located in Availability Zone 2|SSL Certificate ARN
+(`SSLCertificateARN`)|`**__Blank string__**`|Amazon Resource Name (ARN) of your SSL certificate. Supplying this will automatically enable HTTPS on the product and load balancer, configured to use the corresponding certificate. If you want to use your own certificate that you generated outside of Amazon, you need to first import it to AWS Certificate Manager. After a successful import, you'll receive the ARN. If you want to create a certificate with AWS Certificate Manager (ACM certificate), you will receive the ARN after it's successfully created.|IP address block for the VPC
+(`VPCCIDR`)|`10.0.0.0/16`|CIDR Block for the VPC
+|===
+.DNS (Optional)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Existing DNS name
+(`CustomDnsName`)|`**__Blank string__**`|Use custom existing DNS name for your Data Center instance. This will take precedence over HostedZone. Please note: you must own the domain and configure it to point at the load balancer.|Route 53 Hosted Zone
+(`HostedZone`)|`**__Blank string__**`|The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
+|===
+.Application Tuning (Optional)
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Tomcat Context Path
+(`TomcatContextPath`)|`**__Blank string__**`|The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/"|Catalina options
+(`CatalinaOpts`)|`**__Blank string__**`|Pass in any additional jvm options to tune Catalina|JVM Heap Size Override
+(`JvmHeapOverride`)|`**__Blank string__**`|Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g|DB Pool Maximum Size
+(`DBPoolMaxSize`)|`20`|The maximum number of database connections that can be opened at any time|DB Pool Minimum Size
+(`DBPoolMinSize`)|`20`|The minimum number of idle database connections that are kept open at any time|DB Maximum Idle
+(`DBMaxIdle`)|`20`|The maximum number of database connections that are allowed to remain idle in the pool|DB Maximum Wait
+(`DBMaxWaitMillis`)|`10000`|The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error|DB Minimum Evictable Idle Time
+(`DBMinEvictableIdleTimeMillis`)|`180000`|The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction|DB Minimum Idle Connections
+(`DBMinIdle`)|`10`|The minimum number of idle database connections that are kept open at any time|DB Remove Abandoned?
+(`DBRemoveAbandoned`)|`true`|Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout|DB Remove Abandoned Timeout
+(`DBRemoveAbandonedTimeout`)|`60`|The length of time (in seconds) that a database connection can be idle before it is considered abandoned|DB Test On Borrow?
+(`DBTestOnBorrow`)|`false`|Tests if the database connection is valid when it is borrowed from the database connection pool by Jira|DB Test While Idle?
+(`DBTestWhileIdle`)|`true`|Periodically tests if the database connection is valid when it is idle|DB Time Between Eviction Runs
+(`DBTimeBetweenEvictionRunsMillis`)|`60000`|The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run|Enable App to Process Email
+(`MailEnabled`)|`true`|Enable mail processing and sending|Tomcat Accept Count
+(`TomcatAcceptCount`)|`10`|The maximum queue length for incoming connection requests when all possible request processing threads are in use|Tomcat Default Connector Port
+(`TomcatDefaultConnectorPort`)|`8080`|The port on which to serve the application|Tomcat Enable DNS Lookups
+(`TomcatEnableLookups`)|`false`|Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client|Tomcat Maximum Threads
+(`TomcatMaxThreads`)|`200`|The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled|Tomcat Minimum Spare Threads
+(`TomcatMinSpareThreads`)|`10`|The minimum number of threads always kept running|Tomcat Protocol
+(`TomcatProtocol`)|`HTTP/1.1`|Sets the protocol to handle incoming traffic|Tomcat Redirect Port
+(`TomcatRedirectPort`)|`8443`|The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
+|===
+.AWS Quick Start Configuration
+[width="100%",cols="16%,11%,73%",options="header",]
+|===
+|Parameter label (name) |Default value|Description|Quick Start S3 Bucket Name
+(`QSS3BucketName`)|`aws-quickstart`|S3 bucket name for the Quick Start assets. Quick Start bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).|Quick Start S3 Key Prefix
+(`QSS3KeyPrefix`)|`quickstart-atlassian-jira/`|S3 key prefix for the Quick Start assets. Quick Start key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).|ASI identifier
+(`ExportPrefix`)|`ATL-`|Identifier used in all variables (VPCID, SubnetIDs, KeyName) exported from this deployment's Atlassian Standard Infrastructure. Use different identifiers if you're deploying multiple Atlassian Standard Infrastructures in the same AWS region.
+|===
