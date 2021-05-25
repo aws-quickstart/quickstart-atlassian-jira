@@ -1,6 +1,6 @@
 :quickstart-project-name: quickstart-atlassian-jira
 :partner-product-name: Jira Data Center
-:partner-product-name-short: Jira
+:partner-product-short-name: Jira
 :partner-company-name: Atlassian
 :vpc-name: Atlassian Standard Infrastructure
 :doc-month: October
@@ -14,3 +14,5 @@
 // Additional content will be auto-generated based on these attributes.
 // :marketplace_subscription:
 // :marketplace_listing_url: https://example.com/
+// Uncomment the following attribute if you are deploying AWS Control Tower.
+:control_tower:

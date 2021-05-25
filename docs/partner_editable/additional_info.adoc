@@ -1,61 +1,22 @@
-== Configuring {partner-product-name-short}
+== Configuring {partner-product-short-name}
 
-The following procedure helps you set up your new {partner-product-name-short} deployment.
+The following procedure helps you set up your new {partner-product-short-name} deployment.
 
 include::./_config_application.adoc[]
 
-=== Adding nodes to the {partner-product-name-short} cluster
+=== Adding nodes to the {partner-product-short-name} cluster
 
-By default, your Quick Start deployment starts with a single {partner-product-name-short} node (Auto Scaling group of `min=1` and `max=1`). When you're ready to add nodes to your cluster, perform the following steps:
+By default, your Quick Start deployment starts with a single {partner-product-short-name} node (Auto Scaling group of `min=1` and `max=1`). When you're ready to add nodes to your cluster, perform the following steps:
 
 .	Sign in to the AWS Management Console, use the Region selector in the navigation bar to choose the AWS Region for your deployment, and open the AWS CloudFormation console at https://console.aws.amazon.com/cloudformation/.
-.	Choose the {partner-product-name-short} stack. From the *Actions* list, choose *Update Stack*.
+.	Choose the {partner-product-short-name} stack. From the *Actions* list, choose *Update Stack*.
 .	On the *Select Template* page, leave *Use current template* selected, and then choose *Next*.
-.	On the *Specify Details* page, in the *{partner-product-name-short} Setup* section of *Parameters*, enter the number of cluster nodes in *Minimum number of cluster nodes* and *Maximum number of cluster nodes*, and then click through to update the stack. This step sets a static number of nodes in your cluster.
-. After the stack finishes updating, verify the number of nodes in your {partner-product-name-short} cluster. Choose *Clustering* again from the administration console sidebar. The following example shows a cluster that is scaled up to three instances.
+.	On the *Specify Details* page, in the *{partner-product-short-name} Setup* section of *Parameters*, enter the number of cluster nodes in *Minimum number of cluster nodes* and *Maximum number of cluster nodes*, and then click through to update the stack. This step sets a static number of nodes in your cluster.
+. After the stack finishes updating, verify the number of nodes in your {partner-product-short-name} cluster. Choose *Clustering* again from the administration console sidebar. The following example shows a cluster that is scaled up to three instances.
 +
 .Clustering (multiple nodes)
 image::../images/qs-jira-step11-two-nodes-clustered.png[]
 
-== Deploying with Control Tower
-{partner-product-name} can be deployed in a Control Tower environment. To accomplish this, we make use of https://aws.amazon.com/solutions/implementations/customizations-for-aws-control-tower/?did=sl_card&trk=sl_card[Customizations for AWS Control Tower] solution. A folder labeled "ct" has been provided in the repository for this Quick Start to aid in the deployment.
-
-After the https://aws.amazon.com/solutions/implementations/customizations-for-aws-control-tower/?did=sl_card&trk=sl_card[Customization for AWS Control Tower] solution has been deployed, use the contents of the "ct" folder (located in the root of the GitHub repositoy) to customize your deployment.
-----
-└── ct
-   ├── custom-control-tower-configuration
-   │   └── manifest.yaml
-   └── custom-control-tower-configuration.zip
-----
-The manifest.yaml file has been customized for the {partner-product-name} Quick Start. 
-
-=== Review the manifest file.
-
-Open and review the *manifest.yaml* file
-
-*region:* Ensure the _region_ attribute references the region where the Customization for AWS Control Tower has been deployed. (The default region is "us-east-1")
-
-NOTE: There is a second _region_ attribute located under the _resources_ section, that attribute is used to define the region where the Quick Start will be deployed. 
-
-==== Review the _resources_ section
-*resource_file:* The _resource_file_ attribute points to the public S3 bucket for the {partner-product-name} Quick Start, if you are deploying from your own s3 bucket, update this reference appropriately.
-
-NOTE: There are other methods for deploying {partner-product-name} using Customization for AWS Control Tower, we have chosen to make use of the public s3 repository to ensure a consistent code base across the different deployment options. Visit the https://aws.amazon.com/solutions/implementations/customizations-for-aws-control-tower/?did=sl_card&trk=sl_card[Customizations for AWS Control Tower] solution page for additional information.
-
-*parameters:* Update The _parameters_ attribute to suit your deployment. 
-
-NOTE: Carefuly review and update these attributes, to ensure the deployment is successful.
-
-*deployment_targets:* Ensure your _deployment_targets_ is configured for either your target account(s) or target OU(s)
-
-*region:* Enter the _region_ where you wish to deploy the {partner-product-name-short} Quick Start. (The default region is "us-east-1")
-
-=== Upload the manifest file
-Compress the "manifest.yaml" file and name it *custom-control-tower-configuration.zip*
-Upload the *custom-control-tower-configuration.zip* to the s3 bucket that was created by the Customization for AWS Control Tower solution. (custom-control-tower-configuration-_accountnumber_-_region_)
-The file upload will trigger the customized pipeline that will deploy the Quick Start to your target accounts.
-
-Visit the https://aws.amazon.com/solutions/implementations/customizations-for-aws-control-tower/?did=sl_card&trk=sl_card[Customizations for AWS Control Tower] solution page for additional information.
 
 // == Best practices for using {partner-product-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
