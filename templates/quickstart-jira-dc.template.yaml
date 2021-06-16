@@ -1016,24 +1016,32 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Action:
-                  - 'autoscaling:DescribeTags'
-                  - 'autoscaling:CreateOrUpdateTags'
-                  - 'ec2:CreateTags'
-                  - 'ec2:DescribeInstances'
-                  - 'ec2:DescribeTags'
-                  - 'route53:ListHostedZones'
-                  - 'route53:ListResourceRecordSet'
-                Effect: Allow
-                Resource: ['*']
-              - Action:
-                  - "route53:ChangeResourceRecordSets"
+                  - ec2:CreateTags
                 Effect: Allow
                 Resource:
-                  - !Sub 'arn:${AWS::Partition}:route53:::healthcheck/*'
-                  - !Sub 'arn:${AWS::Partition}:route53:::healthcheck/*'
-                  - !Sub 'arn:${AWS::Partition}:route53:::change/*'
-                  - !Sub 'arn:${AWS::Partition}:route53:::hostedzone/*'
-                  - !Sub 'arn:${AWS::Partition}:route53:::delegationset/*'
+                  - !Sub "arn:${AWS::Partition}:ec2:*:${AWS::AccountId}:instance/*"
+                  - !Sub "arn:${AWS::Partition}:ec2:*:${AWS::AccountId}:vpc/*"
+              - Action:
+                  - autoscaling:CreateOrUpdateTags
+                  - route53:ListResourceRecordSets
+                Effect: Allow
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:autoscaling:*:${AWS::AccountId}:autoScalingGroup:*:autoScalingGroupName/*"
+                  - !Sub "arn:${AWS::Partition}:route53:::hostedzone/*"
+              - Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeTags
+                  - route53:ListHostedZones
+                  - autoscaling:DescribeTags
+                Effect: Allow
+                Resource: "*"
+              - Action: route53:ChangeResourceRecordSets
+                Effect: Allow
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:route53:::hostedzone/*"
+                  - !Sub "arn:${AWS::Partition}:route53:::change/*"
+                  - !Sub "arn:${AWS::Partition}:route53:::healthcheck/*"
+                  - !Sub "arn:${AWS::Partition}:route53:::delegationset/*"
         - PolicyName: SSMParameterPutAccess
           PolicyDocument:
             Version: 2012-10-17
