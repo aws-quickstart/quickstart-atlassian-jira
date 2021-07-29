@@ -552,7 +552,7 @@ Parameters:
     Type: String
   KeyPairName:
     ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
+    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host (Type Key Pairs name without file extension).
     Type: String
     Default: ''
   MailEnabled:
