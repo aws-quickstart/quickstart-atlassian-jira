@@ -201,7 +201,7 @@ Metadata:
 Parameters:
   CatalinaOpts:
     Default: ''
-    Description: Pass in any additional jvm options to tune Catalina
+    Description: Pass in any additional jvm options to tune Catalina.
     Type: String
   CidrBlock:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
@@ -322,7 +322,7 @@ Parameters:
     Type: Number
   ClusterNodeVolumeSize:
     Default: 50
-    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)
+    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4).
     Type: Number
   CustomDnsName:
     Default: ""
@@ -330,7 +330,7 @@ Parameters:
     Type: String
   DBEngine:
     Default: 'PostgreSQL'
-    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
+    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL.'
     AllowedValues:
       - 'PostgreSQL'
       - 'Amazon Aurora PostgreSQL'
@@ -401,19 +401,19 @@ Parameters:
     Type: String
   DBMaxIdle:
     Default: 20
-    Description: The maximum number of database connections that are allowed to remain idle in the pool
+    Description: The maximum number of database connections that are allowed to remain idle in the pool.
     Type: Number
   DBMaxWaitMillis:
     Default: 10000
-    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error
+    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error.
     Type: Number
   DBMinEvictableIdleTimeMillis:
     Default: 180000
-    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction
+    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction.
     Type: Number
   DBMinIdle:
     Default: 10
-    Description: The minimum number of idle database connections that are kept open at any time
+    Description: The minimum number of idle database connections that are kept open at any time.
     Type: Number
   DBMultiAZ:
     Description: Whether to provision a multi-AZ RDS instance.
@@ -433,22 +433,22 @@ Parameters:
     Type: String
   DBPoolMaxSize:
     Default: 20
-    Description: The maximum number of database connections that can be opened at any time
+    Description: The maximum number of database connections that can be opened at any time.
     Type: Number
   DBPoolMinSize:
     Default: 20
-    Description: The minimum number of idle database connections that are kept open at any time
+    Description: The minimum number of idle database connections that are kept open at any time.
     Type: Number
   DBRemoveAbandoned:
     Default: "true"
     AllowedValues:
       - "true"
       - "false"
-    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout
+    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout.
     Type: String
   DBRemoveAbandonedTimeout:
     Default: 60
-    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned
+    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned.
     Type: Number
   DBStorage:
     Default: 200
@@ -459,7 +459,7 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Description: Whether or not to encrypt the database
+    Description: Whether or not to encrypt the database.
     Type: String
   DBStorageType:
     Default: General Purpose (SSD)
@@ -474,18 +474,18 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira
+    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira.
     Type: String
   DBTestWhileIdle:
     Default: "true"
     AllowedValues:
       - "true"
       - "false"
-    Description: Periodically tests if the database connection is valid when it is idle
+    Description: Periodically tests if the database connection is valid when it is idle.
     Type: String
   DBTimeBetweenEvictionRunsMillis:
     Default: 60000
-    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
+    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run.
     Type: Number
   DeploymentAutomationRepository:
     Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
@@ -515,7 +515,7 @@ Parameters:
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
-    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
+    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames.
     Type: String
   InternetFacingLoadBalancer:
     Default: "true"
@@ -541,7 +541,7 @@ Parameters:
     Type: String
   JvmHeapOverride:
     Default: ''
-    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g.
     Type: String
   BastionHostRequired:
     Default: "true"
@@ -561,7 +561,7 @@ Parameters:
       - "false"
     ConstraintDescription: Must be 'true' or 'false'.
     Default: "true"
-    Description: Enable mail processing and sending
+    Description: Enable mail processing and sending.
     Type: String
   SSLCertificateARN:
     Default: ''
@@ -571,43 +571,43 @@ Parameters:
     Type: String
   TomcatAcceptCount:
     Default: 10
-    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
+    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use.
     Type: Number
   TomcatConnectionTimeout:
     Default: 20000
-    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented
+    Description: The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented.
     Type: Number
   TomcatContextPath:
     Default: ''
     AllowedPattern: '^(\/[A-z_\-0-9\.]+)?$'
-    Description: The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/"
+    Description: The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/".
     Type: String
   TomcatDefaultConnectorPort:
     Default: 8080
-    Description: The port on which to serve the application
+    Description: The port on which to serve the application.
     Type: Number
   TomcatEnableLookups:
     Default: "false"
     AllowedValues:
       - "true"
       - "false"
-    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client
+    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
     Type: String
   TomcatMaxThreads:
     Default: 200
-    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled
+    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled.
     Type: Number
   TomcatMinSpareThreads:
     Default: 10
-    Description: The minimum number of threads always kept running
+    Description: The minimum number of threads always kept running.
     Type: Number
   TomcatProtocol:
     Default: 'HTTP/1.1'
-    Description: Sets the protocol to handle incoming traffic
+    Description: Sets the protocol to handle incoming traffic.
     Type: String
   TomcatRedirectPort:
     Default: 8443
-    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
+    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI.
     Type: Number
   QSS3BucketName:
     Default: 'aws-quickstart'

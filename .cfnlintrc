@@ -9,3 +9,5 @@ ignore_checks:
   - E3012
   # E1001: Top level template section tests is not valid
   - E1001
+  # E9101: Checks that text is welcoming and inclusive as per Amazon Open Source Code of Conduct https://aws.github.io/code-of-conduct
+  - E9101
