@@ -16,5 +16,7 @@ ignore_checks:
   # W9006: Parameter Label is not sentence case
   # W9006: Parameter Label contains spelling error(s)
   - W9006
+  # W9003 Parameter is not in a ParameterGroup
+  - W9003
   # EIAMPolicyWildcardResource: IAM policy should not allow * resource; This method in this in this policy support granular permissions
   - EIAMPolicyWildcardResource
