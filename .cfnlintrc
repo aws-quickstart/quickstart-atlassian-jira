@@ -9,3 +9,14 @@ ignore_checks:
   - E3012
   # E1001: Top level template section tests is not valid
   - E1001
+  # E9101: Checks that text is welcoming and inclusive as per Amazon Open Source Code of Conduct https://aws.github.io/code-of-conduct
+  - E9101
+  # W9006: Parameter Group name contains spelling error(s)
+  # W9006: Parameter Group name is not sentence case
+  # W9006: Parameter Label is not sentence case
+  # W9006: Parameter Label contains spelling error(s)
+  - W9006
+  # W9003 Parameter is not in a ParameterGroup
+  - W9003
+  # EIAMPolicyWildcardResource: IAM policy should not allow * resource; This method in this in this policy support granular permissions
+  - EIAMPolicyWildcardResource

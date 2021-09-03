@@ -223,7 +223,7 @@ Parameters:
   # Jira DC template parameters
   CatalinaOpts:
     Default: ''
-    Description: Pass in any additional jvm options to tune Catalina
+    Description: Pass in any additional jvm options to tune Catalina.
     Type: String
   CloudWatchIntegration:
     Default: "Metrics and Logs"
@@ -337,7 +337,7 @@ Parameters:
     Type: Number
   ClusterNodeVolumeSize:
     Default: 50
-    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)
+    Description: Size of cluster node root volume in Gb (note - size based upon Application indexes x 4).
     Type: Number
   CustomDnsName:
     Default: ""
@@ -345,7 +345,7 @@ Parameters:
     Type: String
   DBEngine:
     Default: 'PostgreSQL'
-    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL'
+    Description: 'Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL.'
     AllowedValues:
       - 'PostgreSQL'
       - 'Amazon Aurora PostgreSQL'
@@ -416,19 +416,19 @@ Parameters:
     Type: String
   DBMaxIdle:
     Default: 20
-    Description: The maximum number of database connections that are allowed to remain idle in the pool
+    Description: The maximum number of database connections that are allowed to remain idle in the pool.
     Type: Number
   DBMaxWaitMillis:
     Default: 10000
-    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error
+    Description: The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error.
     Type: Number
   DBMinEvictableIdleTimeMillis:
     Default: 180000
-    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction
+    Description: The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction.
     Type: Number
   DBMinIdle:
     Default: 10
-    Description: The minimum number of idle database connections that are kept open at any time
+    Description: The minimum number of idle database connections that are kept open at any time.
     Type: Number
   DBMultiAZ:
     Description: Whether to provision a multi-AZ RDS instance.
@@ -448,22 +448,22 @@ Parameters:
     Type: String
   DBPoolMaxSize:
     Default: 20
-    Description: The maximum number of database connections that can be opened at any time
+    Description: The maximum number of database connections that can be opened at any time.
     Type: Number
   DBPoolMinSize:
     Default: 20
-    Description: The minimum number of idle database connections that are kept open at any time
+    Description: The minimum number of idle database connections that are kept open at any time.
     Type: Number
   DBRemoveAbandoned:
     Default: "true"
     AllowedValues:
       - "true"
       - "false"
-    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout
+    Description: Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout.
     Type: String
   DBRemoveAbandonedTimeout:
     Default: 60
-    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned
+    Description: The length of time (in seconds) that a database connection can be idle before it is considered abandoned.
     Type: String
   DBStorage:
     Default: 200
@@ -474,7 +474,7 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Description: Whether or not to encrypt the database
+    Description: Whether or not to encrypt the database.
     Type: String
   DBStorageType:
     Default: General Purpose (SSD)
@@ -489,18 +489,18 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
-    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira
+    Description: Tests if the database connection is valid when it is borrowed from the database connection pool by Jira.
     Type: String
   DBTestWhileIdle:
     Default: "true"
     AllowedValues:
       - "true"
       - "false"
-    Description: Periodically tests if the database connection is valid when it is idle
+    Description: Periodically tests if the database connection is valid when it is idle.
     Type: String
   DBTimeBetweenEvictionRunsMillis:
     Default: 60000
-    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run
+    Description: The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run.
     Type: Number
   DeploymentAutomationRepository:
     Default: "https://bitbucket.org/atlassian/dc-deployments-automation.git"
@@ -530,7 +530,7 @@ Parameters:
   HostedZone:
     Default: ''
     ConstraintDescription: Must be the name of an existing Route53 Hosted Zone.
-    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames
+    Description: The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames.
     Type: String
   JiraProduct:
     Default: Software
@@ -550,7 +550,7 @@ Parameters:
     Type: String
   JvmHeapOverride:
     Default: ''
-    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g
+    Description: Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g.
     Type: String
   InternetFacingLoadBalancer:
     Default: "true"
@@ -566,8 +566,8 @@ Parameters:
     Description: Whether to provision a Bastion host instance. If 'true', then you need to provide an EC2 Key Pair (otherwise, you won't be able to use the Bastion host to access Jira instances).
     Type: String
   KeyPairName:
-    ConstraintDescription: Must be the name of an existing EC2 Key Pair.
-    Description: Public/private EC2 Key Pairs to allow you to securely access the Bastion host
+    ConstraintDescription: Must be the name of an existing EC2 Key Pair. Note the supplied value must not include the file extension.
+    Description: Public/private EC2 Key Pairs (without file extension) to allow you to securely access the Bastion host.
     Type: String
     Default: ''
   MailEnabled:
@@ -576,7 +576,7 @@ Parameters:
       - "false"
     ConstraintDescription: Must be 'true' or 'false'.
     Default: "true"
-    Description: Enable mail processing and sending
+    Description: Enable mail processing and sending.
     Type: String
   SSLCertificateARN:
     Default: ''
@@ -586,7 +586,7 @@ Parameters:
     Type: String
   TomcatAcceptCount:
     Default: 10
-    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use
+    Description: The maximum queue length for incoming connection requests when all possible request processing threads are in use.
     Type: Number
   TomcatContextPath:
     Default: ''
@@ -595,30 +595,30 @@ Parameters:
     Type: String
   TomcatDefaultConnectorPort:
     Default: 8080
-    Description: The port on which to serve the application
+    Description: The port on which to serve the application.
     Type: Number
   TomcatEnableLookups:
     Default: "false"
     AllowedValues:
       - "true"
       - "false"
-    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client
+    Description: Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
     Type: String
   TomcatMaxThreads:
     Default: 200
-    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled
+    Description: The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled.
     Type: Number
   TomcatMinSpareThreads:
     Default: 10
-    Description: The minimum number of threads always kept running
+    Description: The minimum number of threads always kept running.
     Type: Number
   TomcatProtocol:
     Default: 'HTTP/1.1'
-    Description: Sets the protocol to handle incoming traffic
+    Description: Sets the protocol to handle incoming traffic.
     Type: String
   TomcatRedirectPort:
     Default: 8443
-    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI
+    Description: The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI.
     Type: Number
 
   # VPC parameters
@@ -643,12 +643,12 @@ Parameters:
   PublicSubnet1CIDR:
     Default: 10.0.128.0/20
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    Description: CIDR Block for the public DMZ subnet 1 located in Availability Zone 1
+    Description: CIDR Block for the public DMZ subnet 1 located in Availability Zone 1.
     Type: String
   PublicSubnet2CIDR:
     Default: 10.0.144.0/20
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2
+    Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2.
     Type: String
   QSS3BucketName:
     Default: 'aws-quickstart'
@@ -672,7 +672,7 @@ Parameters:
   VPCCIDR:
     Default: 10.0.0.0/16
     AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
-    Description: CIDR Block for the VPC
+    Description: CIDR Block for the VPC.
     Type: String
 
 Conditions:
