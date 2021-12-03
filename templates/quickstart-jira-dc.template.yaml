@@ -534,7 +534,7 @@ Parameters:
       - ServiceManagement
       - All
   JiraVersion:
-    Default: "8.13.3"
+    Default: "8.20.1"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.14.0 for Jira Software, or 4.14.0 for Jira Service Management.
     Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
@@ -1076,10 +1076,10 @@ Resources:
           PropagateAtLaunch: true
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
           PropagateAtLaunch: true
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
           PropagateAtLaunch: true
 
   ClusterNodeLaunchConfig:
@@ -1264,9 +1264,9 @@ Resources:
           Value: !Ref AWS::StackId
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
   EFSMountAz1:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1352,9 +1352,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
 
   LoadBalancerHTTPListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -1416,9 +1416,9 @@ Resources:
           Value: !Ref AWS::StackName
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
     DependsOn:
       - LoadBalancer
   LoadBalancerCname:
@@ -1497,9 +1497,9 @@ Resources:
           Value: !Join [' ', [!Ref "AWS::StackName", 'sg']]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
       VpcId:
         Fn::ImportValue: !Sub "${ExportPrefix}VPCID"
   SecurityGroupIngress:
@@ -1582,9 +1582,9 @@ Resources:
           Value: !Sub ["${StackName} Encryption Key", {StackName: !Ref 'AWS::StackName'}]
         # NOTE: The leading COMMIT/TIMESTAMP are used to locate the position to update; see scripts/update-tags.py
         - Key: "atl:quickstart:commit-id"
-          Value: "COMMIT: b4f4ca87b4116ef08abe6f875f9f999a2fda6ee5"
+          Value: "COMMIT: f8461358ad3b2d7362497bd9842c51d2ec1b3958"
         - Key: "atl:quickstart:timestamp"
-          Value: "TIMESTAMP: 2021-02-09T06:41:39Z"
+          Value: "TIMESTAMP: 2021-11-16T02:48:06Z"
   EncryptionKeyAlias:
     Condition: UseDatabaseEncryption
     Type: AWS::KMS::Alias
