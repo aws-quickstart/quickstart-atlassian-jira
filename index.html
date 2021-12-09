@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.15">
+<meta name="generator" content="Asciidoctor 2.0.16">
 <title>Jira Data Center on the AWS Cloud</title>
 <style>
 
@@ -1172,15 +1172,6 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 </div>
 </div>
 <div class="sect3">
-<h4 id="_amazon_ec2_key_pairs">Amazon EC2 key pairs</h4>
-<div class="paragraph">
-<p>Ensure that at least one Amazon EC2 key pair exists in your AWS account in the Region where you plan to deploy the Quick Start. Note the key-pair name because you will use it during deployment. To create a key pair, see <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html" target="_blank" rel="noopener">Amazon EC2 key pairs and Linux instances</a>.</p>
-</div>
-<div class="paragraph">
-<p>For testing or proof-of-concept purposes, we recommend creating a new key pair instead of using one that’s already being used by a production instance.</p>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_iam_permissions">IAM permissions</h4>
 <div class="paragraph">
 <p>Before launching the Quick Start, you must sign in to the AWS Management Console with IAM permissions for the resources that the templates deploy. The <em>AdministratorAccess</em> managed policy within IAM provides sufficient permissions, although your organization may choose to use a custom policy with more restrictions. For more information, see <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html" target="_blank" rel="noopener">AWS managed policies for job functions</a>.</p>
@@ -1403,7 +1394,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Cluster node instance volume size
 (<code>ClusterNodeVolumeSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>50</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Size of cluster node root volume in Gb (note - size based upon Application indexes x 4).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Deployment Automation Git Repository URL
@@ -1456,7 +1447,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database engine to deploy with
 (<code>DBEngine</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostgreSQL</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database engine version to use
@@ -1504,7 +1495,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database encryption
 (<code>DBStorageEncrypted</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Whether or not to encrypt the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether or not to encrypt the database</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database storage type
@@ -1539,7 +1530,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">SSH Key Pair Name
 (<code>KeyPairName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public/private EC2 Key Pairs (without file extension) to allow you to securely access the Bastion host.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public/private EC2 Key Pairs to allow you to securely access the Bastion host</p></td>
 </tr>
 </tbody>
 </table>
@@ -1603,7 +1594,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 Hosted Zone
 (<code>HostedZone</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames</p></td>
 </tr>
 </tbody>
 </table>
@@ -1626,139 +1617,139 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Context Path
 (<code>TomcatContextPath</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/".</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The context path of this web application, which is matched against the beginning of each request URI to select the appropriate web application for processing. If used, must include leading "/"</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Catalina options
 (<code>CatalinaOpts</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pass in any additional jvm options to tune Catalina.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass in any additional jvm options to tune Catalina</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">JVM Heap Size Override
 (<code>JvmHeapOverride</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Pool Maximum Size
 (<code>DBPoolMaxSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that can be opened at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that can be opened at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Pool Minimum Size
 (<code>DBPoolMinSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Maximum Idle
 (<code>DBMaxIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that are allowed to remain idle in the pool.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that are allowed to remain idle in the pool</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Maximum Wait
 (<code>DBMaxWaitMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Minimum Evictable Idle Time
 (<code>DBMinEvictableIdleTimeMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>180000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Minimum Idle Connections
 (<code>DBMinIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Remove Abandoned?
 (<code>DBRemoveAbandoned</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Remove Abandoned Timeout
 (<code>DBRemoveAbandonedTimeout</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>60</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in seconds) that a database connection can be idle before it is considered abandoned.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in seconds) that a database connection can be idle before it is considered abandoned</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Test On Borrow?
 (<code>DBTestOnBorrow</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tests if the database connection is valid when it is borrowed from the database connection pool by Jira.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tests if the database connection is valid when it is borrowed from the database connection pool by Jira</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Test While Idle?
 (<code>DBTestWhileIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Periodically tests if the database connection is valid when it is idle.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Periodically tests if the database connection is valid when it is idle</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Time Between Eviction Runs
 (<code>DBTimeBetweenEvictionRunsMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>60000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enable App to Process Email
 (<code>MailEnabled</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enable mail processing and sending.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable mail processing and sending</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Accept Count
 (<code>TomcatAcceptCount</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum queue length for incoming connection requests when all possible request processing threads are in use.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum queue length for incoming connection requests when all possible request processing threads are in use</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Connection Timeout
 (<code>TomcatConnectionTimeout</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds this Connector will wait, after accepting a connection, for the request URI line to be presented</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Default Connector Port
 (<code>TomcatDefaultConnectorPort</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>8080</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The port on which to serve the application.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port on which to serve the application</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Enable DNS Lookups
 (<code>TomcatEnableLookups</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Maximum Threads
 (<code>TomcatMaxThreads</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>200</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Minimum Spare Threads
 (<code>TomcatMinSpareThreads</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of threads always kept running.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of threads always kept running</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Protocol
 (<code>TomcatProtocol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>HTTP/1.1</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the protocol to handle incoming traffic.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the protocol to handle incoming traffic</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Redirect Port
 (<code>TomcatRedirectPort</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>8443</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI</p></td>
 </tr>
 </tbody>
 </table>
@@ -1872,7 +1863,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Cluster node instance volume size
 (<code>ClusterNodeVolumeSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>50</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Size of cluster node root volume in Gb (note - size based upon Application indexes x 4).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Size of cluster node root volume in Gb (note - size based upon Application indexes x 4)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Deployment Automation Git Repository URL
@@ -1925,7 +1916,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database engine to deploy with
 (<code>DBEngine</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>PostgreSQL</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Database Engine to use for the application. PostgreSQL or Amazon Aurora PostgreSQL</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The database engine version to use
@@ -1973,7 +1964,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database encryption
 (<code>DBStorageEncrypted</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Whether or not to encrypt the database.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether or not to encrypt the database</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database storage type
@@ -2008,7 +1999,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">SSH Key Pair Name
 (<code>KeyPairName</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public/private EC2 Key Pairs (without file extension) to allow you to securely access the Bastion host.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public/private EC2 Key Pairs to allow you to securely access the Bastion host</p></td>
 </tr>
 </tbody>
 </table>
@@ -2061,13 +2052,13 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">AZ1 public IP address block
 (<code>PublicSubnet1CIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.128.0/20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the public DMZ subnet 1 located in Availability Zone 1.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the public DMZ subnet 1 located in Availability Zone 1</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AZ2 public IP address block
 (<code>PublicSubnet2CIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.144.0/20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the public DMZ subnet 2 located in Availability Zone 2.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the public DMZ subnet 2 located in Availability Zone 2</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">SSL Certificate ARN
@@ -2079,7 +2070,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">IP address block for the VPC
 (<code>VPCCIDR</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10.0.0.0/16</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the VPC.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR Block for the VPC</p></td>
 </tr>
 </tbody>
 </table>
@@ -2108,7 +2099,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Route 53 Hosted Zone
 (<code>HostedZone</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The domain name of the Route53 PRIVATE Hosted Zone in which to create cnames</p></td>
 </tr>
 </tbody>
 </table>
@@ -2137,127 +2128,127 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">Catalina options
 (<code>CatalinaOpts</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pass in any additional jvm options to tune Catalina.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pass in any additional jvm options to tune Catalina</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">JVM Heap Size Override
 (<code>JvmHeapOverride</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Override the default amount of memory to allocate to the JVM for your instance type - set size in meg or gig e.g. 1024m or 1g</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Pool Maximum Size
 (<code>DBPoolMaxSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that can be opened at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that can be opened at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Pool Minimum Size
 (<code>DBPoolMinSize</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Maximum Idle
 (<code>DBMaxIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>20</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that are allowed to remain idle in the pool.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of database connections that are allowed to remain idle in the pool</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Maximum Wait
 (<code>DBMaxWaitMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in milliseconds) that Jira is allowed to wait for a database connection to become available (while there are no free ones available in the pool), before returning an error</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Minimum Evictable Idle Time
 (<code>DBMinEvictableIdleTimeMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>180000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum amount of time an object may sit idle in the database connection pool before it is eligible for eviction by the idle object eviction</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Minimum Idle Connections
 (<code>DBMinIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of idle database connections that are kept open at any time</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Remove Abandoned?
 (<code>DBRemoveAbandoned</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Flag to remove abandoned database connections if they exceed the Removed Abandoned Timeout</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Remove Abandoned Timeout
 (<code>DBRemoveAbandonedTimeout</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>60</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in seconds) that a database connection can be idle before it is considered abandoned.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The length of time (in seconds) that a database connection can be idle before it is considered abandoned</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Test On Borrow?
 (<code>DBTestOnBorrow</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tests if the database connection is valid when it is borrowed from the database connection pool by Jira.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tests if the database connection is valid when it is borrowed from the database connection pool by Jira</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Test While Idle?
 (<code>DBTestWhileIdle</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Periodically tests if the database connection is valid when it is idle.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Periodically tests if the database connection is valid when it is idle</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DB Time Between Eviction Runs
 (<code>DBTimeBetweenEvictionRunsMillis</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>60000</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of milliseconds to sleep between runs of the idle object eviction thread. When non-positive, no idle object eviction thread will be run</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enable App to Process Email
 (<code>MailEnabled</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enable mail processing and sending.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable mail processing and sending</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Accept Count
 (<code>TomcatAcceptCount</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum queue length for incoming connection requests when all possible request processing threads are in use.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum queue length for incoming connection requests when all possible request processing threads are in use</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Default Connector Port
 (<code>TomcatDefaultConnectorPort</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>8080</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The port on which to serve the application.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port on which to serve the application</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Enable DNS Lookups
 (<code>TomcatEnableLookups</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Maximum Threads
 (<code>TomcatMaxThreads</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>200</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The maximum number of request processing threads to be created by this Connector, which therefore determines the maximum number of simultaneous requests that can be handled</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Minimum Spare Threads
 (<code>TomcatMinSpareThreads</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>10</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of threads always kept running.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The minimum number of threads always kept running</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Protocol
 (<code>TomcatProtocol</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>HTTP/1.1</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the protocol to handle incoming traffic.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets the protocol to handle incoming traffic</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Tomcat Redirect Port
 (<code>TomcatRedirectPort</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>8443</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The port number for Catalina to use when automatically redirecting a non-SSL connector actioning a redirect to a SSL URI</p></td>
 </tr>
 </tbody>
 </table>
@@ -2579,16 +2570,16 @@ and to share your customizations with others.</p>
 </div>
 <p class="footer-text">
 <!-- We can use document attributes: -->
-<!-- Generated with Asciidoctor v2.0.15. -->
+<!-- Generated with Asciidoctor v2.0.16. -->
 <a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates and Atlassian. All rights reserved.
 </p>
 </body>
 </html>
 <!--
 repo commit:
-c589cf9047be15c584a74806a7eeb4f524b8c378
+a43e9685f52296bd88c40b5211413db45c6b6dee
 
 submodule config:
- eea042d0b9c005d2549a71349e5f28b02c81af75 docs/boilerplate (heads/main)
- e3f076d21785f37f5907592658783fb03efedbc5 submodules/quickstart-atlassian-services (v2.0-76-ge3f076d)
+ 4b446ee8ff99a231295d8e38ebff4bcb68325bd9 docs/boilerplate (heads/main)
+ bb563c174da11162b9716baef31b45130367b095 submodules/quickstart-atlassian-services (v2.0-77-gbb563c1)
 -->
