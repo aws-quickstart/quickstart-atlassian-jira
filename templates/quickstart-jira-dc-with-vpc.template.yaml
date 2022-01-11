@@ -356,7 +356,6 @@ Parameters:
     AllowedValues:
       - 11
       - 10
-      - 9
     Description: "The database engine version to use; we'll install a suitable minor version for your chosen engine. Make sure that the Jira version you're installing supports the database engine selected. Check https://confluence.atlassian.com/x/bqr1Nw to verify this."
     Type: String
   DBInstanceClass:
