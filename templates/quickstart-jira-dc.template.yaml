@@ -938,37 +938,37 @@ Mappings:
 
   AWSRegionArch2AMI:
     ap-northeast-1:
-      HVM64: ami-00d101850e971728d
+      HVM64: ami-08d56ac42e2d4a08b
     ap-northeast-2:
-      HVM64: ami-08ab3f7e72215fe91
+      HVM64: ami-0eb7a369386789460
     ap-south-1:
-      HVM64: ami-00e782930f1c3dbc7
+      HVM64: ami-0dafa01c8100180f8
     ap-southeast-1:
-      HVM64: ami-0b5a47f8865280111
+      HVM64: ami-04fc979a55e14b094
     ap-southeast-2:
-      HVM64: ami-0fb7513bcdc525c3b
+      HVM64: ami-042c4533fa25c105a
     ca-central-1:
-      HVM64: ami-08a9b721ecc5b0a53
+      HVM64: ami-040d8c460f4fc4a9f
     eu-central-1:
-      HVM64: ami-0ebe657bc328d4e82
+      HVM64: ami-00e232b942edaf8f9
     eu-north-1:
-      HVM64: ami-1fb13961
+      HVM64: ami-0e3f1570eb0a9bc7f
     eu-west-1:
-      HVM64: ami-030dbca661d402413
+      HVM64: ami-09d5dd12541e69077
     eu-west-2:
-      HVM64: ami-0009a33f033d8b7b6
+      HVM64: ami-098a393b6fa6e700b
     eu-west-3:
-      HVM64: ami-0ebb3a801d5fb8b9b
+      HVM64: ami-05cb6b584fc3c8ac8
     sa-east-1:
-      HVM64: ami-058141e091292ecf0
+      HVM64: ami-088911543b10876a4
     us-east-1:
-      HVM64: ami-0c6b1d09930fac512
+      HVM64: ami-038b3df3312ddf25d
     us-east-2:
-      HVM64: ami-0ebbf2179e615c338
+      HVM64: ami-07b1d7739c91ed3fc
     us-west-1:
-      HVM64: ami-015954d5e5548d13b
+      HVM64: ami-0729cd65c1a99b0c9
     us-west-2:
-      HVM64: ami-0cb72367e98845d43
+      HVM64: ami-090bc08d7ae1f3881
     us-gov-west-1:
       HVM64: ami-e9a9d388
     us-gov-east-1:
