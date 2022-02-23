@@ -1,4 +1,4 @@
-Deploying this Quick Start for a new https://aws.amazon.com/quickstart/architecture/{partner-company-name}-standard-infrastructure/[{vpc-name} (ASI)] with default parameters builds the following {partner-product-short-name} environment in the AWS Cloud.
+Deploying this Quick Start for a new https://aws.amazon.com/quickstart/architecture/atlassian-standard-infrastructure/[{vpc-name} (ASI)] with default parameters builds the following {partner-product-short-name} environment in the AWS Cloud.
 
 // Replace this example diagram with your own. Send us your source PowerPoint file. Be sure to follow our guidelines here : http://(we should include these points on our contributors giude)
 [#architecture1]
