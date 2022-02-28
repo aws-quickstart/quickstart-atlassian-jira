@@ -543,7 +543,7 @@ Parameters:
       - ServiceManagement
       - All
   JiraVersion:
-    Default: "8.20.1"
+    Default: "8.20.6"
     AllowedPattern: '(\d+\.\d+\.\d+(-?.*))|(latest)'
     ConstraintDescription: Must be a valid version number or 'latest'; for example, 8.14.0 for Jira Software, or 4.14.0 for Jira Service Management.
     Description: The version of Jira Software or Jira Service Management to install. If choosing Jira All, pick the version of Jira Software and the latest compatible version of Jira Service Management will be selected automatically. Find valid versions at https://confluence.atlassian.com/x/TVlNLg (Jira Software), https://confluence.atlassian.com/x/jh9-Lg (Jira Service Management), or https://confluence.atlassian.com/x/XM2EO (Long Term Support releases).
