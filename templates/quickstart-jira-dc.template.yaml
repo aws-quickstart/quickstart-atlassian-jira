@@ -970,9 +970,9 @@ Mappings:
     us-west-2:
       HVM64: ami-090bc08d7ae1f3881
     us-gov-west-1:
-      HVM64: ami-e9a9d388
+      HVM64: ami-0bbf3595bb2fb39ec
     us-gov-east-1:
-      HVM64: ami-a2d938d3
+      HVM64: ami-0cc17d57bec8c6017
 
   JIRAProduct2NameAndVersion:
     Core:
