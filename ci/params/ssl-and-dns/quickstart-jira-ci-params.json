@@ -58,5 +58,9 @@
     {
         "ParameterKey": "BastionHostRequired",
         "ParameterValue": "false"
+    },
+    {
+        "ParameterKey": "DeploymentAutomationBranch",
+        "ParameterValue": "master"
     }
 ]
