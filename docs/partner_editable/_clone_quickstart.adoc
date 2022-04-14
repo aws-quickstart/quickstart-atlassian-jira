@@ -3,18 +3,6 @@
 ----
 git clone --recurse-submodules https://github.com/aws-quickstart/quickstart-atlassian-jira.git
 ----
-. *(Optional)* The Quick Start templates repository uses the directory structure required by the Quick Start interface. If needed (for example, to minimize storage costs), you can remove all other files except the following:
-+
-----
-quickstart-atlassian-jira
-├── submodules
-├── quickstart-atlassian-services
-│   └── templates
-│       └── quickstart-vpc-for-atlassian-services.yaml
-└── templates
-    ├── quickstart-jira-dc-with-vpc.template.yaml
-    └── quickstart-jira-dc.template.yaml
-----
 . Install and set up the https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html[AWS Command Line Interface (CLI)] so that you can create an S3 bucket and upload content to it.
 . Create an S3 bucket in your Region:
 +
