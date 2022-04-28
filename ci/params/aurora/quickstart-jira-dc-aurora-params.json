@@ -24,10 +24,6 @@
     "ParameterValue": "0.0.0.0/0"
   },
   {
-    "ParameterKey": "KeyPairName",
-    "ParameterValue": "replaced-by-taskcat-override-file"
-  },
-  {
     "ParameterKey": "DBEngine",
     "ParameterValue": "Amazon Aurora PostgreSQL"
   },
