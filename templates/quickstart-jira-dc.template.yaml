@@ -1059,6 +1059,10 @@ Resources:
   # Jira node config
   ClusterNodeGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
+    CreationPolicy:
+      ResourceSignal:
+        Count: !Ref ClusterNodeMin
+        Timeout: PT15M
     Properties:
       DesiredCapacity: !Ref ClusterNodeMin
       LaunchConfigurationName: !Ref ClusterNodeLaunchConfig
@@ -1254,7 +1258,7 @@ Resources:
             - !Sub ["/opt/aws/bin/cfn-init -v --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
             - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}\n", {Region: !Ref "AWS::Region"}]
             - !Sub ["/opt/aws/bin/cfn-signal -e $? --stack ${StackName}", {StackName: !Ref "AWS::StackName"}]
-            - !Sub [" --resource ClusterNodeLaunchConfig --region ${Region}", {Region: !Ref "AWS::Region"}]
+            - !Sub [" --resource ClusterNodeGroup --region ${Region}", {Region: !Ref "AWS::Region"}]
   ElasticFileSystem:
     Type: AWS::EFS::FileSystem
     Properties:
