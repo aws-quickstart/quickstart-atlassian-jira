@@ -1,0 +1,26 @@
+project:
+  name: quickstart-atlassian-jira
+  owner: quickstart-eng@amazon.com
+  package_lambda: false
+  s3_regional_buckets: true
+  auth:
+    us-east-1: tests
+  regions:
+  - us-east-1
+tests:
+  jira:
+    template: 'templates/quickstart-jira-dc.template.yaml'
+    parameters:
+      InternetFacingLoadBalancer: 'true'
+      DBMasterUserPassword: 'f925dO1ry_'
+      DBMultiAZ: 'false'
+      DBPassword: 'f925dO1ry_'
+      DBStorage: '100'
+      DBStorageType: 'Provisioned IOPS'
+      CidrBlock: '0.0.0.0/0'
+      QSS3BucketName: $[taskcat_autobucket]
+      QSS3KeyPrefix: 'quickstart-atlassian-jira/'
+      ClusterNodeInstanceType: 't3.medium'
+      DBInstanceClass: 'db.t3.medium'
+      BastionHostRequired: 'false'
+      DeploymentAutomationBranch: 'master'
