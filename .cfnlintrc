@@ -20,3 +20,5 @@ ignore_checks:
   - W9003
   # EIAMPolicyWildcardResource: IAM policy should not allow * resource; This method in this in this policy support granular permissions
   - EIAMPolicyWildcardResource
+  # EFSFilesystemEncryptionEnabled: EFS Encryption is disabled by default
+  - EFSFilesystemEncryptionEnabled
