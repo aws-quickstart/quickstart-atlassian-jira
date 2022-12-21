@@ -25,7 +25,5 @@ This list was last updated on June 20, 2019.
 The services offered in each region change from time to time. If your preferred region isn't on this list, check the https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[Regional Product Services] table to see if it already supports EFS.
 
 [WARNING]
-.AWS GovCloud is not for production
-====
-Our Quick Starts are also available on https://aws.amazon.com/govcloud-us/[AWS GovCloud] regions, but only for testing purposes. We do not support any deployments on GovCloud regions resulting from this Quick Start.
-====
+
+Even though you can deploy our Data Center products on https://aws.amazon.com/govcloud-us/[AWS GovCloud], we don’t test or verify our AWS Quick Starts on the AWS GovCloud environment and can’t provide any support.
