@@ -1,16 +1,16 @@
-:partner-solution-project-name: partner-solution-repo-name
+:partner-solution-project-name: quickstart-atlassian-jira
 :partner-solution-github-org: aws-quickstart
-:partner-product-name: Full Product Name
-:partner-product-short-name: Product Name
-:partner-company-name: Example Company Name, Ltd.
-:doc-month: January
-:doc-year: 2023
-:partner-contributors: John Smith, {partner-company-name}
+:partner-product-name: Jira Data Center
+:partner-product-short-name: Jira
+:partner-company-name: Atlassian
+:doc-month: October
+:doc-year: 2020
+:partner-contributors: Adam Brokes, Ben Partridge, Carlos Corredor, Chris Szmajda, Don Domingo, Dylan Rathbone, Felix Haehnel, Steve Smith, Varun Arbatti, {partner-company-name}
 // :other-contributors: Akua Mansa, Trek10
-:aws-contributors: Janine Singh, AWS IoT Partner team
-:aws-ia-contributors: Toni Jones, AWS Integration & Automation team
-:deployment_time: 15 minutes
-:default_deployment_region: us-east-1
+// :aws-contributors: Janine Singh, AWS IoT Partner team
+:aws-ia-contributors: Tony Vattathil, AWS Integration & Automation team
+:deployment_time: 30-60 minutes
+:default_deployment_region: us-east-2
 // :private_repo:
 
 
