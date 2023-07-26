@@ -1,7 +1,0 @@
-// Replace the content in <>
-// Identify your target audience and explain how/why they would use this Quick Start.
-//Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
-
-This Quick Start is for users who want to deploy {partner-product-name} in a supported configuration in the AWS Cloud, following AWS and Atlassian best practices.
-
-This Quick Start uses the https://fwd.aws/xYyYy[Atlassian Standard Infrastructure] (ASI) as a foundation. You can choose to build a new ASI for your deployment or deploy {partner-product-name-short} into your existing ASI. You can also deploy Confluence, Bitbucket, and Crowd Data Center within the same ASI.
