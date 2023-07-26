@@ -1,20 +1,24 @@
-Deploying this Quick Start for a new https://aws.amazon.com/quickstart/architecture/{partner-company-name}-standard-infrastructure/[{vpc-name} (ASI)] with default parameters builds the following {partner-product-name-short} environment in the AWS Cloud.
+:xrefstyle: short
 
-// Replace this example diagram with your own. Send us your source PowerPoint file. Be sure to follow our guidelines here : http://(we should include these points on our contributors giude)
+Deploying this Partner Solution with default parameters builds the following {partner-product-short-name} environment in the
+AWS Cloud.
+
+// Replace this example diagram with your own. Follow our wiki guidelines: https://w.amazon.com/bin/view/AWS_Quick_Starts/Process_for_PSAs/#HPrepareyourarchitecturediagram. Upload your source PowerPoint file to the GitHub {deployment name}/docs/images/ directory in its repository.
+
 [#architecture1]
-.Quick Start architecture for {partner-product-name-short} on AWS
-image::../images/jira-architecture-diagram.png[Architecture,width=640]
+.Partner Solution architecture for {partner-product-short-name} on AWS
+image::../docs/deployment_guide/images/architecture_diagram.png[Architecture]
 
-As shown in Figure 1, the Quick Start sets up the following:
+As shown in <<architecture1>>, this Partner Solution sets up the following:
 
 * A highly available architecture that spans two Availability Zones.
 * In the public subnets:
 ** A network address translation (NAT) gateway to allow outbound internet access for resources in the private subnets.
-** A bastion host that enables secure access to {partner-product-name-short} without exposing it to the internet. For more information, see https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html#bastion-hosts[Bastion Hosts]). You can choose not to provision a bastion host if you prefer to access {partner-product-name-short} nodes through the https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html[AWS Systems Manager].
+** A bastion host that enables secure access to {partner-product-short-name} without exposing it to the internet. For more information, see https://docs.aws.amazon.com/quickstart/latest/linux-bastion/architecture.html#bastion-hosts[Bastion Hosts]). You can choose not to provision a bastion host if you prefer to access {partner-product-short-name} nodes through the https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html[AWS Systems Manager].
 * In the private subnets:
-** Amazon Elastic File System (Amazon EFS) to store artifacts such as attachments, avatars, icons, import and export files, and plug-ins in a common location that can be accessed by all {partner-product-name-short} nodes.
+** Amazon Elastic File System (Amazon EFS) to store artifacts such as attachments, avatars, icons, import and export files, and plug-ins in a common location that can be accessed by all {partner-product-short-name} nodes.
 ** Amazon Relational Database Service (Amazon RDS) for PostgreSQL in a high-availability (Multi-AZ) configuration, which mitigates failover if the master node fails. You can choose Amazon Aurora PostgreSQL instead.
-* Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups for scaling the bastion hosts in the public subnets and the {partner-product-name-short} nodes in the private subnets. The instances are based on Amazon Linux, a Linux server operating system from AWS, and use an Atlassian-provided Amazon Machine Image (AMI).
+* Amazon Elastic Compute Cloud (Amazon EC2) Auto Scaling groups for scaling the bastion hosts in the public subnets and the {partner-product-short-name} nodes in the private subnets. The instances are based on Amazon Linux, a Linux server operating system from AWS, and use an Atlassian-provided Amazon Machine Image (AMI).
 * An Application Load Balancer, which works both as a load balancer and a Secure Sockets Layer (SSL) termination reverse proxy.
 * Amazon CloudWatch for basic monitoring of all application and database nodes in your deployment. By default, CloudWatch collects and stores logs from each monitored node. Amazon CloudWatch is an optional component.
 
@@ -36,6 +40,6 @@ The Aurora configuration with a single database writer and two readers is design
 
 [#aurora]
 .Amazon Aurora reader/writer configuration
-image::../images/aurora-diagram.png[Amazon Aurora,width=640]
+image::../docs/deployment_guide/images/aurora-diagram.png[Amazon Aurora,width=640]
 
 Amazon Aurora is supported on Jira Software Data Center 8.4, Jira Service Management 4.4, and all later versions of both.

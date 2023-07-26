@@ -1,0 +1,17 @@
+:partner-solution-project-name: quickstart-atlassian-jira
+:partner-solution-github-org: aws-quickstart
+:partner-product-name: Jira Data Center
+:partner-product-short-name: Jira
+:partner-company-name: Atlassian
+:doc-month: October
+:doc-year: 2020
+:partner-contributors: Adam Brokes, Ben Partridge, Carlos Corredor, Chris Szmajda, Don Domingo, Dylan Rathbone, Felix Haehnel, Steve Smith, Varun Arbatti, {partner-company-name}
+// :other-contributors: Akua Mansa, Trek10
+// :aws-contributors: Janine Singh, AWS IoT Partner team
+:aws-ia-contributors: Tony Vattathil, AWS Integration & Automation team
+:deployment_time: 30-60 minutes
+:default_deployment_region: us-east-2
+// :private_repo:
+
+
+// For instructions on creating this deployment guide, refer to "Build your AWS Partner Solution documentation" (https://aws-ia-us-west-2.s3.us-west-2.amazonaws.com/docs/content/index.html#/).

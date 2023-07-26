@@ -1,0 +1,3 @@
+// Include details about any licenses and how to sign up. Provide links as appropriate.
+
+This Quick Start deploys a cluster-ready infrastructure for either Jira Software Data Center or Jira Service Management Data Center. A license for either one is required. See the https://www.atlassian.com/software/jira/pricing?tab=self-managed[Atlassian pricing page] for licensing information.

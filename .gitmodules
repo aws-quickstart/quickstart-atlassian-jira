@@ -1,8 +1,4 @@
-[submodule "submodules/quickstart-atlassian-services"]
-	path = submodules/quickstart-atlassian-services
-	url = https://github.com/aws-quickstart/quickstart-atlassian-services.git
-	branch = main
+
 [submodule "docs/boilerplate"]
 	path = docs/boilerplate
-	url = https://github.com/aws-quickstart/quickstart-documentation-base-common.git
-	branch = main
+	url = https://github.com/aws-ia/aws-ia-documentation-base-common.git
